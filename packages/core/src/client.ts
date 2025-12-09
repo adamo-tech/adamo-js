@@ -74,6 +74,7 @@ export class AdamoClient {
   private _preferredQuality: StreamQuality = StreamQuality.AUTO;
   private statsIntervalId: ReturnType<typeof setInterval> | null = null;
   private freshnessIntervalId: ReturnType<typeof setInterval> | null = null;
+  private jitterBufferIntervalId: ReturnType<typeof setInterval> | null = null;
   private lastBytesReceived: Map<string, number> = new Map();
   private lastFramesDecoded: Map<string, number> = new Map();
   private lastStatsTime: Map<string, number> = new Map();
@@ -688,6 +689,9 @@ export class AdamoClient {
 
     // Start faster freshness polling (every 30ms for 100ms staleness detection)
     this.startFreshnessTracking();
+
+    // Start aggressive jitter buffer minimization (like Selkies)
+    this.startJitterBufferOptimization();
   }
 
   /**
@@ -699,6 +703,54 @@ export class AdamoClient {
     this.freshnessIntervalId = setInterval(() => {
       this.updateFrameFreshness();
     }, 30);
+  }
+
+  /**
+   * Start aggressive jitter buffer optimization
+   *
+   * Sets all three jitter buffer properties to 0 every 15ms on all receivers.
+   * This matches the Selkies approach for achieving ~16ms latency.
+   *
+   * Properties set:
+   * - jitterBufferTarget: Target jitter buffer size
+   * - jitterBufferDelayHint: Hint for jitter buffer delay
+   * - playoutDelayHint: Hint for playout delay
+   */
+  private startJitterBufferOptimization(): void {
+    if (this.jitterBufferIntervalId) return;
+
+    this.jitterBufferIntervalId = setInterval(() => {
+      this.minimizeJitterBuffer();
+    }, 15);
+
+    // Run immediately
+    this.minimizeJitterBuffer();
+  }
+
+  /**
+   * Set all jitter buffer properties to 0 on all video receivers
+   */
+  private minimizeJitterBuffer(): void {
+    try {
+      // Access LiveKit's internal peer connection
+      const engine = (this.room as any).engine;
+      const subscriber = engine?.pcManager?.subscriber;
+      const pc = subscriber?.pc as RTCPeerConnection | undefined;
+
+      if (!pc) return;
+
+      pc.getReceivers().forEach((receiver) => {
+        if (receiver.track?.kind === 'video') {
+          // Set all three properties for maximum effect
+          // These are non-standard but widely supported
+          (receiver as any).jitterBufferTarget = 0;
+          (receiver as any).jitterBufferDelayHint = 0;
+          (receiver as any).playoutDelayHint = 0;
+        }
+      });
+    } catch (e) {
+      // Silently ignore - internal API access may fail
+    }
   }
 
   /**
@@ -758,6 +810,10 @@ export class AdamoClient {
     if (this.freshnessIntervalId) {
       clearInterval(this.freshnessIntervalId);
       this.freshnessIntervalId = null;
+    }
+    if (this.jitterBufferIntervalId) {
+      clearInterval(this.jitterBufferIntervalId);
+      this.jitterBufferIntervalId = null;
     }
     this._networkStats = null;
     this._trackStats.clear();

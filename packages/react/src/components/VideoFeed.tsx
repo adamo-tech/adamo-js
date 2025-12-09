@@ -56,6 +56,25 @@ export function VideoFeed({
     videoElementRef.current = element;
     if (element) {
       element.muted = true; // Ensure muted for autoplay
+
+      // Low-latency optimizations
+      // Disable default buffering behavior
+      element.preload = 'none';
+
+      // Hint to browser we want low latency (Chrome)
+      if ('latencyHint' in element) {
+        (element as any).latencyHint = 'interactive';
+      }
+
+      // Disable any picture-in-picture which can add processing
+      if ('disablePictureInPicture' in element) {
+        element.disablePictureInPicture = true;
+      }
+
+      // Disable remote playback (Chromecast etc) which adds latency
+      if ('disableRemotePlayback' in element) {
+        (element as any).disableRemotePlayback = true;
+      }
     }
     setVideoRef(element);
   }, [setVideoRef]);
