@@ -1,3 +1,4 @@
 {
-  "installCommand": "bash install.sh"
+  "installCommand": "cd ../.. && pnpm install",
+  "buildCommand": "cd ../.. && pnpm --filter @adamo/client build"
 }
