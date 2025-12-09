@@ -1,0 +1,157 @@
+import React, { useEffect, useRef, useCallback, CSSProperties } from 'react';
+import { useVideoTrack } from '../hooks/useVideoTrack';
+
+export interface VideoFeedProps {
+  /** The topic name to subscribe to (e.g., 'fork', 'front', 'left') */
+  topic: string;
+  /** CSS class name for the video element */
+  className?: string;
+  /** Inline styles for the video element */
+  style?: CSSProperties;
+  /** Whether to mirror the video horizontally */
+  mirror?: boolean;
+  /** Called when the video starts playing */
+  onPlay?: () => void;
+  /** Called when the video dimensions change */
+  onResize?: (width: number, height: number) => void;
+  /** Custom placeholder to show while loading */
+  placeholder?: React.ReactNode;
+  /** Whether to show the topic name overlay */
+  showLabel?: boolean;
+  /** Custom label text (defaults to topic name) */
+  label?: string;
+}
+
+/**
+ * VideoFeed - Declarative video feed component
+ *
+ * Displays a video feed from a topic. Drop this inside AdamoProvider
+ * to subscribe to and display video from the server.
+ *
+ * @example
+ * ```tsx
+ * <AdamoProvider config={...} autoConnect={...}>
+ *   <VideoFeed topic="fork" />
+ *   <VideoFeed topic="front" />
+ * </AdamoProvider>
+ * ```
+ */
+export function VideoFeed({
+  topic,
+  className,
+  style,
+  mirror = false,
+  onPlay,
+  onResize,
+  placeholder,
+  showLabel = false,
+  label,
+}: VideoFeedProps) {
+  const { track, videoRef: setVideoRef } = useVideoTrack(topic);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoElementRef = useRef<HTMLVideoElement | null>(null);
+
+  // Combined ref callback - must be before any conditional returns
+  const videoRef = useCallback((element: HTMLVideoElement | null) => {
+    videoElementRef.current = element;
+    if (element) {
+      element.muted = true; // Ensure muted for autoplay
+    }
+    setVideoRef(element);
+  }, [setVideoRef]);
+
+  // Handle video events
+  useEffect(() => {
+    const video = videoElementRef.current;
+    if (!video) return;
+
+    const handlePlay = () => {
+      onPlay?.();
+    };
+
+    const handleResize = () => {
+      onResize?.(video.videoWidth, video.videoHeight);
+    };
+
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('resize', handleResize);
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('resize', handleResize);
+    };
+  }, [onPlay, onResize, track]);
+
+  const videoStyle: CSSProperties = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    transform: mirror ? 'scaleX(-1)' : undefined,
+    ...style,
+  };
+
+  const containerStyle: CSSProperties = {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#000',
+  };
+
+  const labelStyle: CSSProperties = {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    padding: '4px 8px',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    color: '#fff',
+    fontSize: '12px',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    borderRadius: '4px',
+    pointerEvents: 'none',
+  };
+
+  if (!track) {
+    return (
+      <div ref={containerRef} style={containerStyle} className={className}>
+        {placeholder || (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+              color: '#666',
+              fontSize: '14px',
+            }}
+          >
+            Waiting for {topic}...
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div ref={containerRef} style={containerStyle} className={className}>
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        style={videoStyle}
+      />
+      {showLabel && (
+        <span style={labelStyle}>
+          {label || topic}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Backwards compatibility alias
+/** @deprecated Use VideoFeed instead */
+export const CameraFeed = VideoFeed;
+/** @deprecated Use VideoFeedProps instead */
+export type CameraFeedProps = VideoFeedProps;
