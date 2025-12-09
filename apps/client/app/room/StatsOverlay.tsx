@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useHeartbeat, useJoypad, useAdaptiveStream, HeartbeatState } from '@adamo/adamo-react';
 
 const stateLabels: Record<HeartbeatState, string> = {
@@ -34,7 +35,14 @@ function getLatencyColor(ms: number): string {
   return '#ef4444';
 }
 
+function getTotalLatencyColor(ms: number): string {
+  if (ms < 100) return '#22c55e';
+  if (ms < 150) return '#f59e0b';
+  return '#ef4444';
+}
+
 export function StatsOverlay() {
+  const [expanded, setExpanded] = useState(false);
   const { state: heartbeatState } = useHeartbeat();
   const { isConnected: gamepadConnected } = useJoypad();
   const { networkStats, trackStats, encoderStats } = useAdaptiveStream();
@@ -77,11 +85,6 @@ export function StatsOverlay() {
   const networkLatency = (networkStats?.rtt ?? 0) / 2;
   const totalLatency = avgEncodeTime + networkLatency + avgJitterBuffer + avgDecodeTime;
 
-  // Debug: log to console
-  console.log('[StatsOverlay] networkStats:', networkStats);
-  console.log('[StatsOverlay] trackStats size:', trackStats.size, 'entries:', Array.from(trackStats.entries()));
-  console.log('[StatsOverlay] encoderStats size:', encoderStats.size);
-
   return (
     <div
       style={{
@@ -90,156 +93,163 @@ export function StatsOverlay() {
         left: 10,
         background: 'rgba(0, 0, 0, 0.85)',
         color: 'white',
-        padding: '12px 16px',
         borderRadius: '8px',
         fontSize: '12px',
         fontFamily: 'monospace',
         zIndex: 10000,
-        minWidth: '240px',
+        minWidth: expanded ? '240px' : 'auto',
       }}
     >
+      {/* Header - always visible, clickable to expand */}
       <div
+        onClick={() => setExpanded(!expanded)}
         style={{
-          fontWeight: 'bold',
-          marginBottom: '8px',
-          fontSize: '14px',
-          borderBottom: '1px solid #555',
-          paddingBottom: '6px',
+          padding: '10px 14px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          userSelect: 'none',
         }}
       >
-        Latency Breakdown
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px' }}>
-        {/* Server-side encode time */}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ color: '#888' }}>Encode (server):</span>
-          <span style={{ color: getLatencyColor(avgEncodeTime) }}>
-            {formatMs(avgEncodeTime)}
-          </span>
-        </div>
-
-        {/* Network one-way latency (RTT/2) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ color: '#888' }}>Network (RTT/2):</span>
-          <span style={{ color: getLatencyColor(networkLatency) }}>
-            {formatMs(networkLatency)} {networkStats ? '' : '(no stats)'}
-          </span>
-        </div>
-
-        {/* Jitter buffer (client) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ color: '#888' }}>Jitter buffer:</span>
-          <span style={{ color: getLatencyColor(avgJitterBuffer) }}>
-            {formatMs(avgJitterBuffer)} {trackStats.size === 0 ? '(no tracks)' : ''}
-          </span>
-        </div>
-
-        {/* Decode time (client) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ color: '#888' }}>Decode (client):</span>
-          <span style={{ color: getLatencyColor(avgDecodeTime) }}>
-            {formatMs(avgDecodeTime)}
-          </span>
-        </div>
-
-        {/* Total estimated latency */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          fontWeight: 'bold',
-          marginTop: '4px',
-          paddingTop: '4px',
-          borderTop: '1px solid #444'
+        <span style={{
+          color: '#888',
+          fontSize: '10px',
+          transition: 'transform 0.2s ease',
+          transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
         }}>
-          <span style={{ color: '#ccc' }}>Total (est.):</span>
-          <span style={{ color: getLatencyColor(totalLatency) }}>
-            {formatMs(totalLatency)}
-          </span>
-        </div>
-
-        {/* Network stats section */}
-        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333' }}>
-          <div style={{ color: '#666', marginBottom: '4px' }}>Network</div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#888' }}>RTT:</span>
-            <span style={{ color: getLatencyColor(networkStats?.rtt ?? 0) }}>
-              {formatMs(networkStats?.rtt ?? 0)}
-            </span>
-          </div>
-
-          {networkStats && (
-            <>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#888' }}>Packet Loss:</span>
-                <span style={{ color: networkStats.packetLoss < 1 ? '#22c55e' : networkStats.packetLoss < 5 ? '#f59e0b' : '#ef4444' }}>
-                  {networkStats.packetLoss.toFixed(1)}%
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#888' }}>Jitter:</span>
-                <span style={{ color: networkStats.jitter < 10 ? '#22c55e' : networkStats.jitter < 30 ? '#f59e0b' : '#ef4444' }}>
-                  {formatMs(networkStats.jitter)}
-                </span>
-              </div>
-            </>
-          )}
-
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#888' }}>Bandwidth:</span>
-            <span style={{ color: '#0af' }}>
-              {formatBitrate(totalBitrate)}
-            </span>
-          </div>
-        </div>
-
-        {/* Status section */}
-        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333' }}>
-          <div style={{ color: '#666', marginBottom: '4px' }}>Status</div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#888' }}>Safety:</span>
-            <span style={{ color: stateColors[heartbeatState] }}>
-              {stateLabels[heartbeatState]}
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#888' }}>Gamepad:</span>
-            <span style={{ color: gamepadConnected ? '#22c55e' : '#ef4444' }}>
-              {gamepadConnected ? 'Connected' : 'Disconnected'}
-            </span>
-          </div>
-        </div>
-
-        {/* Per-track stats */}
-        {trackStats.size > 0 && (
-          <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333', fontSize: '10px' }}>
-            <div style={{ color: '#666', marginBottom: '4px' }}>Streams</div>
-            {Array.from(trackStats.entries()).map(([name, stats]) => {
-              const encoder = encoderStats.get(name);
-              return (
-                <div key={name} style={{ marginBottom: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#aaa' }}>{name}:</span>
-                    <span style={{ color: '#0af' }}>
-                      {stats.width}x{stats.height} @ {stats.fps.toFixed(0)}fps
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
-                    <span style={{ color: '#666' }}>enc/jit/dec:</span>
-                    <span style={{ color: '#888' }}>
-                      {encoder ? formatMs(encoder.encodeTimeMs) : '---'} / {formatMs(stats.jitterBufferDelayMs || 0)} / {formatMs(stats.decodeTimeMs || 0)}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+          ▶
+        </span>
+        <span style={{ color: '#aaa', fontSize: '11px' }}>Latency:</span>
+        <span style={{
+          color: getTotalLatencyColor(totalLatency),
+          fontWeight: 'bold',
+          fontSize: '13px',
+        }}>
+          {formatMs(totalLatency)}
+        </span>
       </div>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div style={{ padding: '0 14px 12px 14px', borderTop: '1px solid #333' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', paddingTop: '10px' }}>
+            {/* Server-side encode time */}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Encode (server):</span>
+              <span style={{ color: getLatencyColor(avgEncodeTime) }}>
+                {formatMs(avgEncodeTime)}
+              </span>
+            </div>
+
+            {/* Network one-way latency (RTT/2) */}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Network (RTT/2):</span>
+              <span style={{ color: getLatencyColor(networkLatency) }}>
+                {formatMs(networkLatency)} {networkStats ? '' : '(no stats)'}
+              </span>
+            </div>
+
+            {/* Jitter buffer (client) */}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Jitter buffer:</span>
+              <span style={{ color: getLatencyColor(avgJitterBuffer) }}>
+                {formatMs(avgJitterBuffer)} {trackStats.size === 0 ? '(no tracks)' : ''}
+              </span>
+            </div>
+
+            {/* Decode time (client) */}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Decode (client):</span>
+              <span style={{ color: getLatencyColor(avgDecodeTime) }}>
+                {formatMs(avgDecodeTime)}
+              </span>
+            </div>
+
+            {/* Network stats section */}
+            <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333' }}>
+              <div style={{ color: '#666', marginBottom: '4px' }}>Network</div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#888' }}>RTT:</span>
+                <span style={{ color: getLatencyColor(networkStats?.rtt ?? 0) }}>
+                  {formatMs(networkStats?.rtt ?? 0)}
+                </span>
+              </div>
+
+              {networkStats && (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#888' }}>Packet Loss:</span>
+                    <span style={{ color: networkStats.packetLoss < 1 ? '#22c55e' : networkStats.packetLoss < 5 ? '#f59e0b' : '#ef4444' }}>
+                      {networkStats.packetLoss.toFixed(1)}%
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#888' }}>Jitter:</span>
+                    <span style={{ color: networkStats.jitter < 10 ? '#22c55e' : networkStats.jitter < 30 ? '#f59e0b' : '#ef4444' }}>
+                      {formatMs(networkStats.jitter)}
+                    </span>
+                  </div>
+                </>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#888' }}>Bandwidth:</span>
+                <span style={{ color: '#0af' }}>
+                  {formatBitrate(totalBitrate)}
+                </span>
+              </div>
+            </div>
+
+            {/* Status section */}
+            <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333' }}>
+              <div style={{ color: '#666', marginBottom: '4px' }}>Status</div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#888' }}>Safety:</span>
+                <span style={{ color: stateColors[heartbeatState] }}>
+                  {stateLabels[heartbeatState]}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#888' }}>Gamepad:</span>
+                <span style={{ color: gamepadConnected ? '#22c55e' : '#ef4444' }}>
+                  {gamepadConnected ? 'Connected' : 'Disconnected'}
+                </span>
+              </div>
+            </div>
+
+            {/* Per-track stats */}
+            {trackStats.size > 0 && (
+              <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333', fontSize: '10px' }}>
+                <div style={{ color: '#666', marginBottom: '4px' }}>Streams</div>
+                {Array.from(trackStats.entries()).map(([name, stats]) => {
+                  const encoder = encoderStats.get(name);
+                  return (
+                    <div key={name} style={{ marginBottom: '4px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#aaa' }}>{name}:</span>
+                        <span style={{ color: '#0af' }}>
+                          {stats.width}x{stats.height} @ {stats.fps.toFixed(0)}fps
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
+                        <span style={{ color: '#666' }}>enc/jit/dec:</span>
+                        <span style={{ color: '#888' }}>
+                          {encoder ? formatMs(encoder.encodeTimeMs) : '---'} / {formatMs(stats.jitterBufferDelayMs || 0)} / {formatMs(stats.decodeTimeMs || 0)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
