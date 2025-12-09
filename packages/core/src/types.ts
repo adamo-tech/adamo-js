@@ -154,6 +154,12 @@ export interface JoypadConfig {
   stickyButtons?: boolean;
   /** Debounce interval in ms (default: 1) */
   coalesceIntervalMs?: number;
+  /**
+   * Maximum allowed video staleness in ms before blocking commands.
+   * Commands will only be sent if majority of video tracks have received
+   * a frame within this threshold. Set to 0 to disable. (default: 100)
+   */
+  maxVideoStalenessMs?: number;
 }
 
 /**

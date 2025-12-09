@@ -8,6 +8,7 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
   autorepeatRate: 20.0,
   stickyButtons: false,
   coalesceIntervalMs: 1,
+  maxVideoStalenessMs: 100,
 };
 
 /**
@@ -127,6 +128,17 @@ export class JoypadManager {
     const gamepad = this.getGamepad();
 
     if (gamepad && this.client.connectionState === 'connected') {
+      // Check video freshness before sending commands
+      // If video is stale, operator is flying blind - don't send commands
+      if (
+        this.config.maxVideoStalenessMs > 0 &&
+        !this.client.isVideoFresh(this.config.maxVideoStalenessMs)
+      ) {
+        // Video is stale - skip publishing but continue polling
+        this.animationFrameId = requestAnimationFrame(this.pollGamepad);
+        return;
+      }
+
       const { buttons, axes } = this.mapToROSJoy(gamepad);
 
       const changed = this.hasStateChanged(buttons, axes);

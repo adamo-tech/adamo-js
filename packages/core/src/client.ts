@@ -73,9 +73,12 @@ export class AdamoClient {
   private _encoderStats: Map<string, EncoderStats> = new Map();
   private _preferredQuality: StreamQuality = StreamQuality.AUTO;
   private statsIntervalId: ReturnType<typeof setInterval> | null = null;
+  private freshnessIntervalId: ReturnType<typeof setInterval> | null = null;
   private lastBytesReceived: Map<string, number> = new Map();
   private lastFramesDecoded: Map<string, number> = new Map();
   private lastStatsTime: Map<string, number> = new Map();
+  private _lastFrameTime: Map<string, number> = new Map();
+  private _freshnessFramesDecoded: Map<string, number> = new Map();
 
   constructor(config: AdamoClientConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -452,6 +455,46 @@ export class AdamoClient {
     return this._trackStats.get(trackName);
   }
 
+  /**
+   * Get the last frame time for all tracks
+   * Returns a map of track name to timestamp (ms) when the last frame was decoded
+   */
+  get lastFrameTime(): Map<string, number> {
+    return this._lastFrameTime;
+  }
+
+  /**
+   * Get the last frame time for a specific track
+   */
+  getLastFrameTime(trackName: string): number | undefined {
+    return this._lastFrameTime.get(trackName);
+  }
+
+  /**
+   * Check if video feeds are fresh (majority have received frames within threshold)
+   * @param maxStalenessMs - Maximum allowed time since last frame (default: 100ms)
+   * @returns true if majority of tracks are fresh, false otherwise
+   */
+  isVideoFresh(maxStalenessMs: number = 100): boolean {
+    const now = Date.now();
+    const trackCount = this._lastFrameTime.size;
+
+    if (trackCount === 0) {
+      // No tracks yet - consider stale for safety
+      return false;
+    }
+
+    let freshCount = 0;
+    for (const lastTime of this._lastFrameTime.values()) {
+      if (now - lastTime <= maxStalenessMs) {
+        freshCount++;
+      }
+    }
+
+    // Majority means more than half
+    return freshCount > trackCount / 2;
+  }
+
   // Private methods
 
   private setupRoomListeners(): void {
@@ -642,6 +685,66 @@ export class AdamoClient {
 
     // Collect immediately
     this.collectStats();
+
+    // Start faster freshness polling (every 30ms for 100ms staleness detection)
+    this.startFreshnessTracking();
+  }
+
+  /**
+   * Start fast polling for video frame freshness
+   */
+  private startFreshnessTracking(): void {
+    if (this.freshnessIntervalId) return;
+
+    this.freshnessIntervalId = setInterval(() => {
+      this.updateFrameFreshness();
+    }, 30);
+  }
+
+  /**
+   * Update frame freshness by checking if framesDecoded has incremented
+   */
+  private async updateFrameFreshness(): Promise<void> {
+    if (!this.room.localParticipant) return;
+
+    try {
+      const engine = (this.room as any).engine;
+      const subscriber = engine?.pcManager?.subscriber;
+      if (!subscriber) return;
+
+      const pc = await subscriber.getStats();
+      const now = Date.now();
+
+      pc.forEach((report: RTCStats) => {
+        if (report.type === 'inbound-rtp' && (report as any).kind === 'video') {
+          const trackId = (report as any).trackIdentifier || (report as any).trackId;
+          const framesDecoded = (report as any).framesDecoded || 0;
+
+          // Find track name from subscriptions
+          let trackName = '';
+          for (const [name, sub] of this.subscriptions) {
+            const mediaTrack = sub.publication?.videoTrack?.mediaStreamTrack;
+            if (mediaTrack && mediaTrack.id === trackId) {
+              trackName = name;
+              break;
+            }
+          }
+
+          if (trackName) {
+            const prevFrames = this._freshnessFramesDecoded.get(trackName) || 0;
+
+            // If frames have been decoded since last check, update timestamp
+            if (framesDecoded > prevFrames) {
+              this._lastFrameTime.set(trackName, now);
+            }
+
+            this._freshnessFramesDecoded.set(trackName, framesDecoded);
+          }
+        }
+      });
+    } catch (e) {
+      // Silently ignore freshness check failures
+    }
   }
 
   /**
@@ -652,11 +755,17 @@ export class AdamoClient {
       clearInterval(this.statsIntervalId);
       this.statsIntervalId = null;
     }
+    if (this.freshnessIntervalId) {
+      clearInterval(this.freshnessIntervalId);
+      this.freshnessIntervalId = null;
+    }
     this._networkStats = null;
     this._trackStats.clear();
     this.lastBytesReceived.clear();
     this.lastFramesDecoded.clear();
     this.lastStatsTime.clear();
+    this._lastFrameTime.clear();
+    this._freshnessFramesDecoded.clear();
   }
 
   /**
