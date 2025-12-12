@@ -219,7 +219,6 @@ export default function RoomPage() {
                 }} />
               </div>
               {room.robot_name && <div style={styles.robotName}>{room.robot_name}</div>}
-              <div style={styles.roomUrl}>{room.livekit_url}</div>
             </div>
           ))}
         </div>
