@@ -65,3 +65,7 @@ function App() {
 - Latency monitoring
 - Controller connection status
 - Video staleness checks (blocks commands when video freezes)
+
+---
+
+[LLM-friendly documentation](/llms-full.txt)
