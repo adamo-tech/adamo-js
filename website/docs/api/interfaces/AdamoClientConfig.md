@@ -1,6 +1,6 @@
 # Interface: AdamoClientConfig
 
-Defined in: [types.ts:153](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L153)
+Defined in: [types.ts:153](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L153)
 
 Configuration options for the Adamo client.
 
@@ -20,7 +20,7 @@ const client = new AdamoClient({
 
 > `optional` **adaptiveStream**: `boolean`
 
-Defined in: [types.ts:165](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L165)
+Defined in: [types.ts:165](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L165)
 
 Enable adaptive streaming for automatic quality adjustment based on network conditions.
 
@@ -36,7 +36,7 @@ true
 
 > `optional` **dynacast**: `boolean`
 
-Defined in: [types.ts:172](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L172)
+Defined in: [types.ts:172](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L172)
 
 Enable dynacast to only send video when someone is subscribed.
 Improves efficiency in multi-participant scenarios.
@@ -53,7 +53,7 @@ true
 
 > `optional` **playoutDelay**: `number`
 
-Defined in: [types.ts:192](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L192)
+Defined in: [types.ts:192](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L192)
 
 Playout delay in seconds for video tracks.
 Controls the jitter buffer size:
@@ -73,7 +73,7 @@ Controls the jitter buffer size:
 
 > `optional` **serverIdentity**: `string`
 
-Defined in: [types.ts:159](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L159)
+Defined in: [types.ts:159](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L159)
 
 Server participant identity to communicate with.
 This should match the identity of the robot's LiveKit participant.
@@ -90,7 +90,7 @@ This should match the identity of the robot's LiveKit participant.
 
 > `optional` **videoCodec**: `"h264"` \| `"vp8"` \| `"vp9"` \| `"av1"`
 
-Defined in: [types.ts:182](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L182)
+Defined in: [types.ts:182](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L182)
 
 Video codec preference for encoding/decoding.
 - `h264`: Best compatibility, hardware acceleration common

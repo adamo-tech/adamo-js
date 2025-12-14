@@ -14,7 +14,7 @@ pnpm add @adamo-tech/core
 import { AdamoClient, HeartbeatManager, JoypadManager, HeartbeatState } from '@adamo-tech/core';
 
 const client = new AdamoClient({
-  serverIdentity: 'python-bot',
+  serverIdentity: 'robot',
   playoutDelay: 0,
 });
 

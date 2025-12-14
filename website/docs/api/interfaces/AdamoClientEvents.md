@@ -1,6 +1,6 @@
 # Interface: AdamoClientEvents
 
-Defined in: [types.ts:328](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L328)
+Defined in: [types.ts:328](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L328)
 
 Event callback types
 
@@ -10,7 +10,7 @@ Event callback types
 
 > **connectionStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:330](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L330)
+Defined in: [types.ts:330](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L330)
 
 Called when connection state changes
 
@@ -30,7 +30,7 @@ Called when connection state changes
 
 > **costmapData**: (`costmap`) => `void`
 
-Defined in: [types.ts:346](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L346)
+Defined in: [types.ts:346](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L346)
 
 Called when costmap data is received (local rolling window)
 
@@ -50,7 +50,7 @@ Called when costmap data is received (local rolling window)
 
 > **encoderStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:360](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L360)
+Defined in: [types.ts:360](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L360)
 
 Called when encoder stats are received from server
 
@@ -70,7 +70,7 @@ Called when encoder stats are received from server
 
 > **error**: (`error`) => `void`
 
-Defined in: [types.ts:342](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L342)
+Defined in: [types.ts:342](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L342)
 
 Called on any error
 
@@ -90,7 +90,7 @@ Called on any error
 
 > **heartbeatStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:340](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L340)
+Defined in: [types.ts:340](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L340)
 
 Called when heartbeat state changes
 
@@ -110,7 +110,7 @@ Called when heartbeat state changes
 
 > **mapData**: (`map`) => `void`
 
-Defined in: [types.ts:344](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L344)
+Defined in: [types.ts:344](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L344)
 
 Called when map data is received (static or SLAM update)
 
@@ -130,7 +130,7 @@ Called when map data is received (static or SLAM update)
 
 > **navPath**: (`path`) => `void`
 
-Defined in: [types.ts:350](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L350)
+Defined in: [types.ts:350](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L350)
 
 Called when navigation path is updated
 
@@ -150,7 +150,7 @@ Called when navigation path is updated
 
 > **networkStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:352](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L352)
+Defined in: [types.ts:352](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L352)
 
 Called when network stats are updated
 
@@ -170,7 +170,7 @@ Called when network stats are updated
 
 > **qualityChanged**: (`quality`, `trackName?`) => `void`
 
-Defined in: [types.ts:356](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L356)
+Defined in: [types.ts:356](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L356)
 
 Called when stream quality changes
 
@@ -194,7 +194,7 @@ Called when stream quality changes
 
 > **robotPose**: (`pose`) => `void`
 
-Defined in: [types.ts:348](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L348)
+Defined in: [types.ts:348](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L348)
 
 Called when robot pose is updated
 
@@ -214,7 +214,7 @@ Called when robot pose is updated
 
 > **trackAvailable**: (`track`) => `void`
 
-Defined in: [types.ts:332](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L332)
+Defined in: [types.ts:332](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L332)
 
 Called when a new video track is available
 
@@ -234,7 +234,7 @@ Called when a new video track is available
 
 > **trackRemoved**: (`trackName`) => `void`
 
-Defined in: [types.ts:334](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L334)
+Defined in: [types.ts:334](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L334)
 
 Called when a track is removed
 
@@ -254,7 +254,7 @@ Called when a track is removed
 
 > **trackStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:354](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L354)
+Defined in: [types.ts:354](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L354)
 
 Called when track streaming stats are updated
 
@@ -274,7 +274,7 @@ Called when track streaming stats are updated
 
 > **trackSubscribed**: (`track`) => `void`
 
-Defined in: [types.ts:336](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L336)
+Defined in: [types.ts:336](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L336)
 
 Called when a track's subscription state changes
 
@@ -294,7 +294,7 @@ Called when a track's subscription state changes
 
 > **trackUnsubscribed**: (`trackName`) => `void`
 
-Defined in: [types.ts:338](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L338)
+Defined in: [types.ts:338](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L338)
 
 Called when a track is unsubscribed
 
@@ -314,7 +314,7 @@ Called when a track is unsubscribed
 
 > **velocityStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:358](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L358)
+Defined in: [types.ts:358](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L358)
 
 Called when robot velocity state is updated
 

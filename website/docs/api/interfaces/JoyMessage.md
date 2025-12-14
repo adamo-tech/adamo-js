@@ -1,6 +1,6 @@
 # Interface: JoyMessage
 
-Defined in: [types.ts:298](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L298)
+Defined in: [types.ts:298](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L298)
 
 ROS-compatible Joy message format
 
@@ -10,7 +10,7 @@ ROS-compatible Joy message format
 
 > **axes**: `number`[]
 
-Defined in: [types.ts:303](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L303)
+Defined in: [types.ts:303](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L303)
 
 ***
 
@@ -18,7 +18,7 @@ Defined in: [types.ts:303](https://github.com/samconsidine/adamo/blob/12cf5b68ee
 
 > **buttons**: `number`[]
 
-Defined in: [types.ts:304](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L304)
+Defined in: [types.ts:304](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L304)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [types.ts:304](https://github.com/samconsidine/adamo/blob/12cf5b68ee
 
 > **header**: `object`
 
-Defined in: [types.ts:299](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L299)
+Defined in: [types.ts:299](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L299)
 
 #### frame\_id
 

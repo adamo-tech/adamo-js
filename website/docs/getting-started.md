@@ -25,7 +25,7 @@ function App() {
   return (
     <Teleoperate
       config={{
-        serverIdentity: 'python-bot', // Robot's participant identity
+        serverIdentity: 'robot', // Robot's participant identity
         videoCodec: 'h264',
         playoutDelay: -0.1, // Minimum buffering
       }}
@@ -80,7 +80,7 @@ function TeleoperationUI() {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `serverIdentity` | `string` | `'python-bot'` | Robot's participant identity |
+| `serverIdentity` | `string` | `'robot'` | Robot's participant identity |
 | `videoCodec` | `'h264' \| 'vp8' \| 'vp9' \| 'av1'` | `'h264'` | Video codec preference |
 | `playoutDelay` | `number` | `-0.1` | Jitter buffer size. Negative = minimum latency |
 | `adaptiveStream` | `boolean` | `true` | Enable adaptive quality |

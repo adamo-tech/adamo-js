@@ -1,6 +1,6 @@
 # Interface: CostmapData
 
-Defined in: [types.ts:398](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L398)
+Defined in: [types.ts:398](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L398)
 
 Local costmap data (robot-centered rolling window)
 Values: 0=free, 100-252=inflated cost, 253=inscribed, 254=lethal
@@ -11,7 +11,7 @@ Values: 0=free, 100-252=inflated cost, 253=inscribed, 254=lethal
 
 > **data**: `number`[]
 
-Defined in: [types.ts:414](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L414)
+Defined in: [types.ts:414](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L414)
 
 Cost values: 0=free, 100-252=inflated, 253=inscribed, 254=lethal
 
@@ -21,7 +21,7 @@ Cost values: 0=free, 100-252=inflated, 253=inscribed, 254=lethal
 
 > **height**: `number`
 
-Defined in: [types.ts:402](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L402)
+Defined in: [types.ts:402](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L402)
 
 Costmap height in cells
 
@@ -31,7 +31,7 @@ Costmap height in cells
 
 > **origin\_x**: `number`
 
-Defined in: [types.ts:406](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L406)
+Defined in: [types.ts:406](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L406)
 
 Origin X in world coordinates (moves with robot)
 
@@ -41,7 +41,7 @@ Origin X in world coordinates (moves with robot)
 
 > **origin\_y**: `number`
 
-Defined in: [types.ts:408](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L408)
+Defined in: [types.ts:408](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L408)
 
 Origin Y in world coordinates (moves with robot)
 
@@ -51,7 +51,7 @@ Origin Y in world coordinates (moves with robot)
 
 > **resolution**: `number`
 
-Defined in: [types.ts:404](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L404)
+Defined in: [types.ts:404](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L404)
 
 Resolution in meters per cell
 
@@ -61,7 +61,7 @@ Resolution in meters per cell
 
 > **robot\_x**: `number`
 
-Defined in: [types.ts:410](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L410)
+Defined in: [types.ts:410](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L410)
 
 Robot X position in world frame
 
@@ -71,7 +71,7 @@ Robot X position in world frame
 
 > **robot\_y**: `number`
 
-Defined in: [types.ts:412](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L412)
+Defined in: [types.ts:412](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L412)
 
 Robot Y position in world frame
 
@@ -81,6 +81,6 @@ Robot Y position in world frame
 
 > **width**: `number`
 
-Defined in: [types.ts:400](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L400)
+Defined in: [types.ts:400](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L400)
 
 Costmap width in cells

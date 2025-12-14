@@ -1,6 +1,6 @@
 # Class: HeartbeatManager
 
-Defined in: [heartbeat.ts:30](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/heartbeat.ts#L30)
+Defined in: [heartbeat.ts:30](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/heartbeat.ts#L30)
 
 HeartbeatManager - Manages heartbeat monitoring and sending to the server
 
@@ -28,7 +28,7 @@ heartbeat.stop();
 
 > **new HeartbeatManager**(`client`, `config`): `HeartbeatManager`
 
-Defined in: [heartbeat.ts:37](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/heartbeat.ts#L37)
+Defined in: [heartbeat.ts:37](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/heartbeat.ts#L37)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [heartbeat.ts:37](https://github.com/samconsidine/adamo/blob/12cf5b6
 
 > **get** **state**(): [`HeartbeatState`](../enumerations/HeartbeatState.md)
 
-Defined in: [heartbeat.ts:45](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/heartbeat.ts#L45)
+Defined in: [heartbeat.ts:45](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/heartbeat.ts#L45)
 
 Get the current heartbeat state
 
@@ -66,7 +66,7 @@ Get the current heartbeat state
 
 > **onStateChange**(`callback`): () => `void`
 
-Defined in: [heartbeat.ts:77](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/heartbeat.ts#L77)
+Defined in: [heartbeat.ts:77](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/heartbeat.ts#L77)
 
 Register a callback for state changes
 
@@ -90,7 +90,7 @@ Register a callback for state changes
 
 > **start**(): `void`
 
-Defined in: [heartbeat.ts:52](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/heartbeat.ts#L52)
+Defined in: [heartbeat.ts:52](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/heartbeat.ts#L52)
 
 Start sending heartbeats
 
@@ -104,7 +104,7 @@ Start sending heartbeats
 
 > **stop**(): `void`
 
-Defined in: [heartbeat.ts:67](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/heartbeat.ts#L67)
+Defined in: [heartbeat.ts:67](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/heartbeat.ts#L67)
 
 Stop sending heartbeats
 

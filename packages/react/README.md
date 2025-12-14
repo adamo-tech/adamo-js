@@ -21,7 +21,7 @@ import {
 function App() {
   return (
     <Teleoperate
-      config={{ serverIdentity: 'python-bot' }}
+      config={{ serverIdentity: 'robot' }}
       autoConnect={{ url: 'wss://your-server.com', token }}
     >
       <HeartbeatMonitor />

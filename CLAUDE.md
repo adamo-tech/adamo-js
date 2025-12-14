@@ -62,7 +62,7 @@ Key classes:
 Declarative components following react-three-fiber style:
 
 ```tsx
-<AdamoProvider config={{ serverIdentity: 'python-bot' }} autoConnect={{ url, token }}>
+<AdamoProvider config={{ serverIdentity: 'robot' }} autoConnect={{ url, token }}>
   <HeartbeatMonitor />           {/* Invisible - enables safety monitoring */}
   <GamepadController />          {/* Invisible - enables gamepad input */}
   <VideoFeed topic="front_camera" />
@@ -105,6 +105,6 @@ playoutDelay: number  // Negative for minimum buffering (e.g., -0.1)
 
 - **Video**: LiveKit tracks named by ROS topic (e.g., "front_camera", "fork")
 - **Joy data**: Lossy data channel, topic "joy", ROS `sensor_msgs/Joy` format
-- **Heartbeat**: RPC method "heartbeat" to server identity (default: "python-bot")
+- **Heartbeat**: RPC method "heartbeat" to server identity (default: "robot")
 - **Nav data**: Data channels "nav/map", "nav/position", "nav/path", "nav/costmap"
 - **Stats**: Server sends encoder stats on "stats/encoder" topic

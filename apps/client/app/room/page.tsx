@@ -242,7 +242,7 @@ export default function RoomPage() {
   return (
     <Teleoperate
       config={{
-        serverIdentity: 'python-bot',
+        serverIdentity: 'robot',
         adaptiveStream: false,
         dynacast: true,
         videoCodec: 'h264',

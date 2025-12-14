@@ -87,7 +87,7 @@ This should match the identity of the robot's LiveKit participant.
 #### Default
 
 ```ts
-'python-bot'
+'robot'
 ```
 
 ***
