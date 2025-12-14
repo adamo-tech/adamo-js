@@ -1,6 +1,6 @@
 # Interface: JoypadConfig
 
-Defined in: [types.ts:225](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L225)
+Defined in: [types.ts:225](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L225)
 
 Joypad (gamepad) configuration matching ROS joy_node parameters.
 
@@ -26,7 +26,7 @@ Maps W3C Gamepad API to ROS `sensor_msgs/Joy` format.
 
 > `optional` **autorepeatRate**: `number`
 
-Defined in: [types.ts:250](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L250)
+Defined in: [types.ts:250](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L250)
 
 Autorepeat rate in Hz for continuous input.
 Set to 0 to only send on change.
@@ -43,7 +43,7 @@ Set to 0 to only send on change.
 
 > `optional` **coalesceIntervalMs**: `number`
 
-Defined in: [types.ts:263](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L263)
+Defined in: [types.ts:263](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L263)
 
 Debounce interval in ms to coalesce rapid input changes.
 
@@ -59,7 +59,7 @@ Debounce interval in ms to coalesce rapid input changes.
 
 > `optional` **deadzone**: `number`
 
-Defined in: [types.ts:243](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L243)
+Defined in: [types.ts:243](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L243)
 
 Axis deadzone as a fraction (0.05 = 5%).
 Values within the deadzone are reported as 0.
@@ -76,7 +76,7 @@ Values within the deadzone are reported as 0.
 
 > `optional` **deviceId**: `number`
 
-Defined in: [types.ts:230](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L230)
+Defined in: [types.ts:230](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L230)
 
 Which gamepad to use by index (0 = first connected gamepad).
 
@@ -92,7 +92,7 @@ Which gamepad to use by index (0 = first connected gamepad).
 
 > `optional` **deviceName**: `string`
 
-Defined in: [types.ts:236](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L236)
+Defined in: [types.ts:236](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L236)
 
 Filter gamepad by name substring (e.g., 'Xbox', 'DualSense').
 Takes precedence over `deviceId` if specified.
@@ -103,7 +103,7 @@ Takes precedence over `deviceId` if specified.
 
 > `optional` **maxVideoStalenessMs**: `number`
 
-Defined in: [types.ts:275](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L275)
+Defined in: [types.ts:275](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L275)
 
 Maximum allowed video staleness in ms before blocking commands.
 
@@ -125,7 +125,7 @@ Set to 0 to disable this safety check.
 
 > `optional` **stickyButtons**: `boolean`
 
-Defined in: [types.ts:257](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L257)
+Defined in: [types.ts:257](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L257)
 
 Enable toggle mode for buttons (press to toggle on/off).
 Useful for functions like headlights or horn.
@@ -142,7 +142,7 @@ false
 
 > `optional` **topic**: `string`
 
-Defined in: [types.ts:292](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L292)
+Defined in: [types.ts:292](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L292)
 
 Topic name for joy messages.
 

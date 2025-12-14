@@ -139,3 +139,12 @@ th {
   border-bottom: 1px solid #1a1a1a;
 }
 
+/* Remove zebra striping */
+[data-theme='dark'] tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+[data-theme='dark'] tbody tr {
+  background-color: transparent;
+}
+

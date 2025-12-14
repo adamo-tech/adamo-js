@@ -1,6 +1,6 @@
 # Interface: HeartbeatConfig
 
-Defined in: [types.ts:198](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L198)
+Defined in: [types.ts:198](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L198)
 
 Configuration for heartbeat monitoring
 
@@ -10,7 +10,7 @@ Configuration for heartbeat monitoring
 
 > `optional` **checkGamepad**: `boolean`
 
-Defined in: [types.ts:202](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L202)
+Defined in: [types.ts:202](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L202)
 
 Whether to check for gamepad connection (default: true)
 
@@ -20,7 +20,7 @@ Whether to check for gamepad connection (default: true)
 
 > `optional` **checkWindowFocus**: `boolean`
 
-Defined in: [types.ts:204](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L204)
+Defined in: [types.ts:204](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L204)
 
 Whether to check for window focus (default: true)
 
@@ -30,6 +30,6 @@ Whether to check for window focus (default: true)
 
 > `optional` **interval**: `number`
 
-Defined in: [types.ts:200](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L200)
+Defined in: [types.ts:200](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L200)
 
 How often to send heartbeat messages in ms (default: 500)

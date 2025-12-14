@@ -2,7 +2,7 @@
 
 > **ConnectionState** = `"disconnected"` \| `"connecting"` \| `"connected"` \| `"reconnecting"`
 
-Defined in: [types.ts:36](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L36)
+Defined in: [types.ts:36](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L36)
 
 Connection state for the Adamo client.
 

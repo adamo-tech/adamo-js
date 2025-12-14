@@ -1,6 +1,6 @@
 # Interface: AdaptiveStreamState
 
-Defined in: [types.ts:108](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L108)
+Defined in: [types.ts:108](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L108)
 
 Aggregated adaptive streaming state
 
@@ -10,7 +10,7 @@ Aggregated adaptive streaming state
 
 > **currentQuality**: [`StreamQuality`](../enumerations/StreamQuality.md)
 
-Defined in: [types.ts:114](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L114)
+Defined in: [types.ts:114](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L114)
 
 Current actual quality being received
 
@@ -20,7 +20,7 @@ Current actual quality being received
 
 > **enabled**: `boolean`
 
-Defined in: [types.ts:110](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L110)
+Defined in: [types.ts:110](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L110)
 
 Whether adaptive streaming is enabled
 
@@ -30,7 +30,7 @@ Whether adaptive streaming is enabled
 
 > **isAdapting**: `boolean`
 
-Defined in: [types.ts:120](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L120)
+Defined in: [types.ts:120](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L120)
 
 Whether quality is currently being adapted
 
@@ -40,7 +40,7 @@ Whether quality is currently being adapted
 
 > **networkStats**: [`NetworkStats`](NetworkStats.md) \| `null`
 
-Defined in: [types.ts:116](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L116)
+Defined in: [types.ts:116](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L116)
 
 Network statistics
 
@@ -50,7 +50,7 @@ Network statistics
 
 > **preferredQuality**: [`StreamQuality`](../enumerations/StreamQuality.md)
 
-Defined in: [types.ts:112](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L112)
+Defined in: [types.ts:112](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L112)
 
 Current preferred quality (user preference)
 
@@ -60,7 +60,7 @@ Current preferred quality (user preference)
 
 > **qualityReason**: `string`
 
-Defined in: [types.ts:122](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L122)
+Defined in: [types.ts:122](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L122)
 
 Reason for current quality level
 
@@ -70,6 +70,6 @@ Reason for current quality level
 
 > **trackStats**: `Map`\<`string`, [`TrackStreamStats`](TrackStreamStats.md)\>
 
-Defined in: [types.ts:118](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L118)
+Defined in: [types.ts:118](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L118)
 
 Per-track statistics

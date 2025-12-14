@@ -38,6 +38,15 @@ const config: Config = {
         excludeInternal: true,
       },
     ],
+    [
+      'docusaurus-plugin-llms',
+      {
+        generateLLMsTxt: true,
+        generateLLMsFullTxt: true,
+        title: 'Adamo SDK Documentation',
+        description: 'Low-latency robot teleoperation SDK',
+      },
+    ],
   ],
 
   presets: [

@@ -1,6 +1,6 @@
 # Interface: VideoTrack
 
-Defined in: [types.ts:310](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L310)
+Defined in: [types.ts:310](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L310)
 
 Video track information
 
@@ -10,7 +10,7 @@ Video track information
 
 > `optional` **dimensions**: `object`
 
-Defined in: [types.ts:320](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L320)
+Defined in: [types.ts:320](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L320)
 
 Video dimensions if available
 
@@ -28,7 +28,7 @@ Video dimensions if available
 
 > `optional` **mediaStreamTrack**: `MediaStreamTrack`
 
-Defined in: [types.ts:322](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L322)
+Defined in: [types.ts:322](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L322)
 
 The underlying MediaStreamTrack
 
@@ -38,7 +38,7 @@ The underlying MediaStreamTrack
 
 > **muted**: `boolean`
 
-Defined in: [types.ts:318](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L318)
+Defined in: [types.ts:318](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L318)
 
 Whether the track is muted
 
@@ -48,7 +48,7 @@ Whether the track is muted
 
 > **name**: `string`
 
-Defined in: [types.ts:312](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L312)
+Defined in: [types.ts:312](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L312)
 
 Track name (matches ROS topic name without slashes)
 
@@ -58,7 +58,7 @@ Track name (matches ROS topic name without slashes)
 
 > **sid**: `string`
 
-Defined in: [types.ts:314](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L314)
+Defined in: [types.ts:314](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L314)
 
 Track SID
 
@@ -68,6 +68,6 @@ Track SID
 
 > **subscribed**: `boolean`
 
-Defined in: [types.ts:316](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L316)
+Defined in: [types.ts:316](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L316)
 
 Whether the track is subscribed

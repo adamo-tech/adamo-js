@@ -1,6 +1,6 @@
 # Interface: RobotPose
 
-Defined in: [types.ts:420](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L420)
+Defined in: [types.ts:420](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L420)
 
 Robot pose from AMCL localization
 
@@ -10,7 +10,7 @@ Robot pose from AMCL localization
 
 > **theta**: `number`
 
-Defined in: [types.ts:426](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L426)
+Defined in: [types.ts:426](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L426)
 
 Orientation in radians
 
@@ -20,7 +20,7 @@ Orientation in radians
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:428](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L428)
+Defined in: [types.ts:428](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L428)
 
 Timestamp in milliseconds
 
@@ -30,7 +30,7 @@ Timestamp in milliseconds
 
 > **x**: `number`
 
-Defined in: [types.ts:422](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L422)
+Defined in: [types.ts:422](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L422)
 
 X position in meters (map frame)
 
@@ -40,6 +40,6 @@ X position in meters (map frame)
 
 > **y**: `number`
 
-Defined in: [types.ts:424](https://github.com/samconsidine/adamo/blob/ced1c9615dde5e00b0c31d8285a76b1c073d1481/packages/core/src/types.ts#L424)
+Defined in: [types.ts:424](https://github.com/samconsidine/adamo/blob/85f829926b615b1a958ba2ad502542bb762bf4a0/packages/core/src/types.ts#L424)
 
 Y position in meters (map frame)
