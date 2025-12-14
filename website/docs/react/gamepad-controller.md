@@ -38,4 +38,4 @@ import { GamepadController } from '@adamo/adamo-react';
 <GamepadController config={{ deviceId: 1, topic: 'joy_passenger' }} />
 ```
 
-See [Multi-Controller Guide](/docs/guides/multi-controller) for details.
+See [Multi-Controller Guide](/guides/multi-controller) for details.

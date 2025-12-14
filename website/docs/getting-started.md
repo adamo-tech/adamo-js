@@ -99,7 +99,7 @@ function TeleoperationUI() {
 
 ## Next Steps
 
-- [Video Streaming Guide](/docs/guides/video-streaming)
-- [Gamepad Input Guide](/docs/guides/gamepad-input)
-- [Multi-Controller Setup](/docs/guides/multi-controller)
-- [API Reference](/docs/api)
+- [Video Streaming Guide](/guides/video-streaming)
+- [Gamepad Input Guide](/guides/gamepad-input)
+- [Multi-Controller Setup](/guides/multi-controller)
+- [API Reference](/api)
