@@ -1,6 +1,6 @@
 {
   "name": "@adamo-tech/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core ADAMO client library for teleoperation via LiveKit",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -31,7 +31,7 @@
     "typescript": "^5.0.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "keywords": [
     "adamo",

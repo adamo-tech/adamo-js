@@ -1,6 +1,6 @@
 {
   "name": "@adamo-tech/react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React components and hooks for ADAMO teleoperation",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -36,7 +36,7 @@
     "typescript": "^5.0.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "keywords": [
     "adamo",
