@@ -68,4 +68,4 @@ function App() {
 
 ---
 
-[LLM-friendly documentation](/llms-full.txt)
+[LLM-friendly documentation](pathname:///llms-full.txt)
