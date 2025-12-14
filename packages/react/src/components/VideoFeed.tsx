@@ -25,15 +25,15 @@ export interface VideoFeedProps {
 /**
  * VideoFeed - Declarative video feed component
  *
- * Displays a video feed from a topic. Drop this inside AdamoProvider
+ * Displays a video feed from a topic. Drop this inside Teleoperate
  * to subscribe to and display video from the server.
  *
  * @example
  * ```tsx
- * <AdamoProvider config={...} autoConnect={...}>
- *   <VideoFeed topic="fork" />
- *   <VideoFeed topic="front" />
- * </AdamoProvider>
+ * <Teleoperate config={...} autoConnect={...}>
+ *   <VideoFeed topic="front_camera" />
+ *   <VideoFeed topic="rear_camera" />
+ * </Teleoperate>
  * ```
  */
 export function VideoFeed({

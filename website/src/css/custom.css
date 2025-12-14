@@ -1,0 +1,107 @@
+/**
+ * Adamo docs - minimal black & white
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --ifm-color-primary: #000;
+  --ifm-color-primary-dark: #000;
+  --ifm-color-primary-darker: #000;
+  --ifm-color-primary-darkest: #000;
+  --ifm-color-primary-light: #333;
+  --ifm-color-primary-lighter: #666;
+  --ifm-color-primary-lightest: #999;
+  --ifm-font-family-base: 'IBM Plex Sans', -apple-system, sans-serif;
+  --ifm-font-family-monospace: 'IBM Plex Mono', monospace;
+  --ifm-code-font-size: 90%;
+  --ifm-heading-font-weight: 600;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #fff;
+  --ifm-color-primary-dark: #e5e5e5;
+  --ifm-color-primary-darker: #ccc;
+  --ifm-color-primary-darkest: #999;
+  --ifm-color-primary-light: #fff;
+  --ifm-color-primary-lighter: #fff;
+  --ifm-color-primary-lightest: #fff;
+  --ifm-background-color: #0a0a0a;
+  --ifm-background-surface-color: #141414;
+  --ifm-navbar-background-color: #0a0a0a;
+  --ifm-footer-background-color: #0a0a0a;
+}
+
+
+/* Navbar brand - serif like main site */
+.navbar__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+/* Minimal styling */
+.navbar {
+  box-shadow: none;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.footer {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .footer {
+  background-color: #0a0a0a;
+}
+
+/* Clean links */
+[data-theme='dark'] a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+[data-theme='dark'] a:hover {
+  color: #ccc;
+}
+
+/* Sidebar - DM Sans */
+.menu__link {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
+
+.menu__list-item-collapsible .menu__link {
+  font-weight: 500;
+}
+
+[data-theme='dark'] .navbar__link,
+[data-theme='dark'] .menu__link,
+[data-theme='dark'] .footer__link-item {
+  text-decoration: none;
+}
+
+[data-theme='dark'] .navbar__link:hover,
+[data-theme='dark'] .menu__link:hover {
+  text-decoration: underline;
+}
+
+/* Inline code */
+[data-theme='dark'] code {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  color: #e5e5e5;
+}
+
+[data-theme='dark'] pre code {
+  border: none;
+  background: transparent;
+}
+
+/* Code block background - slightly lighter than page bg (#0a0a0a) */
+[data-theme='dark'] pre {
+  background-color: #111 !important;
+}

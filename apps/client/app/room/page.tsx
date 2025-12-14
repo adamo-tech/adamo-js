@@ -3,12 +3,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  AdamoProvider,
+  Teleoperate,
   ConnectionStatus,
   useAdamo,
+  StatsOverlay,
 } from '@adamo/adamo-react';
 import { CameraLayout } from './CameraLayout';
-import { StatsOverlay } from './StatsOverlay';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -240,7 +240,7 @@ export default function RoomPage() {
   }
 
   return (
-    <AdamoProvider
+    <Teleoperate
       config={{
         serverIdentity: 'python-bot',
         adaptiveStream: false,
@@ -251,7 +251,7 @@ export default function RoomPage() {
       autoConnect={{ url: selectedRoom.livekit_url, token: livekitToken }}
     >
       <RoomContent roomName={selectedRoom.name} onDisconnect={() => setSelectedRoom(null)} />
-    </AdamoProvider>
+    </Teleoperate>
   );
 }
 

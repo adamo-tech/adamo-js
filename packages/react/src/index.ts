@@ -1,4 +1,7 @@
 // Context
+export { Teleoperate, useTeleoperateContext } from './context';
+export type { TeleoperateProps } from './context';
+// Deprecated aliases for backwards compatibility
 export { AdamoProvider, useAdamoContext } from './context';
 export type { AdamoProviderProps } from './context';
 
@@ -15,6 +18,10 @@ export { MapViewer } from './components/MapViewer';
 export type { MapViewerProps } from './components/MapViewer';
 export { CostmapViewer } from './components/CostmapViewer';
 export type { CostmapViewerProps } from './components/CostmapViewer';
+export { StatsOverlay } from './components/StatsOverlay';
+export type { StatsOverlayProps, StatsOverlayThresholds } from './components/StatsOverlay';
+export { MultiModeLayout } from './components/MultiModeLayout';
+export type { MultiModeLayoutProps, LayoutMode } from './components/MultiModeLayout';
 
 // Hooks (for advanced use cases)
 export { useAdamo } from './hooks/useAdamo';

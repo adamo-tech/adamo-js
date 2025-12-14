@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useHeartbeat, useJoypad, useAdaptiveStream, HeartbeatState } from '@adamo/adamo-react';
+import { HeartbeatState } from '@adamo/adamo-core';
+import { useHeartbeat } from '../hooks/useHeartbeat';
+import { useJoypad } from '../hooks/useJoypad';
+import { useAdaptiveStream } from '../hooks/useAdaptiveStream';
 
 const stateLabels: Record<HeartbeatState, string> = {
   [HeartbeatState.OK]: 'OK',
@@ -29,23 +32,70 @@ function formatMs(ms: number): string {
   return `${ms.toFixed(1)}ms`;
 }
 
-function getLatencyColor(ms: number): string {
-  if (ms < 50) return '#22c55e';
-  if (ms < 100) return '#f59e0b';
-  return '#ef4444';
+export interface StatsOverlayThresholds {
+  /** Warning threshold for individual latency components in ms (default: 50) */
+  warning?: number;
+  /** Critical threshold for individual latency components in ms (default: 100) */
+  critical?: number;
+  /** Warning threshold for total end-to-end latency in ms (default: 100) */
+  totalWarning?: number;
+  /** Critical threshold for total end-to-end latency in ms (default: 150) */
+  totalCritical?: number;
 }
 
-function getTotalLatencyColor(ms: number): string {
-  if (ms < 100) return '#22c55e';
-  if (ms < 150) return '#f59e0b';
-  return '#ef4444';
+export interface StatsOverlayProps {
+  /** Position on screen (default: 'bottom-left') */
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  /** Start expanded (default: false) */
+  defaultExpanded?: boolean;
+  /** Latency thresholds for color coding */
+  thresholds?: StatsOverlayThresholds;
 }
 
-export function StatsOverlay() {
-  const [expanded, setExpanded] = useState(false);
+const DEFAULT_THRESHOLDS: Required<StatsOverlayThresholds> = {
+  warning: 50,
+  critical: 100,
+  totalWarning: 100,
+  totalCritical: 150,
+};
+
+/**
+ * StatsOverlay - Real-time telemetry display for debugging and monitoring
+ *
+ * Shows end-to-end latency breakdown, network stats, and safety status.
+ * Collapsible by default, expands to show detailed stats.
+ *
+ * @example
+ * ```tsx
+ * <AdamoProvider config={...} autoConnect={...}>
+ *   <StatsOverlay position="bottom-left" />
+ *   <VideoFeed topic="fork" />
+ * </AdamoProvider>
+ * ```
+ */
+export function StatsOverlay({
+  position = 'bottom-left',
+  defaultExpanded = false,
+  thresholds: userThresholds,
+}: StatsOverlayProps) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const { state: heartbeatState } = useHeartbeat();
   const { isConnected: gamepadConnected } = useJoypad();
   const { networkStats, trackStats, encoderStats } = useAdaptiveStream();
+
+  const thresholds = { ...DEFAULT_THRESHOLDS, ...userThresholds };
+
+  const getLatencyColor = (ms: number): string => {
+    if (ms < thresholds.warning) return '#22c55e';
+    if (ms < thresholds.critical) return '#f59e0b';
+    return '#ef4444';
+  };
+
+  const getTotalLatencyColor = (ms: number): string => {
+    if (ms < thresholds.totalWarning) return '#22c55e';
+    if (ms < thresholds.totalCritical) return '#f59e0b';
+    return '#ef4444';
+  };
 
   // Calculate total bitrate across all tracks
   let totalBitrate = 0;
@@ -59,7 +109,7 @@ export function StatsOverlay() {
   let avgDecodeTime = 0;
   let trackCount = 0;
 
-  for (const [name, stats] of trackStats.entries()) {
+  for (const stats of trackStats.values()) {
     avgJitterBuffer += stats.jitterBufferDelayMs || 0;
     avgDecodeTime += stats.decodeTimeMs || 0;
     trackCount++;
@@ -85,12 +135,19 @@ export function StatsOverlay() {
   const networkLatency = (networkStats?.rtt ?? 0) / 2;
   const totalLatency = avgEncodeTime + networkLatency + avgJitterBuffer + avgDecodeTime;
 
+  // Position styles
+  const positionStyles: Record<string, React.CSSProperties> = {
+    'top-left': { top: 10, left: 10 },
+    'top-right': { top: 10, right: 10 },
+    'bottom-left': { bottom: 10, left: 10 },
+    'bottom-right': { bottom: 10, right: 10 },
+  };
+
   return (
     <div
       style={{
         position: 'fixed',
-        bottom: 10,
-        left: 10,
+        ...positionStyles[position],
         background: 'rgba(0, 0, 0, 0.85)',
         color: 'white',
         borderRadius: '8px',

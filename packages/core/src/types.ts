@@ -1,7 +1,37 @@
+/**
+ * @packageDocumentation
+ * @module @adamo/adamo-core
+ *
+ * Core types for the Adamo teleoperation system.
+ *
+ * This module provides TypeScript types for:
+ * - Connection and streaming state management
+ * - Gamepad/joypad input configuration
+ * - Navigation (Nav2) data structures
+ * - WebRTC statistics and adaptive streaming
+ * - Safety heartbeat monitoring
+ */
+
 import type { Room, RemoteTrackPublication, RemoteParticipant } from 'livekit-client';
 
 /**
- * Connection state for the Adamo client
+ * Connection state for the Adamo client.
+ *
+ * State transitions:
+ * - `disconnected` → `connecting` (on connect call)
+ * - `connecting` → `connected` (on successful connection)
+ * - `connected` → `reconnecting` (on network interruption)
+ * - `reconnecting` → `connected` (on successful reconnection)
+ * - Any state → `disconnected` (on disconnect call or fatal error)
+ *
+ * @example
+ * ```ts
+ * client.on('connectionStateChanged', (state: ConnectionState) => {
+ *   if (state === 'connected') {
+ *     console.log('Ready to stream!');
+ *   }
+ * });
+ * ```
  */
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 
@@ -109,19 +139,55 @@ export enum HeartbeatState {
 }
 
 /**
- * Configuration options for the Adamo client
+ * Configuration options for the Adamo client.
+ *
+ * @example
+ * ```ts
+ * const client = new AdamoClient({
+ *   serverIdentity: 'forklift-01',
+ *   videoCodec: 'h264',
+ *   playoutDelay: -0.1, // Minimum buffering for low latency
+ * });
+ * ```
  */
 export interface AdamoClientConfig {
-  /** Server participant identity to communicate with (default: 'python-bot') */
+  /**
+   * Server participant identity to communicate with.
+   * This should match the identity of the robot's LiveKit participant.
+   * @default 'python-bot'
+   */
   serverIdentity?: string;
-  /** Enable adaptive streaming for automatic quality adjustment */
+
+  /**
+   * Enable adaptive streaming for automatic quality adjustment based on network conditions.
+   * @default true
+   */
   adaptiveStream?: boolean;
-  /** Enable dynacast for efficiency */
+
+  /**
+   * Enable dynacast to only send video when someone is subscribed.
+   * Improves efficiency in multi-participant scenarios.
+   * @default true
+   */
   dynacast?: boolean;
-  /** Video codec preference */
+
+  /**
+   * Video codec preference for encoding/decoding.
+   * - `h264`: Best compatibility, hardware acceleration common
+   * - `vp8`: Open codec, good quality
+   * - `vp9`: Better compression than VP8
+   * - `av1`: Best compression, but higher CPU usage
+   * @default 'h264'
+   */
   videoCodec?: 'h264' | 'vp8' | 'vp9' | 'av1';
-  /** Playout delay in seconds for video tracks.
-   *  0 = default browser behavior, negative = request minimum buffering (e.g., -0.1)
+
+  /**
+   * Playout delay in seconds for video tracks.
+   * Controls the jitter buffer size:
+   * - `0`: Default browser behavior
+   * - Negative (e.g., `-0.1`): Request minimum buffering for lowest latency
+   * - Positive: Add extra buffer for smoother playback
+   * @default -0.1
    */
   playoutDelay?: number;
 }
@@ -139,27 +205,91 @@ export interface HeartbeatConfig {
 }
 
 /**
- * Joypad (gamepad) configuration matching ROS joy_node parameters
+ * Joypad (gamepad) configuration matching ROS joy_node parameters.
+ *
+ * Maps W3C Gamepad API to ROS `sensor_msgs/Joy` format.
+ *
+ * @example
+ * ```tsx
+ * // Single controller (default)
+ * <GamepadController />
+ *
+ * // Multiple controllers with different topics
+ * <GamepadController config={{ deviceId: 0, topic: 'joy_driver' }} />
+ * <GamepadController config={{ deviceId: 1, topic: 'joy_passenger' }} />
+ *
+ * // Select controller by name
+ * <GamepadController config={{ deviceName: 'Xbox', deadzone: 0.1 }} />
+ * ```
  */
 export interface JoypadConfig {
-  /** Which gamepad to use (0 = first) */
+  /**
+   * Which gamepad to use by index (0 = first connected gamepad).
+   * @default 0
+   */
   deviceId?: number;
-  /** Optional: filter by name */
+
+  /**
+   * Filter gamepad by name substring (e.g., 'Xbox', 'DualSense').
+   * Takes precedence over `deviceId` if specified.
+   */
   deviceName?: string;
-  /** Axis deadzone (default: 0.05 = 5%) */
+
+  /**
+   * Axis deadzone as a fraction (0.05 = 5%).
+   * Values within the deadzone are reported as 0.
+   * @default 0.05
+   */
   deadzone?: number;
-  /** Autorepeat rate in Hz (0 = only on change, default: 20) */
+
+  /**
+   * Autorepeat rate in Hz for continuous input.
+   * Set to 0 to only send on change.
+   * @default 20
+   */
   autorepeatRate?: number;
-  /** Toggle mode for buttons (default: false) */
+
+  /**
+   * Enable toggle mode for buttons (press to toggle on/off).
+   * Useful for functions like headlights or horn.
+   * @default false
+   */
   stickyButtons?: boolean;
-  /** Debounce interval in ms (default: 1) */
+
+  /**
+   * Debounce interval in ms to coalesce rapid input changes.
+   * @default 1
+   */
   coalesceIntervalMs?: number;
+
   /**
    * Maximum allowed video staleness in ms before blocking commands.
-   * Commands will only be sent if majority of video tracks have received
-   * a frame within this threshold. Set to 0 to disable. (default: 100)
+   *
+   * Safety feature: Commands are only sent if majority of video tracks
+   * have received a frame within this threshold. Prevents "flying blind"
+   * when video freezes.
+   *
+   * Set to 0 to disable this safety check.
+   * @default 100
    */
   maxVideoStalenessMs?: number;
+
+  /**
+   * Topic name for joy messages.
+   *
+   * Use different topics to support multiple controllers connected to
+   * the same computer, each controlling different robot functions.
+   *
+   * @default 'joy'
+   * @example
+   * ```ts
+   * // Driver controls movement
+   * { topic: 'joy_driver' }
+   * // Passenger controls camera/arm
+   * { topic: 'joy_passenger' }
+   * ```
+   */
+  topic?: string;
 }
 
 /**

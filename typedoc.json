@@ -1,0 +1,27 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Adamo SDK",
+  "entryPoints": [
+    "packages/core/src/index.ts"
+  ],
+  "tsconfig": "packages/core/tsconfig.json",
+  "out": "docs",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Client",
+    "Types",
+    "*"
+  ],
+  "navigationLinks": {
+    "GitHub": "https://github.com/your-org/adamo"
+  },
+  "githubPages": true,
+  "hideGenerator": true,
+  "searchInComments": true
+}

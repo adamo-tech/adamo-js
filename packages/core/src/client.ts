@@ -290,8 +290,11 @@ export class AdamoClient {
 
   /**
    * Send joypad data to the server (fire-and-forget, lossy for low latency)
+   * @param axes - Axis values from the gamepad
+   * @param buttons - Button states from the gamepad
+   * @param topic - Topic name to publish on (default: 'joy')
    */
-  async sendJoyData(axes: number[], buttons: number[]): Promise<void> {
+  async sendJoyData(axes: number[], buttons: number[], topic: string = 'joy'): Promise<void> {
     if (!this.room.localParticipant) {
       throw new Error('Not connected');
     }
@@ -302,7 +305,7 @@ export class AdamoClient {
           sec: Math.floor(Date.now() / 1000),
           nanosec: (Date.now() % 1000) * 1e6,
         },
-        frame_id: 'joy',
+        frame_id: topic,
       },
       axes,
       buttons,
@@ -314,7 +317,7 @@ export class AdamoClient {
     await this.room.localParticipant.publishData(data, {
       reliable: false, // Lossy mode for minimum latency
       destinationIdentities: [this.config.serverIdentity],
-      topic: 'joy',
+      topic,
     });
   }
 

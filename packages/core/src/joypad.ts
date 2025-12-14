@@ -9,6 +9,7 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
   stickyButtons: false,
   coalesceIntervalMs: 1,
   maxVideoStalenessMs: 100,
+  topic: 'joy',
 };
 
 /**
@@ -267,7 +268,7 @@ export class JoypadManager {
           sec: Math.floor(Date.now() / 1000),
           nanosec: (Date.now() % 1000) * 1e6,
         },
-        frame_id: 'joy',
+        frame_id: this.config.topic,
       },
       axes,
       buttons,
@@ -277,7 +278,7 @@ export class JoypadManager {
     this.inputCallbacks.forEach((cb) => cb(joyMessage));
 
     try {
-      await this.client.sendJoyData(axes, buttons);
+      await this.client.sendJoyData(axes, buttons, this.config.topic);
       this.previousState = [...buttons, ...axes];
     } catch (error) {
       console.error('Joy publish failed:', error);

@@ -6,7 +6,7 @@ import {
   VideoTrack,
 } from '@adamo/adamo-core';
 
-interface AdamoContextValue {
+interface TeleoperateContextValue {
   client: AdamoClient | null;
   connectionState: ConnectionState;
   availableTracks: VideoTrack[];
@@ -14,9 +14,9 @@ interface AdamoContextValue {
   disconnect: () => void;
 }
 
-const AdamoContext = createContext<AdamoContextValue | null>(null);
+const TeleoperateContext = createContext<TeleoperateContextValue | null>(null);
 
-export interface AdamoProviderProps {
+export interface TeleoperateProps {
   children: ReactNode;
   /** Client configuration options */
   config?: AdamoClientConfig;
@@ -34,23 +34,23 @@ function useStableConfig(config?: AdamoClientConfig): AdamoClientConfig | undefi
 }
 
 /**
- * AdamoProvider - Context provider for Adamo client
+ * Teleoperate - Context provider for robot teleoperation
  *
  * Provides the Adamo client instance to all child components.
- * Must be used at the root of your application (or the part that needs Adamo).
+ * Must be used at the root of your application (or the part that needs teleoperation).
  *
  * @example
  * ```tsx
  * function App() {
  *   return (
- *     <AdamoProvider config={{ serverIdentity: 'python-bot' }}>
- *       <CameraFeed topic="fork" />
- *     </AdamoProvider>
+ *     <Teleoperate config={{ serverIdentity: 'robot-01' }}>
+ *       <VideoFeed topic="front_camera" />
+ *     </Teleoperate>
  *   );
  * }
  * ```
  */
-export function AdamoProvider({ children, config, autoConnect }: AdamoProviderProps) {
+export function Teleoperate({ children, config, autoConnect }: TeleoperateProps) {
   const clientRef = useRef<AdamoClient | null>(null);
   const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
   const [availableTracks, setAvailableTracks] = useState<VideoTrack[]>([]);
@@ -104,7 +104,7 @@ export function AdamoProvider({ children, config, autoConnect }: AdamoProviderPr
     clientRef.current?.disconnect();
   }, []);
 
-  const value: AdamoContextValue = {
+  const value: TeleoperateContextValue = {
     client: clientRef.current,
     connectionState,
     availableTracks,
@@ -113,21 +113,28 @@ export function AdamoProvider({ children, config, autoConnect }: AdamoProviderPr
   };
 
   return (
-    <AdamoContext.Provider value={value}>
+    <TeleoperateContext.Provider value={value}>
       {children}
-    </AdamoContext.Provider>
+    </TeleoperateContext.Provider>
   );
 }
 
 /**
- * Hook to access the Adamo context
+ * Hook to access the Teleoperate context
  *
- * @throws If used outside of AdamoProvider
+ * @throws If used outside of Teleoperate
  */
-export function useAdamoContext(): AdamoContextValue {
-  const context = useContext(AdamoContext);
+export function useTeleoperateContext(): TeleoperateContextValue {
+  const context = useContext(TeleoperateContext);
   if (!context) {
-    throw new Error('useAdamoContext must be used within an AdamoProvider');
+    throw new Error('useTeleoperateContext must be used within a Teleoperate provider');
   }
   return context;
 }
+
+/** @deprecated Use Teleoperate instead */
+export const AdamoProvider = Teleoperate;
+/** @deprecated Use TeleoperateProps instead */
+export type AdamoProviderProps = TeleoperateProps;
+/** @deprecated Use useTeleoperateContext instead */
+export const useAdamoContext = useTeleoperateContext;
