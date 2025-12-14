@@ -16,8 +16,6 @@ interface Room {
   id: string;
   name: string;
   robot_name?: string;
-  livekit_url: string;
-  livekit_room_name: string;
   is_online: boolean;
   last_seen?: string;
 }
@@ -30,6 +28,7 @@ export default function RoomPage() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [livekitToken, setLivekitToken] = useState<string | null>(null);
+  const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -141,16 +140,28 @@ export default function RoomPage() {
 
   // Fetch LiveKit token once room is selected
   useEffect(() => {
-    if (!selectedRoom) return;
+    if (!selectedRoom || !accessToken) return;
 
     const fetchToken = async () => {
       try {
-        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-        const username = user.email || 'user';
-        const resp = await fetch(`/api/token?room=${selectedRoom.livekit_room_name}&username=${username}`);
+        const resp = await fetch(`${API_URL}/rooms/${selectedRoom.id}/token`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (resp.status === 401) {
+          sessionStorage.removeItem('access_token');
+          sessionStorage.removeItem('refresh_token');
+          sessionStorage.removeItem('user');
+          router.push('/');
+          return;
+        }
+        if (!resp.ok) throw new Error('Failed to get token');
         const data = await resp.json();
-        if (data.token) {
-          setLivekitToken(data.token);
+        if (data.livekit_token && data.livekit_url) {
+          setLivekitToken(data.livekit_token);
+          setLivekitUrl(data.livekit_url);
         }
       } catch (e) {
         console.error('Failed to get token:', e);
@@ -159,7 +170,7 @@ export default function RoomPage() {
     };
 
     fetchToken();
-  }, [selectedRoom]);
+  }, [selectedRoom, accessToken, router]);
 
   if (!isAuthenticated) {
     return (
@@ -231,7 +242,7 @@ export default function RoomPage() {
     );
   }
 
-  if (!livekitToken) {
+  if (!livekitToken || !livekitUrl) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
         <div className="text-zinc-600 dark:text-zinc-400">Connecting to {selectedRoom.name}...</div>
@@ -248,9 +259,13 @@ export default function RoomPage() {
         videoCodec: 'h264',
         playoutDelay: 0,
       }}
-      autoConnect={{ url: selectedRoom.livekit_url, token: livekitToken }}
+      autoConnect={{ url: livekitUrl, token: livekitToken }}
     >
-      <RoomContent roomName={selectedRoom.name} onDisconnect={() => setSelectedRoom(null)} />
+      <RoomContent roomName={selectedRoom.name} onDisconnect={() => {
+        setSelectedRoom(null);
+        setLivekitToken(null);
+        setLivekitUrl(null);
+      }} />
     </Teleoperate>
   );
 }
