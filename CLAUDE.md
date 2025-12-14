@@ -10,8 +10,8 @@ Adamo is a robot teleoperation system built on LiveKit WebRTC. It provides low-l
 
 ```
 packages/
-  core/       - @adamo/adamo-core: Core TypeScript client library (AdamoClient, HeartbeatManager, JoypadManager)
-  react/      - @adamo/adamo-react: React components and hooks for teleoperation UI
+  core/       - @adamo-tech/core: Core TypeScript client library (AdamoClient, HeartbeatManager, JoypadManager)
+  react/      - @adamo-tech/react: React components and hooks for teleoperation UI
 apps/
   client/     - Next.js 16 web app for controlling robots
 ```
@@ -38,12 +38,12 @@ pnpm clean
 pnpm --filter @adamo/client dev
 
 # Build only core library
-pnpm --filter @adamo/adamo-core build
+pnpm --filter @adamo-tech/core build
 ```
 
 ## Architecture
 
-### Core Library (`@adamo/adamo-core`)
+### Core Library (`@adamo-tech/core`)
 
 The `AdamoClient` class wraps LiveKit's `Room` to provide:
 - Video track subscription by topic name (maps to ROS camera topics)
@@ -57,7 +57,7 @@ Key classes:
 - `HeartbeatManager`: Safety state monitoring - window focus, latency, gamepad (heartbeat.ts)
 - `JoypadManager`: Gamepad polling and ROS Joy message formatting (joypad.ts)
 
-### React Library (`@adamo/adamo-react`)
+### React Library (`@adamo-tech/react`)
 
 Declarative components following react-three-fiber style:
 

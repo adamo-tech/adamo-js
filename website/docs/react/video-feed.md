@@ -9,7 +9,7 @@ Displays a video stream from a camera topic.
 ## Usage
 
 ```tsx
-import { VideoFeed } from '@adamo/adamo-react';
+import { VideoFeed } from '@adamo-tech/react';
 
 <VideoFeed topic="front_camera" />
 ```

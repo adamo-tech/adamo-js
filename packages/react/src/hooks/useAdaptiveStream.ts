@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import type { NetworkStats, TrackStreamStats, EncoderStats } from '@adamo/adamo-core';
-import { StreamQuality } from '@adamo/adamo-core';
+import type { NetworkStats, TrackStreamStats, EncoderStats } from '@adamo-tech/core';
+import { StreamQuality } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 /**

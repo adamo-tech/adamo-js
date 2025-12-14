@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, CSSProperties } from 'react';
-import type { MapData, RobotPose, NavPath, NavGoal } from '@adamo/adamo-core';
+import type { MapData, RobotPose, NavPath, NavGoal } from '@adamo-tech/core';
 
 export interface MapViewerProps {
   /** Map data from Nav2 */

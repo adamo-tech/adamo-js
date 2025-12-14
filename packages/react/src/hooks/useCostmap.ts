@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { CostmapData } from '@adamo/adamo-core';
+import type { CostmapData } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 /**

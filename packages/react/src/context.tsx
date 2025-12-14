@@ -4,7 +4,7 @@ import {
   AdamoClientConfig,
   ConnectionState,
   VideoTrack,
-} from '@adamo/adamo-core';
+} from '@adamo-tech/core';
 
 interface TeleoperateContextValue {
   client: AdamoClient | null;

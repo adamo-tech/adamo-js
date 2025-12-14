@@ -4,12 +4,12 @@ sidebar_position: 1
 
 # React Components Overview
 
-`@adamo/adamo-react` provides React components and hooks for building teleoperation UIs.
+`@adamo-tech/react` provides React components and hooks for building teleoperation UIs.
 
 ## Installation
 
 ```bash
-pnpm add @adamo/adamo-react
+pnpm add @adamo-tech/react
 ```
 
 ## Component Types
@@ -52,7 +52,7 @@ import {
   GamepadController,
   HeartbeatMonitor,
   StatsOverlay,
-} from '@adamo/adamo-react';
+} from '@adamo-tech/react';
 
 function TeleoperationApp() {
   return (
@@ -83,5 +83,5 @@ import {
   type ConnectionState,
   type JoypadConfig,
   type VideoTrack,
-} from '@adamo/adamo-react';
+} from '@adamo-tech/react';
 ```

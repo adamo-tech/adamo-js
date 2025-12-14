@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useHeartbeat } from '../hooks/useHeartbeat';
-import type { HeartbeatConfig } from '@adamo/adamo-core';
-import { HeartbeatState } from '@adamo/adamo-core';
+import type { HeartbeatConfig } from '@adamo-tech/core';
+import { HeartbeatState } from '@adamo-tech/core';
 
 export interface HeartbeatMonitorProps {
   /** Heartbeat configuration */

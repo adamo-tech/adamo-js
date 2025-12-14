@@ -17,7 +17,7 @@ Adamo supports multiple gamepads connected to the same computer, each publishing
 Use the `topic` option to specify different ROS topics for each controller:
 
 ```tsx
-import { GamepadController } from '@adamo/adamo-react';
+import { GamepadController } from '@adamo-tech/react';
 
 function DualControllerSetup() {
   return (

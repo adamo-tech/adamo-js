@@ -1,5 +1,5 @@
 import { useAdamoContext } from '../context';
-import type { AdamoClient, ConnectionState, VideoTrack } from '@adamo/adamo-core';
+import type { AdamoClient, ConnectionState, VideoTrack } from '@adamo-tech/core';
 
 /**
  * Hook to access the Adamo client

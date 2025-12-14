@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { VelocityState } from '@adamo/adamo-core';
+import { VelocityState } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 /**

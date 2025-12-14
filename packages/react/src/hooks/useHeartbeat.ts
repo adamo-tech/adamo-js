@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { HeartbeatManager, HeartbeatConfig, HeartbeatState } from '@adamo/adamo-core';
+import { HeartbeatManager, HeartbeatConfig, HeartbeatState } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 // Stabilize config object to prevent effect re-runs

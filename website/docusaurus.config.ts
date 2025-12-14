@@ -93,11 +93,11 @@ const config: Config = {
           title: 'Packages',
           items: [
             {
-              label: '@adamo/adamo-core',
+              label: '@adamo-tech/core',
               to: '/',
             },
             {
-              label: '@adamo/adamo-react',
+              label: '@adamo-tech/react',
               to: '/react/overview',
             },
           ],

@@ -9,7 +9,7 @@ Real-time latency and status display for debugging.
 ## Usage
 
 ```tsx
-import { StatsOverlay } from '@adamo/adamo-react';
+import { StatsOverlay } from '@adamo-tech/react';
 
 <StatsOverlay />
 ```

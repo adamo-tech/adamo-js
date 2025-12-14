@@ -34,7 +34,7 @@ export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
 
 // Re-export core types for convenience
-export { HeartbeatState, StreamQuality } from '@adamo/adamo-core';
+export { HeartbeatState, StreamQuality } from '@adamo-tech/core';
 export type {
   ConnectionState,
   HeartbeatConfig,
@@ -55,4 +55,4 @@ export type {
   EncoderStats,
   // Velocity types
   VelocityState,
-} from '@adamo/adamo-core';
+} from '@adamo-tech/core';

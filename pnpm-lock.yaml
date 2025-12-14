@@ -20,10 +20,10 @@ importers:
 
   apps/client:
     dependencies:
-      '@adamo/adamo-core':
+      '@adamo-tech/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@adamo/adamo-react':
+      '@adamo-tech/react':
         specifier: workspace:*
         version: link:../../packages/react
       livekit-server-sdk:
@@ -31,7 +31,7 @@ importers:
         version: 2.14.2
       next:
         specifier: 16.0.7
-        version: 16.0.7(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -88,7 +88,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@adamo/adamo-core':
+      '@adamo-tech/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -13139,7 +13139,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next@16.0.7(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  next@16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@next/env': 16.0.7
       '@swc/helpers': 0.5.15
@@ -13157,6 +13157,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 16.0.7
       '@next/swc-win32-arm64-msvc': 16.0.7
       '@next/swc-win32-x64-msvc': 16.0.7
+      '@opentelemetry/api': 1.9.0
       sharp: 0.34.5
     transitivePeerDependencies:
       - '@babel/core'

@@ -1,5 +1,5 @@
 {
-  "name": "@adamo/adamo-react",
+  "name": "@adamo-tech/react",
   "version": "1.0.0",
   "description": "React components and hooks for ADAMO teleoperation",
   "main": "./dist/index.js",
@@ -17,13 +17,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external react --external @adamo/adamo-core",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --external react --external @adamo/adamo-core --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external react --external @adamo-tech/core",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --external react --external @adamo-tech/core --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@adamo/adamo-core": "workspace:*"
+    "@adamo-tech/core": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

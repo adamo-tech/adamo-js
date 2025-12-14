@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { JoypadManager, JoypadConfig, JoyMessage } from '@adamo/adamo-core';
+import { JoypadManager, JoypadConfig, JoyMessage } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 // Stabilize config object to prevent effect re-runs

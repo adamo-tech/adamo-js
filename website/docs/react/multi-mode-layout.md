@@ -9,7 +9,7 @@ Configurable camera grid with gamepad-driven mode switching.
 ## Usage
 
 ```tsx
-import { MultiModeLayout, type LayoutMode } from '@adamo/adamo-react';
+import { MultiModeLayout, type LayoutMode } from '@adamo-tech/react';
 
 const MODES: LayoutMode[] = [
   {
@@ -54,7 +54,7 @@ const MODES: LayoutMode[] = [
 Block mode switching while robot is moving:
 
 ```tsx
-import { useVelocity } from '@adamo/adamo-react';
+import { useVelocity } from '@adamo-tech/react';
 
 function Layout() {
   const { isMoving } = useVelocity();

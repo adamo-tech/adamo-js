@@ -9,7 +9,7 @@ Context provider that creates and manages the Adamo client instance.
 ## Usage
 
 ```tsx
-import { Teleoperate } from '@adamo/adamo-react';
+import { Teleoperate } from '@adamo-tech/react';
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
 ## Manual Connection
 
 ```tsx
-import { Teleoperate, useAdamo } from '@adamo/adamo-react';
+import { Teleoperate, useAdamo } from '@adamo-tech/react';
 
 function ConnectButton() {
   const { connect, disconnect, connectionState } = useAdamo();

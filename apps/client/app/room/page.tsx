@@ -7,7 +7,7 @@ import {
   ConnectionStatus,
   useAdamo,
   StatsOverlay,
-} from '@adamo/adamo-react';
+} from '@adamo-tech/react';
 import { CameraLayout } from './CameraLayout';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';

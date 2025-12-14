@@ -1,4 +1,4 @@
-# @adamo/adamo-core
+# @adamo-tech/core
 
 ## Enumerations
 

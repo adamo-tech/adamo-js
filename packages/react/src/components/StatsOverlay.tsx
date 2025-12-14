@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { HeartbeatState } from '@adamo/adamo-core';
+import { HeartbeatState } from '@adamo-tech/core';
 import { useHeartbeat } from '../hooks/useHeartbeat';
 import { useJoypad } from '../hooks/useJoypad';
 import { useAdaptiveStream } from '../hooks/useAdaptiveStream';

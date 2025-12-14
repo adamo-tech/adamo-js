@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, CSSProperties } from 'react';
-import type { CostmapData } from '@adamo/adamo-core';
+import type { CostmapData } from '@adamo-tech/core';
 
 export interface CostmapViewerProps {
   /** Costmap data */

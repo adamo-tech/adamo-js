@@ -105,3 +105,40 @@
 [data-theme='dark'] pre {
   background-color: #111 !important;
 }
+
+/* Pretty tables */
+table {
+  width: auto;
+  margin: 2rem auto;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.75rem 1.25rem;
+  text-align: left;
+}
+
+th {
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+[data-theme='dark'] table {
+  border: 1px solid #222;
+}
+
+[data-theme='dark'] th {
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+[data-theme='dark'] td {
+  border-bottom: 1px solid #1a1a1a;
+}
+
+[data-theme='dark'] tr:hover td {
+  background-color: #0f0f0f;
+}

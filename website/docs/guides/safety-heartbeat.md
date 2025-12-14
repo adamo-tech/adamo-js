@@ -21,7 +21,7 @@ The system monitors several conditions and reports the worst state:
 ## Enabling Heartbeat
 
 ```tsx
-import { HeartbeatMonitor } from '@adamo/adamo-react';
+import { HeartbeatMonitor } from '@adamo-tech/react';
 
 function App() {
   return (
@@ -36,7 +36,7 @@ function App() {
 ## Reading State
 
 ```tsx
-import { useHeartbeat, HeartbeatState } from '@adamo/adamo-react';
+import { useHeartbeat, HeartbeatState } from '@adamo-tech/react';
 
 function SafetyIndicator() {
   const { state } = useHeartbeat();
@@ -126,7 +126,7 @@ config={{
 The `StatsOverlay` component shows safety state along with latency metrics:
 
 ```tsx
-import { StatsOverlay } from '@adamo/adamo-react';
+import { StatsOverlay } from '@adamo-tech/react';
 
 <StatsOverlay position="bottom-left" />
 ```

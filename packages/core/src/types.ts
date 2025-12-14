@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module @adamo/adamo-core
+ * @module @adamo-tech/core
  *
  * Core types for the Adamo teleoperation system.
  *

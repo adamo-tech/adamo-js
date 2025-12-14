@@ -9,7 +9,7 @@ Adamo maps the W3C Gamepad API to ROS `sensor_msgs/Joy` format.
 ## Basic Usage
 
 ```tsx
-import { GamepadController } from '@adamo/adamo-react';
+import { GamepadController } from '@adamo-tech/react';
 
 // Enable gamepad input with defaults
 <GamepadController />
@@ -112,7 +112,7 @@ This prevents "flying blind" when network issues cause video to freeze.
 For programmatic access:
 
 ```tsx
-import { useJoypad } from '@adamo/adamo-react';
+import { useJoypad } from '@adamo-tech/react';
 
 function GamepadStatus() {
   const { isConnected, lastInput, start, stop } = useJoypad();

@@ -1,6 +1,6 @@
 # Interface: NavPath
 
-Defined in: [types.ts:434](https://github.com/samconsidine/adamo/blob/95231b85d86552725697aaef7eeb461ebd99bfa1/packages/core/src/types.ts#L434)
+Defined in: [types.ts:434](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L434)
 
 Navigation path from Nav2 planner
 
@@ -10,7 +10,7 @@ Navigation path from Nav2 planner
 
 > **poses**: `object`[]
 
-Defined in: [types.ts:436](https://github.com/samconsidine/adamo/blob/95231b85d86552725697aaef7eeb461ebd99bfa1/packages/core/src/types.ts#L436)
+Defined in: [types.ts:436](https://github.com/samconsidine/adamo/blob/12cf5b68ee340be1307cf2bbd5c8a53ceb3cee35/packages/core/src/types.ts#L436)
 
 Array of waypoints in the path
 

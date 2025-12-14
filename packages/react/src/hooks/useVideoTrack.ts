@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import type { VideoTrack } from '@adamo/adamo-core';
+import type { VideoTrack } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 /**

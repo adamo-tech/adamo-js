@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { MultiModeLayout, VideoFeed, useVelocity, type LayoutMode } from '@adamo/adamo-react';
+import { MultiModeLayout, VideoFeed, useVelocity, type LayoutMode } from '@adamo-tech/react';
 
 /**
  * Layout modes for this robot:

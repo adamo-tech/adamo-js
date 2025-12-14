@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { useAdamo } from '../hooks/useAdamo';
-import type { ConnectionState } from '@adamo/adamo-core';
+import type { ConnectionState } from '@adamo-tech/core';
 
 export interface ConnectionStatusProps {
   /** CSS class name */

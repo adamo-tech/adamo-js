@@ -27,13 +27,13 @@ slug: /
 
 | Package | Description |
 |---------|-------------|
-| `@adamo/adamo-core` | Core TypeScript client - framework agnostic |
-| `@adamo/adamo-react` | React components and hooks |
+| `@adamo-tech/core` | Core TypeScript client - framework agnostic |
+| `@adamo-tech/react` | React components and hooks |
 
 ## Quick Example
 
 ```tsx
-import { Teleoperate, VideoFeed, GamepadController } from '@adamo/adamo-react';
+import { Teleoperate, VideoFeed, GamepadController } from '@adamo-tech/react';
 
 function App() {
   return (

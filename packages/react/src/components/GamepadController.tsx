@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useJoypad } from '../hooks/useJoypad';
-import type { JoypadConfig, JoyMessage } from '@adamo/adamo-core';
+import type { JoypadConfig, JoyMessage } from '@adamo-tech/core';
 
 export interface GamepadControllerProps {
   /** Joypad configuration */

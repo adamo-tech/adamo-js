@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import type { MapData, RobotPose, NavPath, NavGoal } from '@adamo/adamo-core';
+import type { MapData, RobotPose, NavPath, NavGoal } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 /**

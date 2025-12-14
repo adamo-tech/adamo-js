@@ -9,7 +9,7 @@ Stream video from your robot with just a few lines of React.
 ## Minimal Example
 
 ```tsx
-import { Teleoperate, VideoFeed } from '@adamo/adamo-react';
+import { Teleoperate, VideoFeed } from '@adamo-tech/react';
 
 function App() {
   return (
@@ -40,7 +40,7 @@ Here's a complete React app with a single camera feed:
 
 ```tsx
 // App.tsx
-import { Teleoperate, VideoFeed } from '@adamo/adamo-react';
+import { Teleoperate, VideoFeed } from '@adamo-tech/react';
 
 function App() {
   const serverUrl = 'wss://your-server.com';
@@ -71,7 +71,7 @@ A more realistic setup with multiple camera feeds:
 
 ```tsx
 // App.tsx
-import { Teleoperate, VideoFeed, StatsOverlay } from '@adamo/adamo-react';
+import { Teleoperate, VideoFeed, StatsOverlay } from '@adamo-tech/react';
 
 function App() {
   const serverUrl = 'wss://your-server.com';
@@ -155,7 +155,7 @@ import {
   GamepadController,
   HeartbeatMonitor,
   StatsOverlay,
-} from '@adamo/adamo-react';
+} from '@adamo-tech/react';
 
 function App() {
   const serverUrl = 'wss://your-server.com';
@@ -225,7 +225,7 @@ export default App;
 For custom video implementations:
 
 ```tsx
-import { useVideoTrack } from '@adamo/adamo-react';
+import { useVideoTrack } from '@adamo-tech/react';
 
 function CustomPlayer({ topic }: { topic: string }) {
   const { track, videoRef } = useVideoTrack(topic);

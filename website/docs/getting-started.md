@@ -8,10 +8,10 @@ sidebar_position: 2
 
 ```bash
 # Core library (framework agnostic)
-pnpm add @adamo/adamo-core
+pnpm add @adamo-tech/core
 
 # React bindings
-pnpm add @adamo/adamo-react
+pnpm add @adamo-tech/react
 ```
 
 ## Basic Setup
@@ -19,7 +19,7 @@ pnpm add @adamo/adamo-react
 ### 1. Wrap your app with Teleoperate
 
 ```tsx
-import { Teleoperate } from '@adamo/adamo-react';
+import { Teleoperate } from '@adamo-tech/react';
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
 ### 2. Display video feeds
 
 ```tsx
-import { VideoFeed } from '@adamo/adamo-react';
+import { VideoFeed } from '@adamo-tech/react';
 
 function TeleoperationUI() {
   return (
@@ -58,7 +58,7 @@ function TeleoperationUI() {
 ### 3. Enable gamepad input
 
 ```tsx
-import { GamepadController, HeartbeatMonitor } from '@adamo/adamo-react';
+import { GamepadController, HeartbeatMonitor } from '@adamo-tech/react';
 
 function TeleoperationUI() {
   return (

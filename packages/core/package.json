@@ -1,5 +1,5 @@
 {
-  "name": "@adamo/adamo-core",
+  "name": "@adamo-tech/core",
   "version": "1.0.0",
   "description": "Core ADAMO client library for teleoperation via LiveKit",
   "main": "./dist/index.js",

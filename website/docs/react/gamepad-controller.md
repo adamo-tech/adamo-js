@@ -9,7 +9,7 @@ Invisible component that enables gamepad input.
 ## Usage
 
 ```tsx
-import { GamepadController } from '@adamo/adamo-react';
+import { GamepadController } from '@adamo-tech/react';
 
 // Basic - renders nothing, enables input
 <GamepadController />
