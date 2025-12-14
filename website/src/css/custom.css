@@ -139,6 +139,3 @@ th {
   border-bottom: 1px solid #1a1a1a;
 }
 
-[data-theme='dark'] tr:hover td {
-  background-color: #0f0f0f;
-}
