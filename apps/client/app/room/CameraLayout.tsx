@@ -48,9 +48,11 @@ export function CameraLayout() {
 
   const renderCell = useCallback((topic: string | null, _mode: LayoutMode) => {
     if (topic) {
+      // Only flip the fork camera
+      const style = topic === 'fork' ? { transform: 'scale(-1)' } : undefined;
       return (
         <>
-          <VideoFeed style={{ transform: 'scale(-1)' }} topic={topic} />
+          <VideoFeed style={style} topic={topic} />
           <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
         </>
       );
