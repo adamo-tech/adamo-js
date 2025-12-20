@@ -154,7 +154,7 @@ export interface AdamoClientConfig {
   /**
    * Server participant identity to communicate with.
    * This should match the identity of the robot's LiveKit participant.
-   * @default 'robot'
+   * @default 'python-bot'
    */
   serverIdentity?: string;
 

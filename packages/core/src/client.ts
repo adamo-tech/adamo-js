@@ -27,7 +27,7 @@ import type {
 import { StreamQuality } from './types';
 
 const DEFAULT_CONFIG: Required<AdamoClientConfig> = {
-  serverIdentity: 'robot',
+  serverIdentity: 'python-bot',
   adaptiveStream: true,
   dynacast: true,
   videoCodec: 'h264',
