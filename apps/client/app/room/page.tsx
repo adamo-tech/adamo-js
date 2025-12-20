@@ -6,6 +6,7 @@ import {
   Teleoperate,
   ConnectionStatus,
   useAdamo,
+  HeartbeatMonitor,
   StatsOverlay,
 } from '@adamo-tech/react';
 import { CameraLayout } from './CameraLayout';
@@ -253,7 +254,7 @@ export default function RoomPage() {
   return (
     <Teleoperate
       config={{
-        serverIdentity: 'robot',
+        serverIdentity: 'python-bot',
         adaptiveStream: false,
         dynacast: true,
         videoCodec: 'h264',
@@ -283,6 +284,7 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
 
   return (
     <>
+      <HeartbeatMonitor />
       <CameraLayout />
       <StatsOverlay />
 
