@@ -47,28 +47,31 @@ export function CameraLayout() {
   const { isMoving } = useVelocity();
 
 const renderCell = useCallback((topic: string | null, _mode: LayoutMode) => {
-  if (topic === 'fork') {
-    return (
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        <div style={{ width: '100%', height: '100%', transform: 'scale(-1)' }}>
-          <VideoFeed topic={topic} />
-        </div>
-        <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
-      </div>
-    );
-  }
+    if (!topic) return <div style={placeholderStyle}>--</div>;
 
-  if (topic) {
+    const isFork = topic === 'fork';
+
+    // If it's the fork, we wrap the video in a transform div 
+    // but keep the label outside that transform.
+    if (isFork) {
+      return (
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div style={{ width: '100%', height: '100%', transform: 'scale(-1)' }}>
+            <VideoFeed topic={topic} />
+          </div>
+          <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
+        </div>
+      );
+    }
+
+    // Default return for all other cameras (original behavior)
     return (
       <>
         <VideoFeed topic={topic} />
         <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
       </>
     );
-  }
-
-  return <div style={placeholderStyle}>--</div>;
-}, []);
+  }, []);
 
   return (
     <MultiModeLayout
