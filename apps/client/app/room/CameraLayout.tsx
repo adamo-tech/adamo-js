@@ -14,7 +14,7 @@ const MODES: LayoutMode[] = [
     label: 'Travel',
     grid: [
       ['left', 'front_low', 'right'],
-      [null, 'fork', null],
+      [null, null, null],
     ],
   },
   {
@@ -22,7 +22,7 @@ const MODES: LayoutMode[] = [
     label: 'Pick and Place',
     grid: [
       ['right', 'fork', 'left'],
-      [null, 'fork', 'front_low'],
+      [null, null, 'front_low'],
     ],
   },
 ];
