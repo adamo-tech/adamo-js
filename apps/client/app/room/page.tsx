@@ -7,6 +7,7 @@ import {
   ConnectionStatus,
   useAdamo,
   HeartbeatMonitor,
+  GamepadController,
   StatsOverlay,
 } from '@adamo-tech/react';
 import { CameraLayout } from './CameraLayout';
@@ -285,6 +286,7 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
   return (
     <>
       <HeartbeatMonitor />
+      <GamepadController />
       <CameraLayout />
       <StatsOverlay />
 
