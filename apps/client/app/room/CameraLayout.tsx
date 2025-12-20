@@ -47,25 +47,26 @@ export function CameraLayout() {
   const { isMoving } = useVelocity();
 
 const renderCell = useCallback((topic: string | null, _mode: LayoutMode) => {
-  if (topic) {
-    const isFork = topic === 'fork';
-    
+  if (topic === 'fork') {
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        {/* Only wrap the video in the transform to avoid flipping text and other stuff*/}
-        <div style={{ 
-          width: '100%', 
-          height: '100%', 
-          transform: isFork ? 'scale(-1)' : undefined 
-        }}>
+        <div style={{ width: '100%', height: '100%', transform: 'scale(-1)' }}>
           <VideoFeed topic={topic} />
         </div>
-
-        {/* Keep the video label out of transform */}
         <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
       </div>
     );
   }
+
+  if (topic) {
+    return (
+      <>
+        <VideoFeed topic={topic} />
+        <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
+      </>
+    );
+  }
+
   return <div style={placeholderStyle}>--</div>;
 }, []);
 
