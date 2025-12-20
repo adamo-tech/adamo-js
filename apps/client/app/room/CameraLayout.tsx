@@ -61,7 +61,7 @@ const renderCell = useCallback((topic: string | null, _mode: LayoutMode) => {
           <VideoFeed topic={topic} />
         </div>
 
-        {/* Keep the video label out of transform*/}
+        {/* Keep the video label out of transform */}
         <div style={labelStyle}>{CAMERA_LABELS[topic] || topic}</div>
       </div>
     );
