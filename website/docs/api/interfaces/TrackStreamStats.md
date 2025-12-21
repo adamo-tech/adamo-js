@@ -1,6 +1,6 @@
 # Interface: TrackStreamStats
 
-Defined in: [types.ts:90](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L90)
+Defined in: [types.ts:90](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L90)
 
 Per-track streaming statistics
 
@@ -10,7 +10,7 @@ Per-track streaming statistics
 
 > **bitrate**: `number`
 
-Defined in: [types.ts:100](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L100)
+Defined in: [types.ts:100](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L100)
 
 Current bitrate in bits per second
 
@@ -20,7 +20,7 @@ Current bitrate in bits per second
 
 > **bytesReceived**: `number`
 
-Defined in: [types.ts:104](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L104)
+Defined in: [types.ts:104](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L104)
 
 Bytes received since last stats update
 
@@ -30,7 +30,7 @@ Bytes received since last stats update
 
 > **decodeTimeMs**: `number`
 
-Defined in: [types.ts:114](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L114)
+Defined in: [types.ts:114](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L114)
 
 Decode time in milliseconds (time to decode each frame)
 
@@ -40,7 +40,7 @@ Decode time in milliseconds (time to decode each frame)
 
 > **fps**: `number`
 
-Defined in: [types.ts:98](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L98)
+Defined in: [types.ts:98](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L98)
 
 Current framerate
 
@@ -50,7 +50,7 @@ Current framerate
 
 > **framesDecoded**: `number`
 
-Defined in: [types.ts:106](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L106)
+Defined in: [types.ts:106](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L106)
 
 Frames decoded since last stats update
 
@@ -60,7 +60,7 @@ Frames decoded since last stats update
 
 > **framesDropped**: `number`
 
-Defined in: [types.ts:108](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L108)
+Defined in: [types.ts:108](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L108)
 
 Frames dropped since last stats update
 
@@ -70,7 +70,7 @@ Frames dropped since last stats update
 
 > **height**: `number`
 
-Defined in: [types.ts:96](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L96)
+Defined in: [types.ts:96](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L96)
 
 Current resolution height
 
@@ -80,7 +80,7 @@ Current resolution height
 
 > **jitterBufferDelayMs**: `number`
 
-Defined in: [types.ts:112](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L112)
+Defined in: [types.ts:112](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L112)
 
 Jitter buffer delay in milliseconds (time frames wait before playback)
 
@@ -90,7 +90,7 @@ Jitter buffer delay in milliseconds (time frames wait before playback)
 
 > **processingDelayMs**: `number`
 
-Defined in: [types.ts:116](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L116)
+Defined in: [types.ts:116](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L116)
 
 Total processing delay: jitterBufferDelayMs + decodeTimeMs
 
@@ -100,7 +100,7 @@ Total processing delay: jitterBufferDelayMs + decodeTimeMs
 
 > **quality**: [`StreamQuality`](../enumerations/StreamQuality.md)
 
-Defined in: [types.ts:102](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L102)
+Defined in: [types.ts:102](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L102)
 
 Current quality tier
 
@@ -110,7 +110,7 @@ Current quality tier
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:110](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L110)
+Defined in: [types.ts:110](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L110)
 
 Timestamp of when these stats were collected
 
@@ -120,7 +120,7 @@ Timestamp of when these stats were collected
 
 > **trackName**: `string`
 
-Defined in: [types.ts:92](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L92)
+Defined in: [types.ts:92](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L92)
 
 Track name/topic
 
@@ -130,6 +130,6 @@ Track name/topic
 
 > **width**: `number`
 
-Defined in: [types.ts:94](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L94)
+Defined in: [types.ts:94](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L94)
 
 Current resolution width

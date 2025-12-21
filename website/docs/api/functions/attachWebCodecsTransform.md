@@ -2,7 +2,7 @@
 
 > **attachWebCodecsTransform**(`receiver`, `worker`): [`AttachTransformResult`](../interfaces/AttachTransformResult.md)
 
-Defined in: webcodecs/transform.ts:61
+Defined in: [webcodecs/transform.ts:61](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/webcodecs/transform.ts#L61)
 
 Attach a WebCodecs transform to an RTCRtpReceiver
 

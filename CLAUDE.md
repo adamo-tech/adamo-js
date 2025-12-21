@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Adamo is a robot teleoperation system built on LiveKit WebRTC. It provides low-latency video streaming from robots and sends gamepad control data back to them.
+Adamo is a robot teleoperation system using native WebRTC. It provides low-latency video streaming from robots and sends gamepad control data back to them via WebRTC data channels.
 
 ## Monorepo Structure
 
@@ -45,15 +45,16 @@ pnpm --filter @adamo-tech/core build
 
 ### Core Library (`@adamo-tech/core`)
 
-The `AdamoClient` class wraps LiveKit's `Room` to provide:
-- Video track subscription by topic name (maps to ROS camera topics)
-- Joy data sending via lossy data channel for minimum latency
-- Heartbeat RPC for safety monitoring
-- Nav2 integration (map, costmap, pose, path data via data channels)
-- WebRTC stats collection for adaptive streaming
+The `AdamoClient` class manages native WebRTC connections:
+- Video track reception (multi-track support with track names from server)
+- Control data sending via unreliable data channel for minimum latency
+- Heartbeat monitoring for safety
+- WebCodecs support for ultra-low-latency video decoding
+- WebRTC stats collection
 
 Key classes:
 - `AdamoClient`: Main connection and messaging (client.ts)
+- `WebRTCConnection`: Low-level WebRTC/signaling handling (webrtc/connection.ts)
 - `HeartbeatManager`: Safety state monitoring - window focus, latency, gamepad (heartbeat.ts)
 - `JoypadManager`: Gamepad polling and ROS Joy message formatting (joypad.ts)
 
@@ -62,15 +63,19 @@ Key classes:
 Declarative components following react-three-fiber style:
 
 ```tsx
-<AdamoProvider config={{ serverIdentity: 'robot' }} autoConnect={{ url, token }}>
+<Teleoperate
+  config={{ debug: true }}
+  signaling={{ serverUrl, roomId, token, iceServers }}
+  autoConnect
+>
   <HeartbeatMonitor />           {/* Invisible - enables safety monitoring */}
   <GamepadController />          {/* Invisible - enables gamepad input */}
-  <VideoFeed topic="front_camera" />
-</AdamoProvider>
+  <VideoFeed trackName="front_camera" />
+</Teleoperate>
 ```
 
 Key patterns:
-- `AdamoProvider` creates and manages the AdamoClient instance
+- `Teleoperate` creates and manages the AdamoClient instance
 - Components like `HeartbeatMonitor` and `GamepadController` render nothing but enable functionality
 - Hooks (`useAdamo`, `useHeartbeat`, `useJoypad`, `useVideoTrack`) for custom implementations
 
@@ -80,11 +85,19 @@ Next.js 16 app with:
 - Authentication flow storing tokens in sessionStorage
 - Room selection with gamepad D-pad navigation
 - Draggable/resizable camera grid using react-rnd
-- LiveKit token generation via `/api/token` route
+- WebRTC signaling via backend WebSocket
 
 ## Key Types
 
 ```typescript
+// Signaling configuration
+interface SignalingConfig {
+  serverUrl: string;      // WebSocket signaling URL
+  roomId: string;         // Room identifier
+  token?: string;         // Auth token (via subprotocol)
+  iceServers?: RTCIceServer[];
+}
+
 // Safety states sent to robot
 enum HeartbeatState {
   OK = 0,
@@ -94,17 +107,17 @@ enum HeartbeatState {
   HEARTBEAT_MISSING = 4,  // Server-side only
 }
 
-// Video codec options
-videoCodec: 'h264' | 'vp8' | 'vp9' | 'av1'
-
-// Playback latency control
-playoutDelay: number  // Negative for minimum buffering (e.g., -0.1)
+// Control message format
+interface ControlMessage {
+  controller1?: { axes: number[]; buttons: number[]; position?: [x,y,z]; quaternion?: [w,x,y,z] };
+  controller2?: { ... };
+  timestamp: number;
+}
 ```
 
 ## Server Communication
 
-- **Video**: LiveKit tracks named by ROS topic (e.g., "front_camera", "fork")
-- **Joy data**: Lossy data channel, topic "joy", ROS `sensor_msgs/Joy` format
-- **Heartbeat**: RPC method "heartbeat" to server identity (default: "robot")
-- **Nav data**: Data channels "nav/map", "nav/position", "nav/path", "nav/costmap"
-- **Stats**: Server sends encoder stats on "stats/encoder" topic
+- **Signaling**: WebSocket at `/ws/signal/{room_id}` with token via subprotocol
+- **Video**: WebRTC tracks with names from offer metadata (e.g., "front_camera")
+- **Control data**: Unreliable data channel "control", JSON messages
+- **Heartbeat**: Sent via data channel as `{ type: "heartbeat", state: 0, timestamp: ... }`

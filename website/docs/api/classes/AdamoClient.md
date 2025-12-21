@@ -1,6 +1,6 @@
 # Class: AdamoClient
 
-Defined in: [client.ts:71](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L71)
+Defined in: [client.ts:71](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L71)
 
 Adamo Client - Core class for teleoperation via WebRTC
 
@@ -42,7 +42,7 @@ client.sendControl({
 
 > **new AdamoClient**(`config`): `AdamoClient`
 
-Defined in: [client.ts:92](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L92)
+Defined in: [client.ts:92](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L92)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Defined in: [client.ts:92](https://github.com/adamo-tech/adamo-js/blob/30fc620ef
 
 > **get** **connectionState**(): [`ConnectionState`](../type-aliases/ConnectionState.md)
 
-Defined in: [client.ts:99](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L99)
+Defined in: [client.ts:99](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L99)
 
 Get the current connection state
 
@@ -78,7 +78,7 @@ Get the current connection state
 
 > **get** **dataChannelOpen**(): `boolean`
 
-Defined in: [client.ts:106](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L106)
+Defined in: [client.ts:106](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L106)
 
 Check if data channel is open and ready for sending
 
@@ -94,7 +94,7 @@ Check if data channel is open and ready for sending
 
 > **get** **networkStats**(): [`NetworkStats`](../interfaces/NetworkStats.md) \| `null`
 
-Defined in: [client.ts:129](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L129)
+Defined in: [client.ts:129](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L129)
 
 Get current network statistics
 
@@ -110,7 +110,7 @@ Get current network statistics
 
 > **get** **trackStats**(): `Map`\<`string`, [`TrackStreamStats`](../interfaces/TrackStreamStats.md)\>
 
-Defined in: [client.ts:136](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L136)
+Defined in: [client.ts:136](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L136)
 
 Get track streaming statistics (Map keyed by track name)
 
@@ -126,7 +126,7 @@ Get track streaming statistics (Map keyed by track name)
 
 > **get** **useWebCodecs**(): `boolean`
 
-Defined in: [client.ts:158](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L158)
+Defined in: [client.ts:158](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L158)
 
 Check if WebCodecs mode is enabled
 
@@ -142,7 +142,7 @@ Check if WebCodecs mode is enabled
 
 > **get** **videoTrack**(): [`VideoTrack`](../interfaces/VideoTrack.md) \| `null`
 
-Defined in: [client.ts:121](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L121)
+Defined in: [client.ts:121](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L121)
 
 Get a specific video track by name (for backwards compatibility)
 Returns the first track if no name specified, or null if no tracks
@@ -159,7 +159,7 @@ Returns the first track if no name specified, or null if no tracks
 
 > **get** **videoTracks**(): `Map`\<`string`, [`VideoTrack`](../interfaces/VideoTrack.md)\>
 
-Defined in: [client.ts:113](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L113)
+Defined in: [client.ts:113](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L113)
 
 Get all video tracks as a Map (keyed by track name)
 
@@ -173,7 +173,7 @@ Get all video tracks as a Map (keyed by track name)
 
 > **connect**(`signaling`): `Promise`\<`void`\>
 
-Defined in: [client.ts:165](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L165)
+Defined in: [client.ts:165](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L165)
 
 Connect to the robot
 
@@ -193,7 +193,7 @@ Connect to the robot
 
 > **disableWebCodecs**(): `void`
 
-Defined in: [client.ts:341](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L341)
+Defined in: [client.ts:341](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L341)
 
 Disable WebCodecs and switch back to standard video decoding
 
@@ -207,7 +207,7 @@ Disable WebCodecs and switch back to standard video decoding
 
 > **disconnect**(): `void`
 
-Defined in: [client.ts:197](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L197)
+Defined in: [client.ts:197](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L197)
 
 Disconnect from the robot
 
@@ -221,7 +221,7 @@ Disconnect from the robot
 
 > **enableWebCodecs**(): `void`
 
-Defined in: [client.ts:277](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L277)
+Defined in: [client.ts:277](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L277)
 
 Enable WebCodecs ultra-low-latency decoding.
 
@@ -253,7 +253,7 @@ client.enableWebCodecs();
 
 > **getLastFrameTime**(`trackName?`): `number`
 
-Defined in: [client.ts:143](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L143)
+Defined in: [client.ts:143](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L143)
 
 Get the last frame time for a specific track (for staleness checking)
 
@@ -273,7 +273,7 @@ Get the last frame time for a specific track (for staleness checking)
 
 > **getPeerConnection**(): `RTCPeerConnection` \| `null`
 
-Defined in: [client.ts:430](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L430)
+Defined in: [client.ts:430](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L430)
 
 Get the underlying RTCPeerConnection (for advanced use)
 
@@ -287,7 +287,7 @@ Get the underlying RTCPeerConnection (for advanced use)
 
 > **getTrackNames**(): `string`[]
 
-Defined in: [client.ts:239](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L239)
+Defined in: [client.ts:239](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L239)
 
 Get track names (topics) of all available video tracks
 
@@ -301,7 +301,7 @@ Get track names (topics) of all available video tracks
 
 > **getVideoTrack**(`name?`): [`VideoTrack`](../interfaces/VideoTrack.md) \| `null`
 
-Defined in: [client.ts:220](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L220)
+Defined in: [client.ts:220](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L220)
 
 Get a video track by name
 
@@ -325,7 +325,7 @@ The video track or null if not found
 
 > **getVideoTracks**(): [`VideoTrack`](../interfaces/VideoTrack.md)[]
 
-Defined in: [client.ts:232](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L232)
+Defined in: [client.ts:232](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L232)
 
 Get all video tracks as an array
 
@@ -339,7 +339,7 @@ Get all video tracks as an array
 
 > **isVideoFresh**(`maxStalenessMs`, `trackName?`): `boolean`
 
-Defined in: [client.ts:439](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L439)
+Defined in: [client.ts:439](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L439)
 
 Check if video is fresh (frames received recently)
 
@@ -367,7 +367,7 @@ Optional track name to check specific track
 
 > **off**\<`K`\>(`event`, `handler`): `void`
 
-Defined in: [client.ts:423](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L423)
+Defined in: [client.ts:423](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L423)
 
 Remove an event listener
 
@@ -397,7 +397,7 @@ Remove an event listener
 
 > **on**\<`K`\>(`event`, `handler`): () => `void`
 
-Defined in: [client.ts:407](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L407)
+Defined in: [client.ts:407](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L407)
 
 Add an event listener
 
@@ -433,7 +433,7 @@ Unsubscribe function
 
 > **onDecodedFrame**(`callback`): () => `void`
 
-Defined in: [client.ts:358](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L358)
+Defined in: [client.ts:358](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L358)
 
 Register a callback for decoded frames (WebCodecs mode)
 
@@ -459,7 +459,7 @@ Unsubscribe function
 
 > **onVideoTrack**(`callback`): () => `void`
 
-Defined in: [client.ts:247](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L247)
+Defined in: [client.ts:247](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L247)
 
 Register a callback for when video track becomes available
 
@@ -485,7 +485,7 @@ Unsubscribe function
 
 > **sendControl**(`data`): `boolean`
 
-Defined in: [client.ts:366](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L366)
+Defined in: [client.ts:366](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L366)
 
 Send control data to the robot
 
@@ -507,7 +507,7 @@ true if sent, false if data channel not open
 
 > **sendHeartbeat**(`state`): `boolean`
 
-Defined in: [client.ts:375](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L375)
+Defined in: [client.ts:375](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L375)
 
 Send heartbeat state to the robot
 
@@ -529,7 +529,7 @@ true if sent, false if data channel not open
 
 > **sendNavGoal**(`goal`): `Promise`\<`void`\>
 
-Defined in: [client.ts:389](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/client.ts#L389)
+Defined in: [client.ts:389](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/client.ts#L389)
 
 Send a navigation goal to Nav2
 

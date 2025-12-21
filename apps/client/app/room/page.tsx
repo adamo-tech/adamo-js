@@ -31,6 +31,7 @@ export default function RoomPage() {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [signalingUrl, setSignalingUrl] = useState<string | null>(null);
   const [signalingToken, setSignalingToken] = useState<string | null>(null);
+  const [iceServers, setIceServers] = useState<RTCIceServer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -161,12 +162,23 @@ export default function RoomPage() {
         }
         if (!resp.ok) throw new Error('Failed to get token');
         const data = await resp.json();
-        // Support both old livekit format and new signaling format
-        const url = data.signaling_url || data.livekit_url;
-        const token = data.token || data.livekit_token;
-        if (url && token) {
-          setSignalingUrl(url);
+
+        // Build signaling WebSocket URL from backend's websocket_url (relative path)
+        // websocket_url is like "/ws/signal/{room_id}?token=xxx"
+        if (!data.websocket_url) {
+          throw new Error('Missing websocket_url in response');
+        }
+        // Convert API_URL to WebSocket URL and append the path
+        const apiBase = API_URL.replace(/^http/, 'ws');
+        const signalingWsUrl = `${apiBase}${data.websocket_url}`;
+
+        const token = data.token;
+        if (signalingWsUrl && token) {
+          setSignalingUrl(signalingWsUrl);
           setSignalingToken(token);
+          if (data.ice_servers) {
+            setIceServers(data.ice_servers);
+          }
         }
       } catch (e) {
         console.error('Failed to get token:', e);
@@ -262,6 +274,7 @@ export default function RoomPage() {
         serverUrl: signalingUrl,
         roomId: selectedRoom.id,
         token: signalingToken,
+        iceServers: iceServers.length > 0 ? iceServers : undefined,
       }}
       autoConnect
     >
@@ -269,6 +282,7 @@ export default function RoomPage() {
         setSelectedRoom(null);
         setSignalingToken(null);
         setSignalingUrl(null);
+        setIceServers([]);
       }} />
     </Teleoperate>
   );

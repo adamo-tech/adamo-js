@@ -1,6 +1,6 @@
 # Enumeration: StreamQuality
 
-Defined in: [types.ts:60](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L60)
+Defined in: [types.ts:60](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L60)
 
 Quality tier for adaptive streaming
 Matches server-side quality tiers from the NVENC encoder
@@ -11,7 +11,7 @@ Matches server-side quality tiers from the NVENC encoder
 
 > **AUTO**: `"auto"`
 
-Defined in: [types.ts:68](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L68)
+Defined in: [types.ts:68](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L68)
 
 Auto: Let server decide based on network conditions
 
@@ -21,7 +21,7 @@ Auto: Let server decide based on network conditions
 
 > **HIGH**: `"high"`
 
-Defined in: [types.ts:66](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L66)
+Defined in: [types.ts:66](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L66)
 
 High quality: 1920x1080 @ 3-6 Mbps
 
@@ -31,7 +31,7 @@ High quality: 1920x1080 @ 3-6 Mbps
 
 > **LOW**: `"low"`
 
-Defined in: [types.ts:62](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L62)
+Defined in: [types.ts:62](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L62)
 
 Low quality: 640x480 @ 0.5-1 Mbps
 
@@ -41,6 +41,6 @@ Low quality: 640x480 @ 0.5-1 Mbps
 
 > **MEDIUM**: `"medium"`
 
-Defined in: [types.ts:64](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L64)
+Defined in: [types.ts:64](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L64)
 
 Medium quality: 1280x720 @ 1.5-2.5 Mbps
