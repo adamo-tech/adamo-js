@@ -22,7 +22,7 @@ const MODES: LayoutMode[] = [
     label: 'Pick and Place',
     grid: [
       ['right', 'fork', 'left'],
-      [null, 'fork', 'front_low'],
+      [null, 'fork_low', 'front_low'],
     ],
   },
 ];
@@ -33,6 +33,7 @@ const CAMERA_LABELS: Record<string, string> = {
   right: 'Right',
   front_low: 'Front Low',
   fork: 'Forks',
+  fork_low: 'Fork Low',
 };
 
 /**
@@ -49,7 +50,7 @@ export function CameraLayout() {
   const renderCell = useCallback((topic: string | null, _mode: LayoutMode) => {
     if (topic) {
       // Only flip the fork camera
-      const style = topic === 'fork' ? { transform: 'scale(-1)' } : undefined;
+      const style = topic === 'fork_low' ? { transform: 'scale(-1)' } : undefined;
       return (
         <>
           <VideoFeed style={style} topic={topic} />
