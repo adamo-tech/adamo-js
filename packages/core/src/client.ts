@@ -1,103 +1,96 @@
+/**
+ * Adamo Client
+ *
+ * Core class for robot teleoperation via WebRTC.
+ * Provides a simple API for connecting, receiving video, and sending controls.
+ */
+
+import { WebRTCConnection } from './webrtc/connection';
+import type { SignalingConfig, WebRTCConnectionState } from './webrtc/types';
 import {
-  Room,
-  RoomEvent,
-  ConnectionState as LKConnectionState,
-  RemoteParticipant,
-  RemoteTrackPublication,
-  Track,
-  RemoteVideoTrack,
-  DataPacket_Kind,
-} from 'livekit-client';
+  attachWebCodecsTransform,
+  getReceiverForTrack,
+  isWebCodecsSupported,
+} from './webcodecs/transform';
+import type { DecodedVideoFrame } from './webcodecs/types';
+import { StreamQuality } from './types';
 import type {
   AdamoClientConfig,
   AdamoClientEvents,
   ConnectionState,
   VideoTrack,
-  TrackSubscription,
-  MapData,
-  CostmapData,
-  RobotPose,
-  NavPath,
-  NavGoal,
+  ControlMessage,
+  HeartbeatState,
   NetworkStats,
   TrackStreamStats,
-  VelocityState,
-  EncoderStats,
+  NavGoal,
 } from './types';
-import { StreamQuality } from './types';
 
-const DEFAULT_CONFIG: Required<AdamoClientConfig> = {
-  serverIdentity: 'python-bot',
-  adaptiveStream: true,
-  dynacast: true,
-  videoCodec: 'h264',
-  // Negative value requests minimum buffering from the browser's jitter buffer
-  // 0 = default (browser decides), negative = request less buffering
-  playoutDelay: -0.1,
+const DEFAULT_CONFIG: AdamoClientConfig & { debug: boolean; useWebCodecs: boolean; codecProfile: string; hardwareAcceleration: 'prefer-hardware' | 'prefer-software' | 'no-preference' } = {
+  debug: false,
+  useWebCodecs: false,
+  codecProfile: 'avc1.42001f',
+  hardwareAcceleration: 'prefer-hardware',
+  webCodecsWorkerUrl: undefined,
 };
 
 /**
- * Adamo Client - Core class for teleoperation via LiveKit
+ * Adamo Client - Core class for teleoperation via WebRTC
  *
- * Abstracts LiveKit connection and provides a simple API for:
- * - Connecting to a room
- * - Subscribing to video topics (camera feeds)
- * - Sending control data (joypad)
+ * Provides a simple API for:
+ * - Connecting to a robot
+ * - Receiving video streams
+ * - Sending control data (gamepad)
  * - Heartbeat monitoring
  *
  * @example
  * ```ts
- * const client = new AdamoClient();
+ * const client = new AdamoClient({ debug: true });
  *
- * client.on('trackAvailable', (track) => {
- *   console.log('New track:', track.name);
+ * client.on('videoTrackReceived', (track) => {
+ *   videoElement.srcObject = new MediaStream([track.mediaStreamTrack]);
  * });
  *
- * await client.connect('ws://localhost:7880', token);
- * await client.subscribe('fork', (track) => {
- *   videoElement.srcObject = new MediaStream([track.mediaStreamTrack]);
+ * client.on('dataChannelOpen', () => {
+ *   console.log('Ready to send controls!');
+ * });
+ *
+ * await client.connect({
+ *   serverUrl: 'wss://relay.example.com',
+ *   roomId: 'robot-1',
+ *   token: 'jwt...',
+ * });
+ *
+ * // Send control data
+ * client.sendControl({
+ *   controller1: { axes: [0, 0.5], buttons: [0, 1] },
+ *   timestamp: Date.now(),
  * });
  * ```
  */
 export class AdamoClient {
-  private room: Room;
-  private config: Required<AdamoClientConfig>;
+  private connection: WebRTCConnection | null = null;
+  private config: AdamoClientConfig & Required<Omit<AdamoClientConfig, 'webCodecsWorkerUrl'>>;
   private eventHandlers: Map<keyof AdamoClientEvents, Set<Function>> = new Map();
-  private subscriptions: Map<string, TrackSubscription> = new Map();
   private _connectionState: ConnectionState = 'disconnected';
-  private connectAbortController: AbortController | null = null;
+  private _videoTracks: Map<string, VideoTrack> = new Map();
+  private _dataChannelOpen = false;
 
-  // Adaptive streaming state
+  // WebCodecs support
+  private decoderWorker: Worker | null = null;
+  private webCodecsEnabled = false;
+
+  // Stats collection
+  private statsIntervalId: ReturnType<typeof setInterval> | null = null;
   private _networkStats: NetworkStats | null = null;
   private _trackStats: Map<string, TrackStreamStats> = new Map();
-  private _encoderStats: Map<string, EncoderStats> = new Map();
-  private _preferredQuality: StreamQuality = StreamQuality.AUTO;
-  private statsIntervalId: ReturnType<typeof setInterval> | null = null;
-  private freshnessIntervalId: ReturnType<typeof setInterval> | null = null;
-  private jitterBufferIntervalId: ReturnType<typeof setInterval> | null = null;
   private lastBytesReceived: Map<string, number> = new Map();
   private lastFramesDecoded: Map<string, number> = new Map();
-  private lastStatsTime: Map<string, number> = new Map();
+  private lastStatsTime = 0;
   private _lastFrameTime: Map<string, number> = new Map();
-  private _freshnessFramesDecoded: Map<string, number> = new Map();
 
   constructor(config: AdamoClientConfig = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
-
-    this.room = new Room({
-      adaptiveStream: this.config.adaptiveStream,
-      dynacast: this.config.dynacast,
-      videoCaptureDefaults: {
-        resolution: { width: 1280, height: 720, frameRate: 30 },
-      },
-      publishDefaults: {
-        videoCodec: this.config.videoCodec,
-        simulcast: true,
-        videoEncoding: { maxBitrate: 2_500_000, maxFramerate: 30 },
-      },
-    });
-
-    this.setupRoomListeners();
+    this.config = { ...DEFAULT_CONFIG, ...config } as typeof this.config;
   }
 
   /**
@@ -108,17 +101,26 @@ export class AdamoClient {
   }
 
   /**
-   * Get the underlying LiveKit Room instance (for advanced use cases)
+   * Check if data channel is open and ready for sending
    */
-  get liveKitRoom(): Room {
-    return this.room;
+  get dataChannelOpen(): boolean {
+    return this._dataChannelOpen;
   }
 
   /**
-   * Get the server identity this client communicates with
+   * Get all video tracks as a Map (keyed by track name)
    */
-  get serverIdentity(): string {
-    return this.config.serverIdentity;
+  get videoTracks(): Map<string, VideoTrack> {
+    return this._videoTracks;
+  }
+
+  /**
+   * Get a specific video track by name (for backwards compatibility)
+   * Returns the first track if no name specified, or null if no tracks
+   */
+  get videoTrack(): VideoTrack | null {
+    if (this._videoTracks.size === 0) return null;
+    return this._videoTracks.values().next().value ?? null;
   }
 
   /**
@@ -129,66 +131,60 @@ export class AdamoClient {
   }
 
   /**
-   * Get statistics for all tracks
+   * Get track streaming statistics (Map keyed by track name)
    */
   get trackStats(): Map<string, TrackStreamStats> {
     return this._trackStats;
   }
 
   /**
-   * Get encoder statistics from the server (per-track)
+   * Get the last frame time for a specific track (for staleness checking)
    */
-  get encoderStats(): Map<string, EncoderStats> {
-    return this._encoderStats;
+  getLastFrameTime(trackName?: string): number {
+    if (!trackName) {
+      // Return the most recent frame time across all tracks
+      let maxTime = 0;
+      for (const time of this._lastFrameTime.values()) {
+        if (time > maxTime) maxTime = time;
+      }
+      return maxTime;
+    }
+    return this._lastFrameTime.get(trackName) ?? 0;
   }
 
   /**
-   * Get encoder stats for a specific track
+   * Check if WebCodecs mode is enabled
    */
-  getEncoderStats(trackName: string): EncoderStats | undefined {
-    return this._encoderStats.get(trackName);
+  get useWebCodecs(): boolean {
+    return this.webCodecsEnabled;
   }
 
   /**
-   * Get the preferred quality setting
+   * Connect to the robot
    */
-  get preferredQuality(): StreamQuality {
-    return this._preferredQuality;
-  }
-
-  /**
-   * Connect to the Adamo server
-   */
-  async connect(url: string, token: string): Promise<void> {
-    // Cancel any pending connection
-    this.connectAbortController?.abort();
-    this.connectAbortController = new AbortController();
-    const signal = this.connectAbortController.signal;
+  async connect(signaling: SignalingConfig): Promise<void> {
+    // Disconnect any existing connection
+    if (this.connection) {
+      this.disconnect();
+    }
 
     this.setConnectionState('connecting');
 
+    // Create WebRTC connection
+    this.connection = new WebRTCConnection({
+      signaling,
+      debug: this.config.debug,
+      onTrack: (track, streams) => this.handleTrack(track, streams),
+      onConnectionStateChange: (state) => this.handleConnectionStateChange(state),
+      onDataChannelOpen: () => this.handleDataChannelOpen(),
+      onDataChannelClose: () => this.handleDataChannelClose(),
+      onDataChannelMessage: (data) => this.handleDataChannelMessage(data),
+      onError: (error) => this.emit('error', error),
+    });
+
     try {
-      await this.room.connect(url, token, {
-        autoSubscribe: true,
-      });
-
-      // Check if aborted during connection
-      if (signal.aborted) {
-        this.room.disconnect();
-        return;
-      }
-
-      this.setConnectionState('connected');
-      this.startStatsCollection();
-
-      // Request nav map on connect
-      // this.requestNavMap().catch((e) => {
-      //   console.debug('[Adamo] Failed to request nav map:', e);
-      // });
+      await this.connection.connect();
     } catch (error) {
-      // Ignore errors from aborted connections
-      if (signal.aborted) return;
-
       this.setConnectionState('disconnected');
       this.emit('error', error instanceof Error ? error : new Error(String(error)));
       throw error;
@@ -196,208 +192,217 @@ export class AdamoClient {
   }
 
   /**
-   * Disconnect from the server
+   * Disconnect from the robot
    */
   disconnect(): void {
-    // Abort any pending connection
-    this.connectAbortController?.abort();
-    this.connectAbortController = null;
-
-    // Stop stats collection
     this.stopStatsCollection();
+    this.disableWebCodecs();
 
-    this.room.disconnect();
-    this.subscriptions.clear();
+    if (this.connection) {
+      this.connection.disconnect();
+      this.connection = null;
+    }
+
+    this._videoTracks.clear();
+    this._trackStats.clear();
+    this.lastBytesReceived.clear();
+    this.lastFramesDecoded.clear();
+    this._lastFrameTime.clear();
+    this._dataChannelOpen = false;
     this.setConnectionState('disconnected');
   }
 
   /**
-   * Get all available video tracks from the server
+   * Get a video track by name
+   * @param name Track name/topic (e.g., 'front_camera')
+   * @returns The video track or null if not found
    */
-  getAvailableTracks(): VideoTrack[] {
-    const tracks: VideoTrack[] = [];
-
-    for (const participant of this.room.remoteParticipants.values()) {
-      for (const publication of participant.videoTrackPublications.values()) {
-        tracks.push(this.publicationToVideoTrack(publication));
-      }
+  getVideoTrack(name?: string): VideoTrack | null {
+    if (!name) {
+      // Return first track for backwards compatibility
+      if (this._videoTracks.size === 0) return null;
+      return this._videoTracks.values().next().value ?? null;
     }
-
-    return tracks;
+    return this._videoTracks.get(name) ?? null;
   }
 
   /**
-   * Subscribe to a video topic by name
-   *
-   * @param topicName - The topic name (e.g., 'fork', 'front', 'left')
-   * @param callback - Called when the track becomes available with video data
+   * Get all video tracks as an array
+   */
+  getVideoTracks(): VideoTrack[] {
+    return Array.from(this._videoTracks.values());
+  }
+
+  /**
+   * Get track names (topics) of all available video tracks
+   */
+  getTrackNames(): string[] {
+    return Array.from(this._videoTracks.keys());
+  }
+
+  /**
+   * Register a callback for when video track becomes available
    * @returns Unsubscribe function
    */
-  subscribe(topicName: string, callback: (track: VideoTrack) => void): () => void {
-    // Find the track publication
-    const publication = this.findPublicationByName(topicName);
-
-    if (publication) {
-      // Track already exists
-      const track = this.publicationToVideoTrack(publication.pub);
-
-      // Store subscription
-      let sub = this.subscriptions.get(topicName);
-      if (!sub) {
-        sub = {
-          publication: publication.pub,
-          participant: publication.participant,
-          callbacks: new Set(),
-        };
-        this.subscriptions.set(topicName, sub);
-      }
-      sub.callbacks.add(callback);
-
-      // Set optimal playback settings
-      if (publication.pub.videoTrack instanceof RemoteVideoTrack) {
-        publication.pub.videoTrack.setPlayoutDelay(this.config.playoutDelay);
-      }
-
-      // Call callback immediately if track is ready
-      if (track.mediaStreamTrack) {
-        callback(track);
-      }
-    } else {
-      // Track not yet available, store callback for when it arrives
-      let sub = this.subscriptions.get(topicName);
-      if (!sub) {
-        sub = {
-          publication: null as any,
-          participant: null as any,
-          callbacks: new Set(),
-        };
-        this.subscriptions.set(topicName, sub);
-      }
-      sub.callbacks.add(callback);
+  onVideoTrack(callback: (track: VideoTrack) => void): () => void {
+    // If tracks already exist, call immediately for each
+    for (const track of this._videoTracks.values()) {
+      callback(track);
     }
 
-    // Return unsubscribe function
-    return () => {
-      const sub = this.subscriptions.get(topicName);
-      if (sub) {
-        sub.callbacks.delete(callback);
-        if (sub.callbacks.size === 0) {
-          this.subscriptions.delete(topicName);
+    // Register for future updates
+    return this.on('videoTrackReceived', callback);
+  }
+
+  /**
+   * Enable WebCodecs ultra-low-latency decoding.
+   *
+   * The worker can be provided via config.webCodecsWorkerUrl as:
+   * - A Worker instance (recommended for bundler compatibility)
+   * - A URL or string URL pointing to the worker file
+   *
+   * If no worker is provided, this will throw an error.
+   *
+   * @example
+   * ```ts
+   * // Create worker with your bundler's syntax
+   * const worker = new Worker(
+   *   new URL('@adamo-tech/core/dist/webcodecs/decoder-worker.mjs', import.meta.url),
+   *   { type: 'module' }
+   * );
+   * const client = new AdamoClient({ webCodecsWorkerUrl: worker });
+   * client.enableWebCodecs();
+   * ```
+   */
+  enableWebCodecs(): void {
+    if (this.webCodecsEnabled) return;
+
+    if (!isWebCodecsSupported()) {
+      this.emit('error', new Error('WebCodecs is not supported in this browser'));
+      return;
+    }
+
+    const workerConfig = this.config.webCodecsWorkerUrl;
+
+    if (!workerConfig) {
+      this.emit(
+        'error',
+        new Error(
+          'WebCodecs worker not configured. Provide webCodecsWorkerUrl in AdamoClient config. ' +
+            'See documentation for bundler-specific instructions.'
+        )
+      );
+      return;
+    }
+
+    try {
+      // Accept a Worker instance directly, or create one from URL
+      if (workerConfig instanceof Worker) {
+        this.decoderWorker = workerConfig;
+      } else {
+        const url = typeof workerConfig === 'string' ? new URL(workerConfig) : workerConfig;
+        this.decoderWorker = new Worker(url, { type: 'module' });
+      }
+
+      this.decoderWorker.onmessage = (event) => this.handleWorkerMessage(event);
+
+      // Configure decoder
+      this.decoderWorker.postMessage({
+        type: 'configure',
+        codec: this.config.codecProfile,
+        optimizeForLatency: true,
+        hardwareAcceleration: this.config.hardwareAcceleration,
+      });
+
+      this.webCodecsEnabled = true;
+
+      // If we already have video tracks, attach transform to each
+      if (this._videoTracks.size > 0 && this.connection) {
+        const pc = this.connection.getPeerConnection();
+        if (pc) {
+          for (const track of this._videoTracks.values()) {
+            const receiver = getReceiverForTrack(pc, track.mediaStreamTrack);
+            if (receiver) {
+              attachWebCodecsTransform(receiver, this.decoderWorker);
+            }
+          }
         }
       }
-    };
+
+      this.log('WebCodecs enabled');
+    } catch (e) {
+      this.emit('error', new Error(`Failed to create WebCodecs worker: ${e}`));
+    }
   }
 
   /**
-   * Send joypad data to the server (fire-and-forget, lossy for low latency)
-   * @param axes - Axis values from the gamepad
-   * @param buttons - Button states from the gamepad
-   * @param topic - Topic name to publish on (default: 'joy')
+   * Disable WebCodecs and switch back to standard video decoding
    */
-  async sendJoyData(axes: number[], buttons: number[], topic: string = 'joy'): Promise<void> {
-    if (!this.room.localParticipant) {
-      throw new Error('Not connected');
+  disableWebCodecs(): void {
+    if (!this.webCodecsEnabled) return;
+
+    if (this.decoderWorker) {
+      this.decoderWorker.postMessage({ type: 'close' });
+      this.decoderWorker.terminate();
+      this.decoderWorker = null;
     }
 
-    const joyMessage = {
-      header: {
-        stamp: {
-          sec: Math.floor(Date.now() / 1000),
-          nanosec: (Date.now() % 1000) * 1e6,
-        },
-        frame_id: topic,
-      },
-      axes,
-      buttons,
-    };
-
-    const encoder = new TextEncoder();
-    const data = encoder.encode(JSON.stringify(joyMessage));
-
-    await this.room.localParticipant.publishData(data, {
-      reliable: false, // Lossy mode for minimum latency
-      destinationIdentities: [this.config.serverIdentity],
-      topic,
-    });
+    this.webCodecsEnabled = false;
+    this.log('WebCodecs disabled');
   }
 
   /**
-   * Send heartbeat to the server via RPC
+   * Register a callback for decoded frames (WebCodecs mode)
+   * @returns Unsubscribe function
    */
-  async sendHeartbeat(state: number): Promise<void> {
-    if (!this.room.localParticipant) {
-      throw new Error('Not connected');
-    }
+  onDecodedFrame(callback: (frame: DecodedVideoFrame) => void): () => void {
+    return this.on('decodedFrame', callback);
+  }
 
-    const payload = {
+  /**
+   * Send control data to the robot
+   * @returns true if sent, false if data channel not open
+   */
+  sendControl(data: ControlMessage): boolean {
+    if (!this.connection) return false;
+    return this.connection.sendControl(data);
+  }
+
+  /**
+   * Send heartbeat state to the robot
+   * @returns true if sent, false if data channel not open
+   */
+  sendHeartbeat(state: HeartbeatState): boolean {
+    if (!this.connection) return false;
+    return this.connection.sendControl({
+      type: 'heartbeat',
       state,
       timestamp: Date.now(),
-    };
-
-    await this.room.localParticipant.performRpc({
-      destinationIdentity: this.config.serverIdentity,
-      method: 'heartbeat',
-      payload: JSON.stringify(payload),
-    });
-  }
-
-  /**
-   * Request the nav map from the server via RPC
-   */
-  async requestNavMap(): Promise<void> {
-    if (!this.room.localParticipant) {
-      throw new Error('Not connected');
-    }
-
-    console.log('[Adamo] Requesting nav map via RPC...');
-    const response = await this.room.localParticipant.performRpc({
-      destinationIdentity: this.config.serverIdentity,
-      method: 'getNavMap',
-      payload: '',
-    });
-    console.log('[Adamo] Nav map request response:', response);
+    } as unknown as ControlMessage);
   }
 
   /**
    * Send a navigation goal to Nav2
+   * @param goal - Navigation goal with x, y, theta
+   * @returns Promise that resolves when goal is sent
    */
   async sendNavGoal(goal: NavGoal): Promise<void> {
-    if (!this.room.localParticipant) {
+    if (!this.connection) {
       throw new Error('Not connected');
     }
-
-    const encoder = new TextEncoder();
-    const data = encoder.encode(JSON.stringify(goal));
-
-    await this.room.localParticipant.publishData(data, {
-      reliable: true, // Nav goals should be reliable
-      destinationIdentities: [this.config.serverIdentity],
-      topic: 'nav_goal',
-    });
-  }
-
-  /**
-   * Register an RPC method handler
-   */
-  registerRpcMethod(method: string, handler: (payload: string) => Promise<string> | string): void {
-    if (!this.room.localParticipant) {
-      throw new Error('Not connected');
+    const success = this.connection.sendControl({
+      type: 'nav_goal',
+      goal,
+      timestamp: Date.now(),
+    } as unknown as ControlMessage);
+    if (!success) {
+      throw new Error('Data channel not open');
     }
-
-    this.room.localParticipant.registerRpcMethod(method, async (data) => {
-      return handler(data.payload);
-    });
-  }
-
-  /**
-   * Unregister an RPC method handler
-   */
-  unregisterRpcMethod(method: string): void {
-    this.room.localParticipant?.unregisterRpcMethod(method);
   }
 
   /**
    * Add an event listener
+   * @returns Unsubscribe function
    */
   on<K extends keyof AdamoClientEvents>(event: K, handler: AdamoClientEvents[K]): () => void {
     let handlers = this.eventHandlers.get(event);
@@ -420,237 +425,176 @@ export class AdamoClient {
   }
 
   /**
-   * Set the preferred streaming quality
-   * This sends a preference to the server which will adapt the stream accordingly
-   *
-   * @param quality - The desired quality level (LOW, MEDIUM, HIGH, or AUTO)
+   * Get the underlying RTCPeerConnection (for advanced use)
    */
-  async setPreferredQuality(quality: StreamQuality): Promise<void> {
-    this._preferredQuality = quality;
+  getPeerConnection(): RTCPeerConnection | null {
+    return this.connection?.getPeerConnection() ?? null;
+  }
 
-    if (!this.room.localParticipant) {
-      return;
+  /**
+   * Check if video is fresh (frames received recently)
+   * @param maxStalenessMs Maximum allowed time since last frame
+   * @param trackName Optional track name to check specific track
+   */
+  isVideoFresh(maxStalenessMs: number = 100, trackName?: string): boolean {
+    const lastFrameTime = this.getLastFrameTime(trackName);
+    if (lastFrameTime === 0) return false;
+    return Date.now() - lastFrameTime <= maxStalenessMs;
+  }
+
+  // ============================================================================
+  // Private Methods
+  // ============================================================================
+
+  private handleTrack(track: MediaStreamTrack, _streams: readonly MediaStream[]): void {
+    if (track.kind !== 'video') return;
+
+    // Get track name from connection's track metadata (sent in offer)
+    // Falls back to track.label or generated name if metadata not available
+    let trackName: string;
+    if (this.connection) {
+      trackName = this.connection.getNextTrackName();
+    } else {
+      trackName = track.label || `video_${this._videoTracks.size}`;
     }
 
-    // Send quality preference to server via data channel
-    const encoder = new TextEncoder();
-    const message = {
-      type: 'quality_preference',
-      quality,
-      timestamp: Date.now(),
+    this.log(`Video track received: ${trackName}`);
+
+    const videoTrack: VideoTrack = {
+      id: track.id,
+      name: trackName,
+      mediaStreamTrack: track,
+      dimensions: undefined, // Will be updated when metadata is available
+      active: true,
     };
 
-    await this.room.localParticipant.publishData(
-      encoder.encode(JSON.stringify(message)),
-      {
-        reliable: true,
-        destinationIdentities: [this.config.serverIdentity],
-        topic: 'stream_control',
-      }
-    );
+    // Add to tracks map
+    this._videoTracks.set(trackName, videoTrack);
 
-    this.emit('qualityChanged', quality);
-  }
+    // Track ended handler
+    track.onended = () => {
+      this.log(`Video track ended: ${trackName}`);
+      this._videoTracks.delete(trackName);
+      this._trackStats.delete(trackName);
+      this.lastBytesReceived.delete(trackName);
+      this.lastFramesDecoded.delete(trackName);
+      this._lastFrameTime.delete(trackName);
+      this.emit('videoTrackEnded', track.id);
+    };
 
-  /**
-   * Get statistics for a specific track
-   */
-  getTrackStats(trackName: string): TrackStreamStats | undefined {
-    return this._trackStats.get(trackName);
-  }
-
-  /**
-   * Get the last frame time for all tracks
-   * Returns a map of track name to timestamp (ms) when the last frame was decoded
-   */
-  get lastFrameTime(): Map<string, number> {
-    return this._lastFrameTime;
-  }
-
-  /**
-   * Get the last frame time for a specific track
-   */
-  getLastFrameTime(trackName: string): number | undefined {
-    return this._lastFrameTime.get(trackName);
-  }
-
-  /**
-   * Check if video feeds are fresh (majority have received frames within threshold)
-   * @param maxStalenessMs - Maximum allowed time since last frame (default: 100ms)
-   * @returns true if majority of tracks are fresh, false otherwise
-   */
-  isVideoFresh(maxStalenessMs: number = 100): boolean {
-    const now = Date.now();
-    const trackCount = this._lastFrameTime.size;
-
-    if (trackCount === 0) {
-      // No tracks yet - consider stale for safety
-      return false;
-    }
-
-    let freshCount = 0;
-    for (const lastTime of this._lastFrameTime.values()) {
-      if (now - lastTime <= maxStalenessMs) {
-        freshCount++;
-      }
-    }
-
-    // Majority means more than half
-    return freshCount > trackCount / 2;
-  }
-
-  // Private methods
-
-  private setupRoomListeners(): void {
-    this.room.on(RoomEvent.ConnectionStateChanged, (state) => {
-      switch (state) {
-        case LKConnectionState.Connected:
-          this.setConnectionState('connected');
-          break;
-        case LKConnectionState.Connecting:
-          this.setConnectionState('connecting');
-          break;
-        case LKConnectionState.Reconnecting:
-          this.setConnectionState('reconnecting');
-          break;
-        case LKConnectionState.Disconnected:
-          this.setConnectionState('disconnected');
-          break;
-      }
-    });
-
-    this.room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
-      if (track.kind !== Track.Kind.Video) return;
-
-      const trackName = publication.trackName || publication.trackSid;
-      const videoTrack = this.publicationToVideoTrack(publication);
-
-      // Set optimal playback settings
-      if (track instanceof RemoteVideoTrack) {
-        track.setPlayoutDelay(this.config.playoutDelay);
-      }
-
-      this.emit('trackSubscribed', videoTrack);
-      this.emit('trackAvailable', videoTrack);
-
-      // Notify subscribers
-      const sub = this.subscriptions.get(trackName);
-      if (sub) {
-        sub.publication = publication;
-        sub.participant = participant;
-        sub.callbacks.forEach((cb) => cb(videoTrack));
-      }
-    });
-
-    this.room.on(RoomEvent.TrackUnsubscribed, (track, publication) => {
-      if (track.kind !== Track.Kind.Video) return;
-
-      const trackName = publication.trackName || publication.trackSid;
-      this.emit('trackUnsubscribed', trackName);
-      this.emit('trackRemoved', trackName);
-    });
-
-    this.room.on(RoomEvent.ParticipantConnected, (participant) => {
-      // Check for any pending subscriptions that match this participant's tracks
-      participant.on('trackPublished', (publication) => {
-        if (publication.kind !== Track.Kind.Video) return;
-
-        const trackName = publication.trackName || publication.trackSid;
-        const videoTrack = this.publicationToVideoTrack(publication);
-        this.emit('trackAvailable', videoTrack);
-      });
-    });
-
-    this.room.on(RoomEvent.Disconnected, () => {
-      this.setConnectionState('disconnected');
-    });
-
-    this.room.on(RoomEvent.Reconnecting, () => {
-      this.setConnectionState('reconnecting');
-    });
-
-    this.room.on(RoomEvent.Reconnected, () => {
-      this.setConnectionState('connected');
-    });
-
-    // Handle incoming nav data from server
-    this.room.on(RoomEvent.DataReceived, (payload, participant, kind, topic) => {
-      console.log(`[Adamo] DataReceived: topic=${topic}, from=${participant?.identity}, size=${payload.byteLength}`);
-
-      if (!topic) return;
-
-      try {
-        const decoder = new TextDecoder();
-        const jsonStr = decoder.decode(payload);
-        const data = JSON.parse(jsonStr);
-
-        switch (topic) {
-          case 'nav/map':
-            console.log(`[Adamo] Map received: ${data.width}x${data.height}`);
-            this.emit('mapData', data as MapData);
-            break;
-          case 'nav/position':
-            console.log(`[Adamo] Pose received: (${data.x?.toFixed(2)}, ${data.y?.toFixed(2)})`);
-            this.emit('robotPose', data as RobotPose);
-            break;
-          case 'nav/path':
-            console.log(`[Adamo] Path received: ${data.poses?.length} poses`);
-            this.emit('navPath', data as NavPath);
-            break;
-          case 'nav/costmap':
-            this.emit('costmapData', data as CostmapData);
-            break;
-          case 'velocity':
-            this.emit('velocityStateChanged', data as VelocityState);
-            break;
-          case 'stats/encoder':
-            // Server encoder stats - update internal state and emit
-            const encoderStats: EncoderStats = {
-              trackName: data.track_name,
-              encodeTimeMs: data.encode_time_ms,
-              pipelineLatencyMs: data.pipeline_latency_ms,
-              framesEncoded: data.frames_encoded,
-              framesDropped: data.frames_dropped,
-              fps: data.fps,
-              timestamp: data.timestamp,
-            };
-            this._encoderStats.set(encoderStats.trackName, encoderStats);
-            this.emit('encoderStatsUpdated', encoderStats);
-            break;
-          default:
-            console.log(`[Adamo] Unknown topic: ${topic}`);
-        }
-      } catch (e) {
-        console.error(`Error parsing nav data for topic ${topic}:`, e);
-      }
-    });
-  }
-
-  private findPublicationByName(
-    name: string
-  ): { pub: RemoteTrackPublication; participant: RemoteParticipant } | null {
-    for (const participant of this.room.remoteParticipants.values()) {
-      for (const publication of participant.videoTrackPublications.values()) {
-        if (publication.trackName === name || publication.trackSid === name) {
-          return { pub: publication, participant };
+    // If WebCodecs is enabled, attach transform
+    if (this.webCodecsEnabled && this.decoderWorker && this.connection) {
+      const pc = this.connection.getPeerConnection();
+      if (pc) {
+        const receiver = getReceiverForTrack(pc, track);
+        if (receiver) {
+          attachWebCodecsTransform(receiver, this.decoderWorker);
         }
       }
     }
-    return null;
+
+    this.emit('videoTrackReceived', videoTrack);
+    this.startStatsCollection();
   }
 
-  private publicationToVideoTrack(publication: RemoteTrackPublication): VideoTrack {
-    const track = publication.videoTrack;
-    return {
-      name: publication.trackName || publication.trackSid,
-      sid: publication.trackSid,
-      subscribed: publication.isSubscribed,
-      muted: publication.isMuted,
-      dimensions: publication.dimensions
-        ? { width: publication.dimensions.width, height: publication.dimensions.height }
-        : undefined,
-      mediaStreamTrack: track?.mediaStreamTrack,
-    };
+  private handleConnectionStateChange(state: WebRTCConnectionState): void {
+    // Map WebRTC state to our ConnectionState
+    switch (state) {
+      case 'connected':
+        this.setConnectionState('connected');
+        break;
+      case 'connecting':
+        this.setConnectionState('connecting');
+        break;
+      case 'reconnecting':
+        this.setConnectionState('reconnecting');
+        break;
+      case 'disconnected':
+        this.setConnectionState('disconnected');
+        break;
+      case 'failed':
+        this.setConnectionState('failed');
+        break;
+    }
+  }
+
+  private handleDataChannelOpen(): void {
+    this._dataChannelOpen = true;
+    this.emit('dataChannelOpen');
+  }
+
+  private handleDataChannelClose(): void {
+    this._dataChannelOpen = false;
+    this.emit('dataChannelClose');
+  }
+
+  private handleDataChannelMessage(data: unknown): void {
+    this.emit('dataChannelMessage', data);
+
+    // Handle known message types
+    if (typeof data === 'object' && data !== null) {
+      const msg = data as Record<string, unknown>;
+
+      // Handle nav data, stats, etc.
+      if (msg.type === 'nav/map') {
+        this.emit('mapData', msg as unknown as Parameters<AdamoClientEvents['mapData']>[0]);
+      } else if (msg.type === 'nav/position') {
+        this.emit('robotPose', msg as unknown as Parameters<AdamoClientEvents['robotPose']>[0]);
+      } else if (msg.type === 'nav/path') {
+        this.emit('navPath', msg as unknown as Parameters<AdamoClientEvents['navPath']>[0]);
+      } else if (msg.type === 'nav/costmap') {
+        this.emit('costmapData', msg as unknown as Parameters<AdamoClientEvents['costmapData']>[0]);
+      } else if (msg.type === 'velocity') {
+        this.emit(
+          'velocityStateChanged',
+          msg as unknown as Parameters<AdamoClientEvents['velocityStateChanged']>[0]
+        );
+      } else if (msg.type === 'stats/encoder') {
+        this.emit(
+          'encoderStatsUpdated',
+          msg as unknown as Parameters<AdamoClientEvents['encoderStatsUpdated']>[0]
+        );
+      }
+    }
+  }
+
+  private handleWorkerMessage(event: MessageEvent): void {
+    const { type, ...data } = event.data;
+
+    switch (type) {
+      case 'ready':
+        this.log('WebCodecs worker ready');
+        break;
+
+      case 'frame':
+        // Emit decoded frame
+        this.emit('decodedFrame', {
+          frame: data.frame,
+          timestamp: data.timestamp,
+          width: data.width,
+          height: data.height,
+        });
+        // Update frame time for all tracks (WebCodecs decodes all tracks)
+        const now = Date.now();
+        for (const name of this._videoTracks.keys()) {
+          this._lastFrameTime.set(name, now);
+        }
+        break;
+
+      case 'frameReady':
+        // Request the frame from worker
+        this.decoderWorker?.postMessage({ type: 'getFrame' });
+        break;
+
+      case 'error':
+        this.log('WebCodecs worker error:', data.message);
+        break;
+
+      case 'requestKeyframe':
+        // TODO: Implement keyframe request to server
+        this.log('Keyframe requested');
+        break;
+    }
   }
 
   private setConnectionState(state: ConnectionState): void {
@@ -676,320 +620,171 @@ export class AdamoClient {
     }
   }
 
-  /**
-   * Start collecting WebRTC stats for adaptive streaming
-   */
+  private log(...args: unknown[]): void {
+    if (this.config.debug) {
+      console.log('[AdamoClient]', ...args);
+    }
+  }
+
+  // ============================================================================
+  // Stats Collection
+  // ============================================================================
+
   private startStatsCollection(): void {
     if (this.statsIntervalId) return;
 
-    // Collect stats every second
     this.statsIntervalId = setInterval(() => {
       this.collectStats();
     }, 1000);
 
     // Collect immediately
     this.collectStats();
-
-    // Start faster freshness polling (every 30ms for 100ms staleness detection)
-    this.startFreshnessTracking();
-
-    // Start aggressive jitter buffer minimization (like Selkies)
-    this.startJitterBufferOptimization();
   }
 
-  /**
-   * Start fast polling for video frame freshness
-   */
-  private startFreshnessTracking(): void {
-    if (this.freshnessIntervalId) return;
-
-    this.freshnessIntervalId = setInterval(() => {
-      this.updateFrameFreshness();
-    }, 30);
-  }
-
-  /**
-   * Start aggressive jitter buffer optimization
-   *
-   * Sets all three jitter buffer properties to 0 every 15ms on all receivers.
-   * This matches the Selkies approach for achieving ~16ms latency.
-   *
-   * Properties set:
-   * - jitterBufferTarget: Target jitter buffer size
-   * - jitterBufferDelayHint: Hint for jitter buffer delay
-   * - playoutDelayHint: Hint for playout delay
-   */
-  private startJitterBufferOptimization(): void {
-    if (this.jitterBufferIntervalId) return;
-
-    this.jitterBufferIntervalId = setInterval(() => {
-      this.minimizeJitterBuffer();
-    }, 15);
-
-    // Run immediately
-    this.minimizeJitterBuffer();
-  }
-
-  /**
-   * Set all jitter buffer properties to 0 on all video receivers
-   */
-  private minimizeJitterBuffer(): void {
-    try {
-      // Access LiveKit's internal peer connection
-      const engine = (this.room as any).engine;
-      const subscriber = engine?.pcManager?.subscriber;
-      const pc = subscriber?.pc as RTCPeerConnection | undefined;
-
-      if (!pc) return;
-
-      pc.getReceivers().forEach((receiver) => {
-        if (receiver.track?.kind === 'video') {
-          // Set all three properties for maximum effect
-          // These are non-standard but widely supported
-          (receiver as any).jitterBufferTarget = 0;
-          (receiver as any).jitterBufferDelayHint = 0;
-          (receiver as any).playoutDelayHint = 0;
-        }
-      });
-    } catch (e) {
-      // Silently ignore - internal API access may fail
-    }
-  }
-
-  /**
-   * Update frame freshness by checking if framesDecoded has incremented
-   */
-  private async updateFrameFreshness(): Promise<void> {
-    if (!this.room.localParticipant) return;
-
-    try {
-      const engine = (this.room as any).engine;
-      const subscriber = engine?.pcManager?.subscriber;
-      if (!subscriber) return;
-
-      const pc = await subscriber.getStats();
-      const now = Date.now();
-
-      pc.forEach((report: RTCStats) => {
-        if (report.type === 'inbound-rtp' && (report as any).kind === 'video') {
-          const trackId = (report as any).trackIdentifier || (report as any).trackId;
-          const framesDecoded = (report as any).framesDecoded || 0;
-
-          // Find track name from subscriptions
-          let trackName = '';
-          for (const [name, sub] of this.subscriptions) {
-            const mediaTrack = sub.publication?.videoTrack?.mediaStreamTrack;
-            if (mediaTrack && mediaTrack.id === trackId) {
-              trackName = name;
-              break;
-            }
-          }
-
-          if (trackName) {
-            const prevFrames = this._freshnessFramesDecoded.get(trackName) || 0;
-
-            // If frames have been decoded since last check, update timestamp
-            if (framesDecoded > prevFrames) {
-              this._lastFrameTime.set(trackName, now);
-            }
-
-            this._freshnessFramesDecoded.set(trackName, framesDecoded);
-          }
-        }
-      });
-    } catch (e) {
-      // Silently ignore freshness check failures
-    }
-  }
-
-  /**
-   * Stop collecting WebRTC stats
-   */
   private stopStatsCollection(): void {
     if (this.statsIntervalId) {
       clearInterval(this.statsIntervalId);
       this.statsIntervalId = null;
     }
-    if (this.freshnessIntervalId) {
-      clearInterval(this.freshnessIntervalId);
-      this.freshnessIntervalId = null;
-    }
-    if (this.jitterBufferIntervalId) {
-      clearInterval(this.jitterBufferIntervalId);
-      this.jitterBufferIntervalId = null;
-    }
     this._networkStats = null;
     this._trackStats.clear();
     this.lastBytesReceived.clear();
     this.lastFramesDecoded.clear();
-    this.lastStatsTime.clear();
-    this._lastFrameTime.clear();
-    this._freshnessFramesDecoded.clear();
+    this.lastStatsTime = 0;
   }
 
-  /**
-   * Collect WebRTC stats from the room connection
-   */
   private async collectStats(): Promise<void> {
-    if (!this.room.localParticipant) return;
+    if (!this.connection) return;
+
+    const statsReport = await this.connection.getStats();
+    if (!statsReport) return;
 
     const now = Date.now();
+    const timeDelta = (now - this.lastStatsTime) / 1000;
+    let totalRtt = 0;
+    let rttCount = 0;
+    let totalPacketsLost = 0;
+    let totalPacketsReceived = 0;
+    let totalJitter = 0;
+    let jitterCount = 0;
+    let availableBandwidth = 0;
 
-    // Get connection-level stats
-    try {
-      // Use the room's engine to get WebRTC stats
-      const engine = (this.room as any).engine;
-      const subscriber = engine?.pcManager?.subscriber;
-      if (!subscriber) return;
+    // Build a map of trackIdentifier -> trackName from our video tracks
+    const trackIdToName = new Map<string, string>();
+    for (const [name, track] of this._videoTracks) {
+      trackIdToName.set(track.id, name);
+    }
 
-      const pc = await subscriber.getStats();
-
-      let totalRtt = 0;
-      let rttCount = 0;
-      let totalPacketsLost = 0;
-      let totalPacketsReceived = 0;
-      let totalJitter = 0;
-      let jitterCount = 0;
-      let availableBandwidth = 0;
-
-      // Track-level stats
-      const trackStatsMap = new Map<string, Partial<TrackStreamStats>>();
-
-      pc.forEach((report: RTCStats) => {
-        // Connection-level stats from candidate-pair
-        if (report.type === 'candidate-pair' && (report as any).state === 'succeeded') {
-          const rtt = (report as any).currentRoundTripTime;
-          if (rtt !== undefined) {
-            totalRtt += rtt * 1000; // Convert to ms
-            rttCount++;
-          }
-          if ((report as any).availableIncomingBitrate) {
-            availableBandwidth = (report as any).availableIncomingBitrate;
-          }
+    statsReport.forEach((report) => {
+      // Connection-level stats from candidate-pair
+      if (report.type === 'candidate-pair' && (report as RTCIceCandidatePairStats).state === 'succeeded') {
+        const candidateReport = report as RTCIceCandidatePairStats;
+        if (candidateReport.currentRoundTripTime !== undefined) {
+          totalRtt += candidateReport.currentRoundTripTime * 1000;
+          rttCount++;
         }
+        if ((candidateReport as unknown as Record<string, number>).availableIncomingBitrate) {
+          availableBandwidth = (candidateReport as unknown as Record<string, number>).availableIncomingBitrate;
+        }
+      }
 
-        // Inbound RTP stats for video tracks
-        if (report.type === 'inbound-rtp' && (report as any).kind === 'video') {
-          const trackId = (report as any).trackIdentifier || (report as any).trackId;
-          const packetsLost = (report as any).packetsLost || 0;
-          const packetsReceived = (report as any).packetsReceived || 0;
-          const jitter = (report as any).jitter;
+      // Inbound RTP stats for video
+      if (report.type === 'inbound-rtp') {
+        const rtpReport = report as RTCInboundRtpStreamStats;
+        if (rtpReport.kind === 'video') {
+          totalPacketsLost += rtpReport.packetsLost || 0;
+          totalPacketsReceived += rtpReport.packetsReceived || 0;
 
-          totalPacketsLost += packetsLost;
-          totalPacketsReceived += packetsReceived;
-
-          if (jitter !== undefined) {
-            totalJitter += jitter * 1000; // Convert to ms
+          if (rtpReport.jitter !== undefined) {
+            totalJitter += rtpReport.jitter * 1000;
             jitterCount++;
           }
 
-          // Find track name from subscriptions
-          let trackName = '';
-          for (const [name, sub] of this.subscriptions) {
-            const mediaTrack = sub.publication?.videoTrack?.mediaStreamTrack;
-            if (mediaTrack && mediaTrack.id === trackId) {
-              trackName = name;
-              break;
-            }
+          // Find the track name for this RTP stream
+          const trackId = rtpReport.trackIdentifier || '';
+          const trackName = trackIdToName.get(trackId) || `video_${this._trackStats.size}`;
+
+          const bytesReceived = rtpReport.bytesReceived || 0;
+          const framesDecoded = rtpReport.framesDecoded || 0;
+          const framesDropped = rtpReport.framesDropped || 0;
+          const width = rtpReport.frameWidth || 0;
+          const height = rtpReport.frameHeight || 0;
+          const fps = rtpReport.framesPerSecond || 0;
+
+          // Get previous values for this track
+          const lastBytes = this.lastBytesReceived.get(trackName) || 0;
+          const lastFrames = this.lastFramesDecoded.get(trackName) || 0;
+
+          // Calculate bitrate
+          const bytesDelta = bytesReceived - lastBytes;
+          const bitrate = timeDelta > 0 ? (bytesDelta * 8) / timeDelta : 0;
+
+          // Calculate decoded FPS
+          const framesDelta = framesDecoded - lastFrames;
+          const decodedFps = timeDelta > 0 ? framesDelta / timeDelta : 0;
+
+          // Update frame time if frames were decoded
+          if (framesDelta > 0) {
+            this._lastFrameTime.set(trackName, now);
           }
 
-          if (trackName) {
-            const bytesReceived = (report as any).bytesReceived || 0;
-            const framesDecoded = (report as any).framesDecoded || 0;
-            const framesDropped = (report as any).framesDropped || 0;
-            const width = (report as any).frameWidth || 0;
-            const height = (report as any).frameHeight || 0;
-            const fps = (report as any).framesPerSecond || 0;
+          // Jitter buffer and decode stats
+          const jitterBufferDelay = (rtpReport as unknown as Record<string, number>).jitterBufferDelay || 0;
+          const jitterBufferEmittedCount = (rtpReport as unknown as Record<string, number>).jitterBufferEmittedCount || 1;
+          const jitterBufferDelayMs = (jitterBufferDelay / jitterBufferEmittedCount) * 1000;
 
-            // Jitter buffer delay (cumulative, needs to be averaged)
-            const jitterBufferDelay = (report as any).jitterBufferDelay || 0;
-            const jitterBufferEmittedCount = (report as any).jitterBufferEmittedCount || 1;
-            const jitterBufferDelayMs = (jitterBufferDelay / jitterBufferEmittedCount) * 1000;
+          const totalDecodeTime = (rtpReport as unknown as Record<string, number>).totalDecodeTime || 0;
+          const decodeTimeMs = framesDecoded > 0 ? (totalDecodeTime / framesDecoded) * 1000 : 0;
 
-            // Decode time (cumulative, needs to be averaged)
-            const totalDecodeTime = (report as any).totalDecodeTime || 0;
-            const decodeTimeMs = framesDecoded > 0 ? (totalDecodeTime / framesDecoded) * 1000 : 0;
-
-            // Total processing delay
-            const processingDelayMs = jitterBufferDelayMs + decodeTimeMs;
-
-            // Calculate bitrate since last measurement
-            const lastBytes = this.lastBytesReceived.get(trackName) || 0;
-            const lastTime = this.lastStatsTime.get(trackName) || now;
-            const timeDelta = (now - lastTime) / 1000; // seconds
-            const bytesDelta = bytesReceived - lastBytes;
-            const bitrate = timeDelta > 0 ? (bytesDelta * 8) / timeDelta : 0;
-
-            // Calculate frames decoded rate
-            const lastFrames = this.lastFramesDecoded.get(trackName) || 0;
-            const framesDelta = framesDecoded - lastFrames;
-            const decodedFps = timeDelta > 0 ? framesDelta / timeDelta : 0;
-
-            // Update tracking
-            this.lastBytesReceived.set(trackName, bytesReceived);
-            this.lastFramesDecoded.set(trackName, framesDecoded);
-            this.lastStatsTime.set(trackName, now);
-
-            // Determine quality tier from resolution
-            let quality = StreamQuality.MEDIUM;
-            if (height >= 1080) {
-              quality = StreamQuality.HIGH;
-            } else if (height <= 480) {
-              quality = StreamQuality.LOW;
-            }
-
-            trackStatsMap.set(trackName, {
-              trackName,
-              width,
-              height,
-              fps: decodedFps || fps,
-              bitrate,
-              quality,
-              bytesReceived: bytesDelta,
-              framesDecoded: framesDelta,
-              framesDropped,
-              timestamp: now,
-              jitterBufferDelayMs,
-              decodeTimeMs,
-              processingDelayMs,
-            });
+          // Determine quality tier
+          let quality = StreamQuality.MEDIUM;
+          if (height >= 1080) {
+            quality = StreamQuality.HIGH;
+          } else if (height <= 480) {
+            quality = StreamQuality.LOW;
           }
-        }
-      });
 
-      // Calculate network stats
-      const packetLoss =
-        totalPacketsReceived > 0
-          ? (totalPacketsLost / (totalPacketsReceived + totalPacketsLost)) * 100
-          : 0;
+          const stats: TrackStreamStats = {
+            trackName,
+            width,
+            height,
+            fps: decodedFps || fps,
+            bitrate,
+            quality,
+            bytesReceived: bytesDelta,
+            framesDecoded: framesDelta,
+            framesDropped,
+            timestamp: now,
+            jitterBufferDelayMs,
+            decodeTimeMs,
+            processingDelayMs: jitterBufferDelayMs + decodeTimeMs,
+          };
 
-      this._networkStats = {
-        rtt: rttCount > 0 ? totalRtt / rttCount : 0,
-        packetLoss,
-        availableBandwidth,
-        jitter: jitterCount > 0 ? totalJitter / jitterCount : 0,
-        timestamp: now,
-      };
+          this._trackStats.set(trackName, stats);
+          this.lastBytesReceived.set(trackName, bytesReceived);
+          this.lastFramesDecoded.set(trackName, framesDecoded);
 
-      this.emit('networkStatsUpdated', this._networkStats);
-
-      // Update track stats
-      for (const [trackName, stats] of trackStatsMap) {
-        const fullStats = stats as TrackStreamStats;
-        const prevStats = this._trackStats.get(trackName);
-        this._trackStats.set(trackName, fullStats);
-
-        this.emit('trackStatsUpdated', fullStats);
-
-        // Emit quality change if it changed
-        if (prevStats && prevStats.quality !== fullStats.quality) {
-          this.emit('qualityChanged', fullStats.quality, trackName);
+          this.emit('trackStatsUpdated', stats);
         }
       }
-    } catch (e) {
-      // Stats collection failed - throw to surface the error
-      console.error('Stats collection failed:', e);
-      throw e;
-    }
+    });
+
+    this.lastStatsTime = now;
+
+    // Calculate network stats
+    const packetLoss =
+      totalPacketsReceived > 0
+        ? (totalPacketsLost / (totalPacketsReceived + totalPacketsLost)) * 100
+        : 0;
+
+    this._networkStats = {
+      rtt: rttCount > 0 ? totalRtt / rttCount : 0,
+      packetLoss,
+      availableBandwidth,
+      jitter: jitterCount > 0 ? totalJitter / jitterCount : 0,
+      timestamp: now,
+    };
+
+    this.emit('networkStatsUpdated', this._networkStats);
   }
 }

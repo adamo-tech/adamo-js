@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { JoypadManager, JoypadConfig, JoyMessage } from '@adamo-tech/core';
-import { useAdamoContext } from '../context';
+import { useTeleoperateContext } from '../context';
 
 // Stabilize config object to prevent effect re-runs
 function useStableConfig(config?: JoypadConfig): JoypadConfig | undefined {
@@ -38,7 +38,7 @@ export function useJoypad(config?: JoypadConfig): {
   start: () => void;
   stop: () => void;
 } {
-  const { client, connectionState } = useAdamoContext();
+  const { client, connectionState } = useTeleoperateContext();
   const managerRef = useRef<JoypadManager | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [lastInput, setLastInput] = useState<JoyMessage | null>(null);

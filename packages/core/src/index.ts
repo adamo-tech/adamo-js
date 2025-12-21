@@ -5,16 +5,44 @@ export { AdamoClient } from './client';
 export { HeartbeatManager } from './heartbeat';
 export { JoypadManager } from './joypad';
 
-// Types
+// WebRTC layer
+export { WebRTCConnection } from './webrtc';
+export type {
+  SignalingConfig,
+  WebRTCConnectionState,
+  WebRTCConnectionConfig,
+  WebRTCConnectionCallbacks,
+} from './webrtc';
+
+// WebCodecs utilities
 export {
+  isWebCodecsSupported,
+  isRTCRtpScriptTransformSupported,
+  isInsertableStreamsSupported,
+  attachWebCodecsTransform,
+  getVideoReceivers,
+  getReceiverForTrack,
+} from './webcodecs';
+export type {
+  DecodedVideoFrame,
+  WebCodecsConfig,
+  WebCodecsStats,
+  AttachTransformResult,
+} from './webcodecs';
+
+// Types
+export type {
   ConnectionState,
-  HeartbeatState,
   HeartbeatConfig,
   JoypadConfig,
   JoyMessage,
   VideoTrack,
   AdamoClientConfig,
   AdamoClientEvents,
+  // Control message types
+  ControlMessage,
+  ControllerState,
+  HeartbeatMessage,
   // Nav2 types
   MapData,
   CostmapData,
@@ -22,7 +50,6 @@ export {
   NavPath,
   NavGoal,
   // Adaptive streaming types
-  StreamQuality,
   NetworkStats,
   TrackStreamStats,
   AdaptiveStreamState,
@@ -31,3 +58,6 @@ export {
   // Encoder stats types
   EncoderStats,
 } from './types';
+
+// Enums (need separate export)
+export { HeartbeatState, StreamQuality } from './types';

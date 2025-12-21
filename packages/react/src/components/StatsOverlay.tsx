@@ -81,7 +81,7 @@ export function StatsOverlay({
   const [expanded, setExpanded] = useState(defaultExpanded);
   const { state: heartbeatState } = useHeartbeat();
   const { isConnected: gamepadConnected } = useJoypad();
-  const { networkStats, trackStats, encoderStats } = useAdaptiveStream();
+  const { networkStats, trackStats } = useAdaptiveStream();
 
   const thresholds = { ...DEFAULT_THRESHOLDS, ...userThresholds };
 
@@ -104,7 +104,6 @@ export function StatsOverlay({
   }
 
   // Calculate average latency components across all tracks
-  let avgEncodeTime = 0;
   let avgJitterBuffer = 0;
   let avgDecodeTime = 0;
   let trackCount = 0;
@@ -115,25 +114,15 @@ export function StatsOverlay({
     trackCount++;
   }
 
-  // Get encoder stats
-  let encoderCount = 0;
-  for (const stats of encoderStats.values()) {
-    avgEncodeTime += stats.encodeTimeMs;
-    encoderCount++;
-  }
-
   if (trackCount > 0) {
     avgJitterBuffer /= trackCount;
     avgDecodeTime /= trackCount;
-  }
-  if (encoderCount > 0) {
-    avgEncodeTime /= encoderCount;
   }
 
   // Calculate estimated total end-to-end latency
   // RTT/2 gives one-way network latency
   const networkLatency = (networkStats?.rtt ?? 0) / 2;
-  const totalLatency = avgEncodeTime + networkLatency + avgJitterBuffer + avgDecodeTime;
+  const totalLatency = networkLatency + avgJitterBuffer + avgDecodeTime;
 
   // Position styles
   const positionStyles: Record<string, React.CSSProperties> = {
@@ -191,14 +180,6 @@ export function StatsOverlay({
       {expanded && (
         <div style={{ padding: '0 14px 12px 14px', borderTop: '1px solid #333' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', paddingTop: '10px' }}>
-            {/* Server-side encode time */}
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>Encode (server):</span>
-              <span style={{ color: getLatencyColor(avgEncodeTime) }}>
-                {formatMs(avgEncodeTime)}
-              </span>
-            </div>
-
             {/* Network one-way latency (RTT/2) */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: '#888' }}>Network (RTT/2):</span>
@@ -282,26 +263,23 @@ export function StatsOverlay({
             {/* Per-track stats */}
             {trackStats.size > 0 && (
               <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333', fontSize: '10px' }}>
-                <div style={{ color: '#666', marginBottom: '4px' }}>Streams</div>
-                {Array.from(trackStats.entries()).map(([name, stats]) => {
-                  const encoder = encoderStats.get(name);
-                  return (
-                    <div key={name} style={{ marginBottom: '4px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#aaa' }}>{name}:</span>
-                        <span style={{ color: '#0af' }}>
-                          {stats.width}x{stats.height} @ {stats.fps.toFixed(0)}fps
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
-                        <span style={{ color: '#666' }}>enc/jit/dec:</span>
-                        <span style={{ color: '#888' }}>
-                          {encoder ? formatMs(encoder.encodeTimeMs) : '---'} / {formatMs(stats.jitterBufferDelayMs || 0)} / {formatMs(stats.decodeTimeMs || 0)}
-                        </span>
-                      </div>
+                <div style={{ color: '#666', marginBottom: '4px' }}>Streams ({trackStats.size})</div>
+                {Array.from(trackStats.entries()).map(([name, stats]) => (
+                  <div key={name} style={{ marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#aaa' }}>{name}:</span>
+                      <span style={{ color: '#0af' }}>
+                        {stats.width}x{stats.height} @ {stats.fps.toFixed(0)}fps
+                      </span>
                     </div>
-                  );
-                })}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
+                      <span style={{ color: '#666' }}>jit/dec:</span>
+                      <span style={{ color: '#888' }}>
+                        {formatMs(stats.jitterBufferDelayMs || 0)} / {formatMs(stats.decodeTimeMs || 0)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

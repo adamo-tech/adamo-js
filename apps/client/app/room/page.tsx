@@ -29,8 +29,8 @@ export default function RoomPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [livekitToken, setLivekitToken] = useState<string | null>(null);
-  const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
+  const [signalingUrl, setSignalingUrl] = useState<string | null>(null);
+  const [signalingToken, setSignalingToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -161,9 +161,12 @@ export default function RoomPage() {
         }
         if (!resp.ok) throw new Error('Failed to get token');
         const data = await resp.json();
-        if (data.livekit_token && data.livekit_url) {
-          setLivekitToken(data.livekit_token);
-          setLivekitUrl(data.livekit_url);
+        // Support both old livekit format and new signaling format
+        const url = data.signaling_url || data.livekit_url;
+        const token = data.token || data.livekit_token;
+        if (url && token) {
+          setSignalingUrl(url);
+          setSignalingToken(token);
         }
       } catch (e) {
         console.error('Failed to get token:', e);
@@ -244,7 +247,7 @@ export default function RoomPage() {
     );
   }
 
-  if (!livekitToken || !livekitUrl) {
+  if (!signalingToken || !signalingUrl) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
         <div className="text-zinc-600 dark:text-zinc-400">Connecting to {selectedRoom.name}...</div>
@@ -254,19 +257,18 @@ export default function RoomPage() {
 
   return (
     <Teleoperate
-      config={{
-        serverIdentity: 'python-bot',
-        adaptiveStream: false,
-        dynacast: true,
-        videoCodec: 'h264',
-        playoutDelay: 0,
+      config={{ debug: true }}
+      signaling={{
+        serverUrl: signalingUrl,
+        roomId: selectedRoom.id,
+        token: signalingToken,
       }}
-      autoConnect={{ url: livekitUrl, token: livekitToken }}
+      autoConnect
     >
       <RoomContent roomName={selectedRoom.name} onDisconnect={() => {
         setSelectedRoom(null);
-        setLivekitToken(null);
-        setLivekitUrl(null);
+        setSignalingToken(null);
+        setSignalingUrl(null);
       }} />
     </Teleoperate>
   );

@@ -83,7 +83,7 @@ export class HeartbeatManager {
 
   // Private methods
 
-  private async sendHeartbeat(): Promise<void> {
+  private sendHeartbeat(): void {
     const state = this.getCurrentState();
 
     // Notify if state changed
@@ -92,11 +92,11 @@ export class HeartbeatManager {
       this.stateChangeCallbacks.forEach((cb) => cb(state));
     }
 
-    try {
-      await this.client.sendHeartbeat(state);
-    } catch (error) {
-      // Silently handle errors - server will detect missed heartbeats
-      console.debug('Heartbeat failed:', error);
+    // Send heartbeat via data channel (fire-and-forget)
+    const success = this.client.sendHeartbeat(state);
+    if (!success) {
+      // Data channel not ready - this is expected during connection setup
+      console.debug('Heartbeat failed - data channel not open');
     }
   }
 

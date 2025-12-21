@@ -12,7 +12,15 @@
  * - Safety heartbeat monitoring
  */
 
-import type { Room, RemoteTrackPublication, RemoteParticipant } from 'livekit-client';
+// Re-export WebRTC types
+export type {
+  SignalingConfig,
+  WebRTCConnectionState,
+  WebRTCConnectionCallbacks,
+} from './webrtc/types';
+
+// Re-export WebCodecs types
+export type { DecodedVideoFrame, WebCodecsConfig, WebCodecsStats } from './webcodecs/types';
 
 /**
  * Connection state for the Adamo client.
@@ -23,6 +31,7 @@ import type { Room, RemoteTrackPublication, RemoteParticipant } from 'livekit-cl
  * - `connected` → `reconnecting` (on network interruption)
  * - `reconnecting` → `connected` (on successful reconnection)
  * - Any state → `disconnected` (on disconnect call or fatal error)
+ * - Any state → `failed` (on unrecoverable error)
  *
  * @example
  * ```ts
@@ -33,7 +42,12 @@ import type { Room, RemoteTrackPublication, RemoteParticipant } from 'livekit-cl
  * });
  * ```
  */
-export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
+export type ConnectionState =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'reconnecting'
+  | 'failed';
 
 // ============================================================================
 // Adaptive Streaming Types
@@ -138,58 +152,120 @@ export enum HeartbeatState {
   HEARTBEAT_MISSING = 4,
 }
 
+// ============================================================================
+// Control Message Types (Data Channel)
+// ============================================================================
+
+/**
+ * Controller state for a single controller
+ */
+export interface ControllerState {
+  /** Analog axes values (-1 to 1) */
+  axes: number[];
+  /** Button states (0 or 1) */
+  buttons: number[];
+  /** XR controller position [x, y, z] (optional) */
+  position?: [number, number, number];
+  /** XR controller quaternion [w, x, y, z] (optional) */
+  quaternion?: [number, number, number, number];
+  /** Controller handedness (optional) */
+  handedness?: 'left' | 'right';
+}
+
+/**
+ * Control message sent over data channel
+ */
+export interface ControlMessage {
+  /** First controller state (e.g., left hand or primary gamepad) */
+  controller1?: ControllerState;
+  /** Second controller state (e.g., right hand or secondary gamepad) */
+  controller2?: ControllerState;
+  /** Message timestamp */
+  timestamp: number;
+}
+
+/**
+ * Heartbeat message sent over data channel
+ */
+export interface HeartbeatMessage {
+  type: 'heartbeat';
+  /** Safety state */
+  state: HeartbeatState;
+  /** Message timestamp */
+  timestamp: number;
+}
+
+// ============================================================================
+// Client Configuration
+// ============================================================================
+
 /**
  * Configuration options for the Adamo client.
  *
  * @example
  * ```ts
  * const client = new AdamoClient({
- *   serverIdentity: 'forklift-01',
- *   videoCodec: 'h264',
- *   playoutDelay: -0.1, // Minimum buffering for low latency
+ *   debug: true,
+ *   useWebCodecs: true, // Enable ultra-low-latency decoding
+ * });
+ *
+ * await client.connect({
+ *   serverUrl: 'wss://relay.example.com',
+ *   roomId: 'robot-1',
+ *   token: 'jwt...',
  * });
  * ```
  */
 export interface AdamoClientConfig {
   /**
-   * Server participant identity to communicate with.
-   * This should match the identity of the robot's LiveKit participant.
-   * @default 'python-bot'
+   * Enable debug logging
+   * @default false
    */
-  serverIdentity?: string;
+  debug?: boolean;
 
   /**
-   * Enable adaptive streaming for automatic quality adjustment based on network conditions.
-   * @default true
+   * Enable WebCodecs for ultra-low-latency video decoding (~5-17ms decode time).
+   * When enabled, video is decoded via a Worker instead of the browser's built-in decoder.
+   * @default false
    */
-  adaptiveStream?: boolean;
+  useWebCodecs?: boolean;
 
   /**
-   * Enable dynacast to only send video when someone is subscribed.
-   * Improves efficiency in multi-participant scenarios.
-   * @default true
+   * H.264 codec profile for WebCodecs decoder
+   * @default 'avc1.42001f' (Baseline Level 3.1)
    */
-  dynacast?: boolean;
+  codecProfile?: string;
 
   /**
-   * Video codec preference for encoding/decoding.
-   * - `h264`: Best compatibility, hardware acceleration common
-   * - `vp8`: Open codec, good quality
-   * - `vp9`: Better compression than VP8
-   * - `av1`: Best compression, but higher CPU usage
-   * @default 'h264'
+   * Hardware acceleration preference for WebCodecs
+   * @default 'prefer-hardware'
    */
-  videoCodec?: 'h264' | 'vp8' | 'vp9' | 'av1';
+  hardwareAcceleration?: 'prefer-hardware' | 'prefer-software' | 'no-preference';
 
   /**
-   * Playout delay in seconds for video tracks.
-   * Controls the jitter buffer size:
-   * - `0`: Default browser behavior
-   * - Negative (e.g., `-0.1`): Request minimum buffering for lowest latency
-   * - Positive: Add extra buffer for smoother playback
-   * @default -0.1
+   * URL or Worker instance for the WebCodecs decoder worker.
+   *
+   * Different bundlers handle workers differently. You can provide:
+   * - A URL string pointing to the worker file
+   * - A URL object created with your bundler's worker import syntax
+   * - A Worker instance you've created yourself
+   *
+   * @example Next.js
+   * ```ts
+   * // In Next.js, create the worker yourself:
+   * const worker = new Worker(
+   *   new URL('@adamo-tech/core/webcodecs-worker', import.meta.url)
+   * );
+   * const client = new AdamoClient({ webCodecsWorker: worker });
+   * ```
+   *
+   * @example Vite
+   * ```ts
+   * import WorkerUrl from '@adamo-tech/core/webcodecs-worker?worker&url';
+   * const client = new AdamoClient({ webCodecsWorkerUrl: WorkerUrl });
+   * ```
    */
-  playoutDelay?: number;
+  webCodecsWorkerUrl?: string | URL | Worker;
 }
 
 /**
@@ -265,8 +341,8 @@ export interface JoypadConfig {
   /**
    * Maximum allowed video staleness in ms before blocking commands.
    *
-   * Safety feature: Commands are only sent if majority of video tracks
-   * have received a frame within this threshold. Prevents "flying blind"
+   * Safety feature: Commands are only sent if video track
+   * has received a frame within this threshold. Prevents "flying blind"
    * when video freezes.
    *
    * Set to 0 to disable this safety check.
@@ -275,19 +351,7 @@ export interface JoypadConfig {
   maxVideoStalenessMs?: number;
 
   /**
-   * Topic name for joy messages.
-   *
-   * Use different topics to support multiple controllers connected to
-   * the same computer, each controlling different robot functions.
-   *
-   * @default 'joy'
-   * @example
-   * ```ts
-   * // Driver controls movement
-   * { topic: 'joy_driver' }
-   * // Passenger controls camera/arm
-   * { topic: 'joy_passenger' }
-   * ```
+   * @deprecated No longer used - control messages go via single data channel
    */
   topic?: string;
 }
@@ -308,18 +372,16 @@ export interface JoyMessage {
  * Video track information
  */
 export interface VideoTrack {
-  /** Track name (matches ROS topic name without slashes) */
+  /** Track identifier (from WebRTC) */
+  id: string;
+  /** Track name/topic (e.g., 'front_camera', 'fork') - extracted from SDP or track label */
   name: string;
-  /** Track SID */
-  sid: string;
-  /** Whether the track is subscribed */
-  subscribed: boolean;
-  /** Whether the track is muted */
-  muted: boolean;
+  /** The underlying MediaStreamTrack */
+  mediaStreamTrack: MediaStreamTrack;
   /** Video dimensions if available */
   dimensions?: { width: number; height: number };
-  /** The underlying MediaStreamTrack */
-  mediaStreamTrack?: MediaStreamTrack;
+  /** Whether the track is active */
+  active: boolean;
 }
 
 /**
@@ -328,16 +390,20 @@ export interface VideoTrack {
 export interface AdamoClientEvents {
   /** Called when connection state changes */
   connectionStateChanged: (state: ConnectionState) => void;
-  /** Called when a new video track is available */
-  trackAvailable: (track: VideoTrack) => void;
-  /** Called when a track is removed */
-  trackRemoved: (trackName: string) => void;
-  /** Called when a track's subscription state changes */
-  trackSubscribed: (track: VideoTrack) => void;
-  /** Called when a track is unsubscribed */
-  trackUnsubscribed: (trackName: string) => void;
+  /** Called when video track is received */
+  videoTrackReceived: (track: VideoTrack) => void;
+  /** Called when video track ends */
+  videoTrackEnded: (trackId: string) => void;
+  /** Called when data channel opens */
+  dataChannelOpen: () => void;
+  /** Called when data channel closes */
+  dataChannelClose: () => void;
+  /** Called when data is received on data channel */
+  dataChannelMessage: (data: unknown) => void;
   /** Called when heartbeat state changes */
   heartbeatStateChanged: (state: HeartbeatState) => void;
+  /** Called when a decoded frame is ready (WebCodecs mode) */
+  decodedFrame: (frame: import('./webcodecs/types').DecodedVideoFrame) => void;
   /** Called on any error */
   error: (error: Error) => void;
   /** Called when map data is received (static or SLAM update) */
@@ -353,20 +419,11 @@ export interface AdamoClientEvents {
   /** Called when track streaming stats are updated */
   trackStatsUpdated: (stats: TrackStreamStats) => void;
   /** Called when stream quality changes */
-  qualityChanged: (quality: StreamQuality, trackName?: string) => void;
+  qualityChanged: (quality: StreamQuality) => void;
   /** Called when robot velocity state is updated */
   velocityStateChanged: (state: VelocityState) => void;
   /** Called when encoder stats are received from server */
   encoderStatsUpdated: (stats: EncoderStats) => void;
-}
-
-/**
- * Internal track subscription info
- */
-export interface TrackSubscription {
-  publication: RemoteTrackPublication;
-  participant: RemoteParticipant;
-  callbacks: Set<(track: VideoTrack) => void>;
 }
 
 // ============================================================================
@@ -478,7 +535,7 @@ export interface VelocityState {
 
 /**
  * Encoder statistics from the server (per-track)
- * Sent via LiveKit data channel on topic "stats/encoder"
+ * Sent via data channel on topic "stats/encoder"
  */
 export interface EncoderStats {
   /** Track name (e.g., "fork", "front_low") */

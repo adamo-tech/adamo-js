@@ -20,6 +20,7 @@ const DEFAULT_LABELS: Record<ConnectionState, string> = {
   connecting: 'Connecting...',
   connected: 'Connected',
   reconnecting: 'Reconnecting...',
+  failed: 'Connection Failed',
 };
 
 const DEFAULT_COLORS: Record<ConnectionState, string> = {
@@ -27,6 +28,7 @@ const DEFAULT_COLORS: Record<ConnectionState, string> = {
   connecting: '#f59e0b',
   connected: '#22c55e',
   reconnecting: '#f59e0b',
+  failed: '#dc2626',
 };
 
 /**

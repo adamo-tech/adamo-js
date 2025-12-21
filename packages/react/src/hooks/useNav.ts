@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { MapData, RobotPose, NavPath, NavGoal } from '@adamo-tech/core';
-import { useAdamoContext } from '../context';
+import { useTeleoperateContext } from '../context';
 
 /**
  * Hook to access Nav2 navigation data (map, robot pose, path)
@@ -44,7 +44,7 @@ export function useNav(): {
   /** Whether connected to the server */
   isConnected: boolean;
 } {
-  const { client, connectionState } = useAdamoContext();
+  const { client, connectionState } = useTeleoperateContext();
   const [map, setMap] = useState<MapData | null>(null);
   const [robotPose, setRobotPose] = useState<RobotPose | null>(null);
   const [path, setPath] = useState<NavPath | null>(null);

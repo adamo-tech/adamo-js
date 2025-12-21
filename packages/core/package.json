@@ -1,7 +1,7 @@
 {
   "name": "@adamo-tech/core",
-  "version": "1.0.1",
-  "description": "Core ADAMO client library for teleoperation via LiveKit",
+  "version": "2.0.0",
+  "description": "Core ADAMO client library for teleoperation via WebRTC",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -11,19 +11,21 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./webcodecs/decoder-worker": {
+      "types": "./dist/webcodecs/decoder-worker.d.ts",
+      "import": "./dist/webcodecs/decoder-worker.mjs",
+      "require": "./dist/webcodecs/decoder-worker.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/webcodecs/decoder-worker.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts src/webcodecs/decoder-worker.ts --format cjs,esm --dts --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "livekit-client": "^2.9.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -35,7 +37,8 @@
   },
   "keywords": [
     "adamo",
-    "livekit",
+    "webrtc",
+    "webcodecs",
     "ros",
     "robotics",
     "teleoperation"

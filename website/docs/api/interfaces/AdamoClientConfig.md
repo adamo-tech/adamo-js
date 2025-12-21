@@ -1,6 +1,6 @@
 # Interface: AdamoClientConfig
 
-Defined in: [types.ts:153](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L153)
+Defined in: [types.ts:219](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L219)
 
 Configuration options for the Adamo client.
 
@@ -8,98 +8,108 @@ Configuration options for the Adamo client.
 
 ```ts
 const client = new AdamoClient({
-  serverIdentity: 'forklift-01',
-  videoCodec: 'h264',
-  playoutDelay: -0.1, // Minimum buffering for low latency
+  debug: true,
+  useWebCodecs: true, // Enable ultra-low-latency decoding
+});
+
+await client.connect({
+  serverUrl: 'wss://relay.example.com',
+  roomId: 'robot-1',
+  token: 'jwt...',
 });
 ```
 
 ## Properties
 
-### adaptiveStream?
+### codecProfile?
 
-> `optional` **adaptiveStream**: `boolean`
+> `optional` **codecProfile**: `string`
 
-Defined in: [types.ts:165](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L165)
+Defined in: [types.ts:237](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L237)
 
-Enable adaptive streaming for automatic quality adjustment based on network conditions.
+H.264 codec profile for WebCodecs decoder
 
 #### Default
 
 ```ts
-true
+'avc1.42001f' (Baseline Level 3.1)
 ```
 
 ***
 
-### dynacast?
+### debug?
 
-> `optional` **dynacast**: `boolean`
+> `optional` **debug**: `boolean`
 
-Defined in: [types.ts:172](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L172)
+Defined in: [types.ts:224](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L224)
 
-Enable dynacast to only send video when someone is subscribed.
-Improves efficiency in multi-participant scenarios.
+Enable debug logging
 
 #### Default
 
 ```ts
-true
+false
 ```
 
 ***
 
-### playoutDelay?
+### hardwareAcceleration?
 
-> `optional` **playoutDelay**: `number`
+> `optional` **hardwareAcceleration**: `"prefer-hardware"` \| `"prefer-software"` \| `"no-preference"`
 
-Defined in: [types.ts:192](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L192)
+Defined in: [types.ts:243](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L243)
 
-Playout delay in seconds for video tracks.
-Controls the jitter buffer size:
-- `0`: Default browser behavior
-- Negative (e.g., `-0.1`): Request minimum buffering for lowest latency
-- Positive: Add extra buffer for smoother playback
+Hardware acceleration preference for WebCodecs
 
 #### Default
 
 ```ts
--0.1
+'prefer-hardware'
 ```
 
 ***
 
-### serverIdentity?
+### useWebCodecs?
 
-> `optional` **serverIdentity**: `string`
+> `optional` **useWebCodecs**: `boolean`
 
-Defined in: [types.ts:159](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L159)
+Defined in: [types.ts:231](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L231)
 
-Server participant identity to communicate with.
-This should match the identity of the robot's LiveKit participant.
+Enable WebCodecs for ultra-low-latency video decoding (~5-17ms decode time).
+When enabled, video is decoded via a Worker instead of the browser's built-in decoder.
 
 #### Default
 
 ```ts
-'robot'
+false
 ```
 
 ***
 
-### videoCodec?
+### webCodecsWorkerUrl?
 
-> `optional` **videoCodec**: `"h264"` \| `"vp8"` \| `"vp9"` \| `"av1"`
+> `optional` **webCodecsWorkerUrl**: `string` \| `URL` \| `Worker`
 
-Defined in: [types.ts:182](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L182)
+Defined in: [types.ts:268](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L268)
 
-Video codec preference for encoding/decoding.
-- `h264`: Best compatibility, hardware acceleration common
-- `vp8`: Open codec, good quality
-- `vp9`: Better compression than VP8
-- `av1`: Best compression, but higher CPU usage
+URL or Worker instance for the WebCodecs decoder worker.
 
-#### Default
+Different bundlers handle workers differently. You can provide:
+- A URL string pointing to the worker file
+- A URL object created with your bundler's worker import syntax
+- A Worker instance you've created yourself
+
+#### Examples
 
 ```ts
-'h264'
+// In Next.js, create the worker yourself:
+const worker = new Worker(
+  new URL('@adamo-tech/core/webcodecs-worker', import.meta.url)
+);
+const client = new AdamoClient({ webCodecsWorker: worker });
+```
+
+```ts
+import WorkerUrl from '@adamo-tech/core/webcodecs-worker?worker&url';
+const client = new AdamoClient({ webCodecsWorkerUrl: WorkerUrl });
 ```

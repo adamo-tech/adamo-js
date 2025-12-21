@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { HeartbeatManager, HeartbeatConfig, HeartbeatState } from '@adamo-tech/core';
-import { useAdamoContext } from '../context';
+import { useTeleoperateContext } from '../context';
 
 // Stabilize config object to prevent effect re-runs
 function useStableConfig(config?: HeartbeatConfig): HeartbeatConfig | undefined {
@@ -33,7 +33,7 @@ function useStableConfig(config?: HeartbeatConfig): HeartbeatConfig | undefined 
 export function useHeartbeat(config?: HeartbeatConfig): {
   state: HeartbeatState;
 } {
-  const { client, connectionState } = useAdamoContext();
+  const { client, connectionState } = useTeleoperateContext();
   const managerRef = useRef<HeartbeatManager | null>(null);
   const [state, setState] = useState<HeartbeatState>(HeartbeatState.OK);
   const stableConfig = useStableConfig(config);

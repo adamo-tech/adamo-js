@@ -1,5 +1,5 @@
 import type { AdamoClient } from './client';
-import type { JoypadConfig, JoyMessage } from './types';
+import type { JoypadConfig, JoyMessage, ControlMessage } from './types';
 
 const DEFAULT_CONFIG: Required<JoypadConfig> = {
   deviceId: 0,
@@ -9,7 +9,7 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
   stickyButtons: false,
   coalesceIntervalMs: 1,
   maxVideoStalenessMs: 100,
-  topic: 'joy',
+  topic: '', // deprecated, unused
 };
 
 /**
@@ -261,14 +261,14 @@ export class JoypadManager {
     return false;
   }
 
-  private async publishJoyMessage(buttons: number[], axes: number[]): Promise<void> {
+  private publishJoyMessage(buttons: number[], axes: number[]): void {
     const joyMessage: JoyMessage = {
       header: {
         stamp: {
           sec: Math.floor(Date.now() / 1000),
           nanosec: (Date.now() % 1000) * 1e6,
         },
-        frame_id: this.config.topic,
+        frame_id: 'joy',
       },
       axes,
       buttons,
@@ -277,11 +277,20 @@ export class JoypadManager {
     // Notify callbacks
     this.inputCallbacks.forEach((cb) => cb(joyMessage));
 
-    try {
-      await this.client.sendJoyData(axes, buttons, this.config.topic);
+    // Send via data channel using new ControlMessage format
+    const controlMessage: ControlMessage = {
+      controller1: {
+        axes,
+        buttons,
+      },
+      timestamp: Date.now(),
+    };
+
+    const success = this.client.sendControl(controlMessage);
+    if (success) {
       this.previousState = [...buttons, ...axes];
-    } catch (error) {
-      console.error('Joy publish failed:', error);
+    } else {
+      console.debug('Joy publish failed - data channel not open');
     }
   }
 }

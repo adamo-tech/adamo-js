@@ -141,12 +141,12 @@ export function MultiModeLayout({
     onModeChange?.(modes[index], index);
   }, [modeIndex, canSwitchMode, onModeBlocked, modes, onModeChange, blockedWarningDuration]);
 
-  // Default cell renderer
+  // Default cell renderer - shows video feed for the specified track/topic
   const defaultRenderCell = (topic: string | null): ReactNode => {
     if (topic) {
       return (
         <>
-          <VideoFeed topic={topic} />
+          <VideoFeed trackName={topic} />
           <div style={styles.label}>{topic}</div>
         </>
       );

@@ -1,41 +1,51 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import type { VideoTrack } from '@adamo-tech/core';
-import { useAdamoContext } from '../context';
+import { useTeleoperateContext } from '../context';
 
 /**
- * Hook to subscribe to a video track by topic name
+ * Hook to access a video track and attach it to a video element
  *
- * @param topicName - The topic name to subscribe to (e.g., 'fork', 'front')
+ * @param trackName - Optional track name/topic (e.g., 'front_camera'). If not provided, returns the first available track.
  * @returns The video track (if available) and a ref callback for the video element
  *
  * @example
  * ```tsx
- * function CameraView({ topic }: { topic: string }) {
- *   const { track, videoRef } = useVideoTrack(topic);
+ * // Get the first available track
+ * function CameraView() {
+ *   const { track, videoRef } = useVideoTrack();
+ *   return <video ref={videoRef} autoPlay playsInline muted />;
+ * }
  *
- *   return (
- *     <div>
- *       {track ? (
- *         <video ref={videoRef} autoPlay playsInline muted />
- *       ) : (
- *         <p>Waiting for {topic}...</p>
- *       )}
- *     </div>
- *   );
+ * // Get a specific track by name
+ * function FrontCamera() {
+ *   const { track, videoRef } = useVideoTrack('front_camera');
+ *   return <video ref={videoRef} autoPlay playsInline muted />;
  * }
  * ```
  */
-export function useVideoTrack(topicName: string): {
+export function useVideoTrack(trackName?: string): {
   track: VideoTrack | null;
   videoRef: (element: HTMLVideoElement | null) => void;
+  /** All available track names */
+  availableTrackNames: string[];
 } {
-  const { client, connectionState } = useAdamoContext();
-  const [track, setTrack] = useState<VideoTrack | null>(null);
+  const { videoTracks, videoTrack: firstTrack } = useTeleoperateContext();
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const trackRef = useRef<VideoTrack | null>(null);
 
+  // Get the requested track (by name or first track)
+  const track = useMemo(() => {
+    if (trackName) {
+      return videoTracks.get(trackName) ?? null;
+    }
+    return firstTrack;
+  }, [videoTracks, trackName, firstTrack]);
+
   // Keep trackRef in sync
   trackRef.current = track;
+
+  // Get available track names
+  const availableTrackNames = useMemo(() => Array.from(videoTracks.keys()), [videoTracks]);
 
   // Callback ref that attaches the stream when the video element is mounted
   const videoRef = useCallback((element: HTMLVideoElement | null) => {
@@ -65,40 +75,15 @@ export function useVideoTrack(topicName: string): {
     }
   }, []);
 
-  useEffect(() => {
-    if (!client || connectionState !== 'connected') {
-      setTrack(null);
-      return;
-    }
-
-    const unsubscribe = client.subscribe(topicName, (videoTrack) => {
-      setTrack(videoTrack);
-
-      // Attach to video element if already mounted
-      if (videoElementRef.current && videoTrack.mediaStreamTrack) {
-        const stream = new MediaStream([videoTrack.mediaStreamTrack]);
-        videoElementRef.current.srcObject = stream;
-      }
-    });
-
-    return () => {
-      unsubscribe();
-      setTrack(null);
-
-      // Clean up video element
-      if (videoElementRef.current) {
-        videoElementRef.current.srcObject = null;
-      }
-    };
-  }, [client, connectionState, topicName]);
-
   // Re-attach stream when track changes and video element exists
   useEffect(() => {
     if (videoElementRef.current && track?.mediaStreamTrack) {
       const stream = new MediaStream([track.mediaStreamTrack]);
       videoElementRef.current.srcObject = stream;
+    } else if (videoElementRef.current) {
+      videoElementRef.current.srcObject = null;
     }
   }, [track]);
 
-  return { track, videoRef };
+  return { track, videoRef, availableTrackNames };
 }

@@ -28,13 +28,14 @@ export { useAdamo } from './hooks/useAdamo';
 export { useHeartbeat } from './hooks/useHeartbeat';
 export { useJoypad } from './hooks/useJoypad';
 export { useVideoTrack } from './hooks/useVideoTrack';
+export { useWebCodecs } from './hooks/useWebCodecs';
 export { useNav } from './hooks/useNav';
 export { useCostmap } from './hooks/useCostmap';
 export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
 
 // Re-export core types for convenience
-export { HeartbeatState, StreamQuality } from '@adamo-tech/core';
+export { HeartbeatState, StreamQuality, isWebCodecsSupported } from '@adamo-tech/core';
 export type {
   ConnectionState,
   HeartbeatConfig,
@@ -42,6 +43,13 @@ export type {
   JoyMessage,
   VideoTrack,
   AdamoClientConfig,
+  // Signaling types
+  SignalingConfig,
+  // Control message types
+  ControlMessage,
+  ControllerState,
+  // WebCodecs types
+  DecodedVideoFrame,
   // Nav2 types
   MapData,
   CostmapData,

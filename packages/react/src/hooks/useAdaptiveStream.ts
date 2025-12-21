@@ -1,29 +1,24 @@
-import { useEffect, useState, useCallback } from 'react';
-import type { NetworkStats, TrackStreamStats, EncoderStats } from '@adamo-tech/core';
-import { StreamQuality } from '@adamo-tech/core';
-import { useAdamoContext } from '../context';
+import { useEffect, useState, useMemo } from 'react';
+import type { NetworkStats, TrackStreamStats } from '@adamo-tech/core';
+import { useTeleoperateContext } from '../context';
 
 /**
- * Hook to access adaptive streaming state
+ * Hook to access adaptive streaming state for all tracks
+ *
+ * @returns Network stats and per-track streaming statistics
  */
 export function useAdaptiveStream(): {
   networkStats: NetworkStats | null;
   trackStats: Map<string, TrackStreamStats>;
-  encoderStats: Map<string, EncoderStats>;
-  preferredQuality: StreamQuality;
-  setPreferredQuality: (quality: StreamQuality) => Promise<void>;
 } {
-  const { client, connectionState } = useAdamoContext();
+  const { client, connectionState } = useTeleoperateContext();
   const [networkStats, setNetworkStats] = useState<NetworkStats | null>(null);
   const [trackStats, setTrackStats] = useState<Map<string, TrackStreamStats>>(new Map());
-  const [encoderStats, setEncoderStats] = useState<Map<string, EncoderStats>>(new Map());
-  const [preferredQuality, setPreferredQualityState] = useState<StreamQuality>(StreamQuality.AUTO);
 
   useEffect(() => {
     if (!client || connectionState !== 'connected') {
       setNetworkStats(null);
       setTrackStats(new Map());
-      setEncoderStats(new Map());
       return;
     }
 
@@ -34,23 +29,10 @@ export function useAdaptiveStream(): {
     if (client.trackStats.size > 0) {
       setTrackStats(new Map(client.trackStats));
     }
-    if (client.encoderStats.size > 0) {
-      setEncoderStats(new Map(client.encoderStats));
-    }
-    setPreferredQualityState(client.preferredQuality);
 
     const unsubNetwork = client.on('networkStatsUpdated', setNetworkStats);
-
     const unsubTrack = client.on('trackStatsUpdated', (stats) => {
       setTrackStats((prev) => {
-        const next = new Map(prev);
-        next.set(stats.trackName, stats);
-        return next;
-      });
-    });
-
-    const unsubEncoder = client.on('encoderStatsUpdated', (stats) => {
-      setEncoderStats((prev) => {
         const next = new Map(prev);
         next.set(stats.trackName, stats);
         return next;
@@ -60,51 +42,54 @@ export function useAdaptiveStream(): {
     return () => {
       unsubNetwork();
       unsubTrack();
-      unsubEncoder();
     };
   }, [client, connectionState]);
-
-  const setPreferredQuality = useCallback(async (quality: StreamQuality) => {
-    if (!client) return;
-    setPreferredQualityState(quality);
-    await client.setPreferredQuality(quality);
-  }, [client]);
 
   return {
     networkStats,
     trackStats,
-    encoderStats,
-    preferredQuality,
-    setPreferredQuality,
   };
 }
 
 /**
  * Hook to get statistics for a specific video track
+ *
+ * @param trackName - Optional track name/topic. If not provided, returns stats for the first track.
+ * @returns The track statistics or null if not available
  */
-export function useTrackStats(trackName: string): TrackStreamStats | null {
-  const { client, connectionState } = useAdamoContext();
+export function useTrackStats(trackName?: string): TrackStreamStats | null {
+  const { client, connectionState } = useTeleoperateContext();
   const [stats, setStats] = useState<TrackStreamStats | null>(null);
 
+  // Get the first track name if not specified
+  const targetTrackName = useMemo(() => {
+    if (trackName) return trackName;
+    if (client?.trackStats.size) {
+      return client.trackStats.keys().next().value;
+    }
+    return null;
+  }, [trackName, client]);
+
   useEffect(() => {
-    if (!client || connectionState !== 'connected') {
+    if (!client || connectionState !== 'connected' || !targetTrackName) {
       setStats(null);
       return;
     }
 
-    const currentStats = client.getTrackStats(trackName);
+    // Initialize with current stats for this track
+    const currentStats = client.trackStats.get(targetTrackName);
     if (currentStats) {
       setStats(currentStats);
     }
 
     const unsub = client.on('trackStatsUpdated', (trackStats) => {
-      if (trackStats.trackName === trackName) {
+      if (trackStats.trackName === targetTrackName) {
         setStats(trackStats);
       }
     });
 
     return unsub;
-  }, [client, connectionState, trackName]);
+  }, [client, connectionState, targetTrackName]);
 
   return stats;
 }

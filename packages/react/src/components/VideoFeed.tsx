@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useCallback, CSSProperties } from 'react';
 import { useVideoTrack } from '../hooks/useVideoTrack';
 
 export interface VideoFeedProps {
-  /** The topic name to subscribe to (e.g., 'fork', 'front', 'left') */
-  topic: string;
+  /** Track name/topic to display (e.g., 'front_camera'). If not specified, shows the first available track. */
+  trackName?: string;
+  /** @deprecated Use trackName instead */
+  topic?: string;
   /** CSS class name for the video element */
   className?: string;
   /** Inline styles for the video element */
@@ -16,28 +18,35 @@ export interface VideoFeedProps {
   onResize?: (width: number, height: number) => void;
   /** Custom placeholder to show while loading */
   placeholder?: React.ReactNode;
-  /** Whether to show the topic name overlay */
+  /** Whether to show a label overlay */
   showLabel?: boolean;
-  /** Custom label text (defaults to topic name) */
+  /** Custom label text (defaults to track name) */
   label?: string;
 }
 
 /**
  * VideoFeed - Declarative video feed component
  *
- * Displays a video feed from a topic. Drop this inside Teleoperate
- * to subscribe to and display video from the server.
+ * Displays the video feed from the robot. Drop this inside Teleoperate
+ * to display video from the server.
  *
  * @example
  * ```tsx
- * <Teleoperate config={...} autoConnect={...}>
- *   <VideoFeed topic="front_camera" />
- *   <VideoFeed topic="rear_camera" />
+ * // Display the first available video track
+ * <Teleoperate signaling={...} autoConnect>
+ *   <VideoFeed />
+ * </Teleoperate>
+ *
+ * // Display a specific camera by name/topic
+ * <Teleoperate signaling={...} autoConnect>
+ *   <VideoFeed trackName="front_camera" showLabel />
+ *   <VideoFeed trackName="rear_camera" showLabel />
  * </Teleoperate>
  * ```
  */
 export function VideoFeed({
-  topic,
+  trackName,
+  topic, // deprecated alias
   className,
   style,
   mirror = false,
@@ -47,37 +56,42 @@ export function VideoFeed({
   showLabel = false,
   label,
 }: VideoFeedProps) {
-  const { track, videoRef: setVideoRef } = useVideoTrack(topic);
+  // Support deprecated 'topic' prop
+  const resolvedTrackName = trackName || topic;
+  const { track, videoRef: setVideoRef } = useVideoTrack(resolvedTrackName);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
 
   // Combined ref callback - must be before any conditional returns
-  const videoRef = useCallback((element: HTMLVideoElement | null) => {
-    videoElementRef.current = element;
-    if (element) {
-      element.muted = true; // Ensure muted for autoplay
+  const videoRef = useCallback(
+    (element: HTMLVideoElement | null) => {
+      videoElementRef.current = element;
+      if (element) {
+        element.muted = true; // Ensure muted for autoplay
 
-      // Low-latency optimizations
-      // Disable default buffering behavior
-      element.preload = 'none';
+        // Low-latency optimizations
+        // Disable default buffering behavior
+        element.preload = 'none';
 
-      // Hint to browser we want low latency (Chrome)
-      if ('latencyHint' in element) {
-        (element as any).latencyHint = 'interactive';
+        // Hint to browser we want low latency (Chrome)
+        if ('latencyHint' in element) {
+          (element as unknown as { latencyHint: string }).latencyHint = 'interactive';
+        }
+
+        // Disable any picture-in-picture which can add processing
+        if ('disablePictureInPicture' in element) {
+          element.disablePictureInPicture = true;
+        }
+
+        // Disable remote playback (Chromecast etc) which adds latency
+        if ('disableRemotePlayback' in element) {
+          (element as unknown as { disableRemotePlayback: boolean }).disableRemotePlayback = true;
+        }
       }
-
-      // Disable any picture-in-picture which can add processing
-      if ('disablePictureInPicture' in element) {
-        element.disablePictureInPicture = true;
-      }
-
-      // Disable remote playback (Chromecast etc) which adds latency
-      if ('disableRemotePlayback' in element) {
-        (element as any).disableRemotePlayback = true;
-      }
-    }
-    setVideoRef(element);
-  }, [setVideoRef]);
+      setVideoRef(element);
+    },
+    [setVideoRef]
+  );
 
   // Handle video events
   useEffect(() => {
@@ -144,27 +158,20 @@ export function VideoFeed({
               fontSize: '14px',
             }}
           >
-            Waiting for {topic}...
+            Waiting for video...
           </div>
         )}
       </div>
     );
   }
 
+  // Default label to track name if not provided
+  const displayLabel = label || track?.name;
+
   return (
     <div ref={containerRef} style={containerStyle} className={className}>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        style={videoStyle}
-      />
-      {showLabel && (
-        <span style={labelStyle}>
-          {label || topic}
-        </span>
-      )}
+      <video ref={videoRef} autoPlay playsInline muted style={videoStyle} />
+      {showLabel && displayLabel && <span style={labelStyle}>{displayLabel}</span>}
     </div>
   );
 }

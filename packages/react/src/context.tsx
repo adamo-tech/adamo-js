@@ -1,16 +1,33 @@
-import React, { createContext, useContext, useEffect, useState, useRef, useCallback, useMemo, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from 'react';
 import {
   AdamoClient,
   AdamoClientConfig,
   ConnectionState,
   VideoTrack,
+  SignalingConfig,
 } from '@adamo-tech/core';
 
 interface TeleoperateContextValue {
   client: AdamoClient | null;
   connectionState: ConnectionState;
-  availableTracks: VideoTrack[];
-  connect: (url: string, token: string) => Promise<void>;
+  /** All available video tracks (keyed by track name/topic) */
+  videoTracks: Map<string, VideoTrack>;
+  /** The first video track (for backwards compatibility) */
+  videoTrack: VideoTrack | null;
+  /** Whether the data channel is open and ready */
+  dataChannelOpen: boolean;
+  /** Connect to robot */
+  connect: (signaling: SignalingConfig) => Promise<void>;
+  /** Disconnect from robot */
   disconnect: () => void;
 }
 
@@ -20,17 +37,21 @@ export interface TeleoperateProps {
   children: ReactNode;
   /** Client configuration options */
   config?: AdamoClientConfig;
-  /** Auto-connect to this URL and token on mount */
-  autoConnect?: {
-    url: string;
-    token: string;
-  };
+  /** Signaling configuration for auto-connect */
+  signaling?: SignalingConfig;
+  /** Auto-connect on mount (requires signaling prop) */
+  autoConnect?: boolean;
 }
 
 // Stringify config for stable dependency comparison
 function useStableConfig(config?: AdamoClientConfig): AdamoClientConfig | undefined {
   const configJson = config ? JSON.stringify(config) : undefined;
   return useMemo(() => (configJson ? JSON.parse(configJson) : undefined), [configJson]);
+}
+
+function useStableSignaling(signaling?: SignalingConfig): SignalingConfig | undefined {
+  const signalingJson = signaling ? JSON.stringify(signaling) : undefined;
+  return useMemo(() => (signalingJson ? JSON.parse(signalingJson) : undefined), [signalingJson]);
 }
 
 /**
@@ -43,24 +64,32 @@ function useStableConfig(config?: AdamoClientConfig): AdamoClientConfig | undefi
  * ```tsx
  * function App() {
  *   return (
- *     <Teleoperate config={{ serverIdentity: 'robot-01' }}>
- *       <VideoFeed topic="front_camera" />
+ *     <Teleoperate
+ *       config={{ debug: true }}
+ *       signaling={{
+ *         serverUrl: 'wss://relay.example.com',
+ *         roomId: 'robot-1',
+ *         token: 'jwt...',
+ *       }}
+ *       autoConnect
+ *     >
+ *       <VideoFeed />
+ *       <HeartbeatMonitor />
+ *       <GamepadController />
  *     </Teleoperate>
  *   );
  * }
  * ```
  */
-export function Teleoperate({ children, config, autoConnect }: TeleoperateProps) {
+export function Teleoperate({ children, config, signaling, autoConnect }: TeleoperateProps) {
   const clientRef = useRef<AdamoClient | null>(null);
   const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
-  const [availableTracks, setAvailableTracks] = useState<VideoTrack[]>([]);
+  const [videoTracks, setVideoTracks] = useState<Map<string, VideoTrack>>(new Map());
+  const [dataChannelOpen, setDataChannelOpen] = useState(false);
 
   // Stabilize config to prevent reconnection on every render
   const stableConfig = useStableConfig(config);
-
-  // Extract primitives from autoConnect for stable dependencies
-  const autoConnectUrl = autoConnect?.url;
-  const autoConnectToken = autoConnect?.token;
+  const stableSignaling = useStableSignaling(signaling);
 
   // Initialize client (only when config actually changes)
   useEffect(() => {
@@ -70,33 +99,61 @@ export function Teleoperate({ children, config, autoConnect }: TeleoperateProps)
     // Subscribe to events
     const unsubConnectionState = client.on('connectionStateChanged', (state) => {
       setConnectionState(state);
+      // Clear tracks on disconnect
+      if (state === 'disconnected') {
+        setVideoTracks(new Map());
+      }
     });
 
-    const unsubTrackAvailable = client.on('trackAvailable', () => {
-      setAvailableTracks(client.getAvailableTracks());
+    const unsubVideoTrack = client.on('videoTrackReceived', (track) => {
+      setVideoTracks((prev) => {
+        const next = new Map(prev);
+        next.set(track.name, track);
+        return next;
+      });
     });
 
-    const unsubTrackRemoved = client.on('trackRemoved', () => {
-      setAvailableTracks(client.getAvailableTracks());
+    const unsubVideoEnded = client.on('videoTrackEnded', (trackId) => {
+      setVideoTracks((prev) => {
+        const next = new Map(prev);
+        // Find and remove track by ID
+        for (const [name, track] of next) {
+          if (track.id === trackId) {
+            next.delete(name);
+            break;
+          }
+        }
+        return next;
+      });
+    });
+
+    const unsubDataChannelOpen = client.on('dataChannelOpen', () => {
+      setDataChannelOpen(true);
+    });
+
+    const unsubDataChannelClose = client.on('dataChannelClose', () => {
+      setDataChannelOpen(false);
     });
 
     // Auto-connect if configured
-    if (autoConnectUrl && autoConnectToken) {
-      client.connect(autoConnectUrl, autoConnectToken).catch(console.error);
+    if (autoConnect && stableSignaling) {
+      client.connect(stableSignaling).catch(console.error);
     }
 
     return () => {
       unsubConnectionState();
-      unsubTrackAvailable();
-      unsubTrackRemoved();
+      unsubVideoTrack();
+      unsubVideoEnded();
+      unsubDataChannelOpen();
+      unsubDataChannelClose();
       client.disconnect();
       clientRef.current = null;
     };
-  }, [stableConfig, autoConnectUrl, autoConnectToken]);
+  }, [stableConfig, stableSignaling, autoConnect]);
 
-  const connect = useCallback(async (url: string, token: string) => {
+  const connect = useCallback(async (signalingConfig: SignalingConfig) => {
     if (clientRef.current) {
-      await clientRef.current.connect(url, token);
+      await clientRef.current.connect(signalingConfig);
     }
   }, []);
 
@@ -104,19 +161,20 @@ export function Teleoperate({ children, config, autoConnect }: TeleoperateProps)
     clientRef.current?.disconnect();
   }, []);
 
+  // Compute first track for backwards compatibility
+  const videoTrack = videoTracks.size > 0 ? videoTracks.values().next().value ?? null : null;
+
   const value: TeleoperateContextValue = {
     client: clientRef.current,
     connectionState,
-    availableTracks,
+    videoTracks,
+    videoTrack,
+    dataChannelOpen,
     connect,
     disconnect,
   };
 
-  return (
-    <TeleoperateContext.Provider value={value}>
-      {children}
-    </TeleoperateContext.Provider>
-  );
+  return <TeleoperateContext.Provider value={value}>{children}</TeleoperateContext.Provider>;
 }
 
 /**

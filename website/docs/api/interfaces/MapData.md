@@ -1,6 +1,6 @@
 # Interface: MapData
 
-Defined in: [types.ts:379](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L379)
+Defined in: [types.ts:436](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L436)
 
 Map data from Nav2 map_server (OccupancyGrid)
 
@@ -10,7 +10,7 @@ Map data from Nav2 map_server (OccupancyGrid)
 
 > **data**: `number`[]
 
-Defined in: [types.ts:391](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L391)
+Defined in: [types.ts:448](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L448)
 
 Raw occupancy grid data: -1=unknown, 0=free, 100=occupied
 
@@ -20,7 +20,7 @@ Raw occupancy grid data: -1=unknown, 0=free, 100=occupied
 
 > **height**: `number`
 
-Defined in: [types.ts:383](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L383)
+Defined in: [types.ts:440](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L440)
 
 Map height in cells
 
@@ -30,7 +30,7 @@ Map height in cells
 
 > **origin\_x**: `number`
 
-Defined in: [types.ts:387](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L387)
+Defined in: [types.ts:444](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L444)
 
 Origin X in world coordinates (meters)
 
@@ -40,7 +40,7 @@ Origin X in world coordinates (meters)
 
 > **origin\_y**: `number`
 
-Defined in: [types.ts:389](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L389)
+Defined in: [types.ts:446](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L446)
 
 Origin Y in world coordinates (meters)
 
@@ -50,7 +50,7 @@ Origin Y in world coordinates (meters)
 
 > **resolution**: `number`
 
-Defined in: [types.ts:385](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L385)
+Defined in: [types.ts:442](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L442)
 
 Resolution in meters per cell
 
@@ -60,6 +60,6 @@ Resolution in meters per cell
 
 > **width**: `number`
 
-Defined in: [types.ts:381](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L381)
+Defined in: [types.ts:438](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L438)
 
 Map width in cells

@@ -1,20 +1,21 @@
-import { useAdamoContext } from '../context';
-import type { AdamoClient, ConnectionState, VideoTrack } from '@adamo-tech/core';
+import { useTeleoperateContext } from '../context';
+import type { AdamoClient, ConnectionState, VideoTrack, SignalingConfig } from '@adamo-tech/core';
 
 /**
  * Hook to access the Adamo client
  *
- * @returns The Adamo client instance, connection state, and available tracks
+ * @returns The Adamo client instance, connection state, video track, and connection methods
  *
  * @example
  * ```tsx
  * function StatusIndicator() {
- *   const { connectionState, availableTracks } = useAdamo();
+ *   const { connectionState, videoTrack, dataChannelOpen } = useAdamo();
  *
  *   return (
  *     <div>
  *       <p>Status: {connectionState}</p>
- *       <p>Tracks: {availableTracks.length}</p>
+ *       <p>Video: {videoTrack ? 'Available' : 'No video'}</p>
+ *       <p>Data Channel: {dataChannelOpen ? 'Open' : 'Closed'}</p>
  *     </div>
  *   );
  * }
@@ -23,9 +24,10 @@ import type { AdamoClient, ConnectionState, VideoTrack } from '@adamo-tech/core'
 export function useAdamo(): {
   client: AdamoClient | null;
   connectionState: ConnectionState;
-  availableTracks: VideoTrack[];
-  connect: (url: string, token: string) => Promise<void>;
+  videoTrack: VideoTrack | null;
+  dataChannelOpen: boolean;
+  connect: (config: SignalingConfig) => Promise<void>;
   disconnect: () => void;
 } {
-  return useAdamoContext();
+  return useTeleoperateContext();
 }

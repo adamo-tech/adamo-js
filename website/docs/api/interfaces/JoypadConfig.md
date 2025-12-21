@@ -1,6 +1,6 @@
 # Interface: JoypadConfig
 
-Defined in: [types.ts:225](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L225)
+Defined in: [types.ts:301](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L301)
 
 Joypad (gamepad) configuration matching ROS joy_node parameters.
 
@@ -26,7 +26,7 @@ Maps W3C Gamepad API to ROS `sensor_msgs/Joy` format.
 
 > `optional` **autorepeatRate**: `number`
 
-Defined in: [types.ts:250](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L250)
+Defined in: [types.ts:326](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L326)
 
 Autorepeat rate in Hz for continuous input.
 Set to 0 to only send on change.
@@ -43,7 +43,7 @@ Set to 0 to only send on change.
 
 > `optional` **coalesceIntervalMs**: `number`
 
-Defined in: [types.ts:263](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L263)
+Defined in: [types.ts:339](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L339)
 
 Debounce interval in ms to coalesce rapid input changes.
 
@@ -59,7 +59,7 @@ Debounce interval in ms to coalesce rapid input changes.
 
 > `optional` **deadzone**: `number`
 
-Defined in: [types.ts:243](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L243)
+Defined in: [types.ts:319](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L319)
 
 Axis deadzone as a fraction (0.05 = 5%).
 Values within the deadzone are reported as 0.
@@ -76,7 +76,7 @@ Values within the deadzone are reported as 0.
 
 > `optional` **deviceId**: `number`
 
-Defined in: [types.ts:230](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L230)
+Defined in: [types.ts:306](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L306)
 
 Which gamepad to use by index (0 = first connected gamepad).
 
@@ -92,7 +92,7 @@ Which gamepad to use by index (0 = first connected gamepad).
 
 > `optional` **deviceName**: `string`
 
-Defined in: [types.ts:236](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L236)
+Defined in: [types.ts:312](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L312)
 
 Filter gamepad by name substring (e.g., 'Xbox', 'DualSense').
 Takes precedence over `deviceId` if specified.
@@ -103,12 +103,12 @@ Takes precedence over `deviceId` if specified.
 
 > `optional` **maxVideoStalenessMs**: `number`
 
-Defined in: [types.ts:275](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L275)
+Defined in: [types.ts:351](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L351)
 
 Maximum allowed video staleness in ms before blocking commands.
 
-Safety feature: Commands are only sent if majority of video tracks
-have received a frame within this threshold. Prevents "flying blind"
+Safety feature: Commands are only sent if video track
+has received a frame within this threshold. Prevents "flying blind"
 when video freezes.
 
 Set to 0 to disable this safety check.
@@ -125,7 +125,7 @@ Set to 0 to disable this safety check.
 
 > `optional` **stickyButtons**: `boolean`
 
-Defined in: [types.ts:257](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L257)
+Defined in: [types.ts:333](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L333)
 
 Enable toggle mode for buttons (press to toggle on/off).
 Useful for functions like headlights or horn.
@@ -138,28 +138,12 @@ false
 
 ***
 
-### topic?
+### ~~topic?~~
 
 > `optional` **topic**: `string`
 
-Defined in: [types.ts:292](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L292)
+Defined in: [types.ts:356](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L356)
 
-Topic name for joy messages.
+#### Deprecated
 
-Use different topics to support multiple controllers connected to
-the same computer, each controlling different robot functions.
-
-#### Default
-
-```ts
-'joy'
-```
-
-#### Example
-
-```ts
-// Driver controls movement
-{ topic: 'joy_driver' }
-// Passenger controls camera/arm
-{ topic: 'joy_passenger' }
-```
+No longer used - control messages go via single data channel

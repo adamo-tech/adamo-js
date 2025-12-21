@@ -1,16 +1,26 @@
 # Interface: VideoTrack
 
-Defined in: [types.ts:310](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L310)
+Defined in: [types.ts:374](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L374)
 
 Video track information
 
 ## Properties
 
+### active
+
+> **active**: `boolean`
+
+Defined in: [types.ts:384](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L384)
+
+Whether the track is active
+
+***
+
 ### dimensions?
 
 > `optional` **dimensions**: `object`
 
-Defined in: [types.ts:320](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L320)
+Defined in: [types.ts:382](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L382)
 
 Video dimensions if available
 
@@ -24,23 +34,23 @@ Video dimensions if available
 
 ***
 
-### mediaStreamTrack?
+### id
 
-> `optional` **mediaStreamTrack**: `MediaStreamTrack`
+> **id**: `string`
 
-Defined in: [types.ts:322](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L322)
+Defined in: [types.ts:376](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L376)
 
-The underlying MediaStreamTrack
+Track identifier (from WebRTC)
 
 ***
 
-### muted
+### mediaStreamTrack
 
-> **muted**: `boolean`
+> **mediaStreamTrack**: `MediaStreamTrack`
 
-Defined in: [types.ts:318](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L318)
+Defined in: [types.ts:380](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L380)
 
-Whether the track is muted
+The underlying MediaStreamTrack
 
 ***
 
@@ -48,26 +58,6 @@ Whether the track is muted
 
 > **name**: `string`
 
-Defined in: [types.ts:312](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L312)
+Defined in: [types.ts:378](https://github.com/adamo-tech/adamo-js/blob/30fc620efd2236a9998d965f14e083c25e46cc18/packages/core/src/types.ts#L378)
 
-Track name (matches ROS topic name without slashes)
-
-***
-
-### sid
-
-> **sid**: `string`
-
-Defined in: [types.ts:314](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L314)
-
-Track SID
-
-***
-
-### subscribed
-
-> **subscribed**: `boolean`
-
-Defined in: [types.ts:316](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L316)
-
-Whether the track is subscribed
+Track name/topic (e.g., 'front_camera', 'fork') - extracted from SDP or track label
