@@ -125,8 +125,9 @@ export default function Home() {
 
       const data = await response.json();
       setRoomToken(data.token);
-      // Store just the websocket path (not full URL) - library will combine with base
-      setWebsocketPath(data.websocket_url || '');
+      // Build full signaling WebSocket URL (same as client app)
+      const wsBase = signallingUrl.replace(/^http/, 'ws');
+      setWebsocketPath(`${wsBase}${data.websocket_url}`);
       setConnectionState('connecting');
       setIsConnected(true);
     } catch (err) {
@@ -301,11 +302,10 @@ export default function Home() {
             <Teleoperate
               config={{ debug: true }}
               signaling={{
-                serverUrl: signallingUrl.replace(/^http/, 'ws'),
+                serverUrl: websocketPath,
                 roomId: roomId,
                 token: roomToken,
                 iceServers: iceServers,
-                websocketPath: websocketPath,
               }}
               autoConnect
             >

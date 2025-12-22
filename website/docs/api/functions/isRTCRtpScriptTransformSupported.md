@@ -2,7 +2,7 @@
 
 > **isRTCRtpScriptTransformSupported**(): `boolean`
 
-Defined in: [webcodecs/transform.ts:20](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/webcodecs/transform.ts#L20)
+Defined in: [webcodecs/transform.ts:20](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/transform.ts#L20)
 
 Check if RTCRtpScriptTransform is supported
 

@@ -1,6 +1,6 @@
 # Class: HeartbeatManager
 
-Defined in: [heartbeat.ts:30](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/heartbeat.ts#L30)
+Defined in: [heartbeat.ts:30](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/heartbeat.ts#L30)
 
 HeartbeatManager - Manages heartbeat monitoring and sending to the server
 
@@ -28,7 +28,7 @@ heartbeat.stop();
 
 > **new HeartbeatManager**(`client`, `config`): `HeartbeatManager`
 
-Defined in: [heartbeat.ts:37](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/heartbeat.ts#L37)
+Defined in: [heartbeat.ts:37](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/heartbeat.ts#L37)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [heartbeat.ts:37](https://github.com/adamo-tech/adamo-js/blob/b6d4e1
 
 > **get** **state**(): [`HeartbeatState`](../enumerations/HeartbeatState.md)
 
-Defined in: [heartbeat.ts:45](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/heartbeat.ts#L45)
+Defined in: [heartbeat.ts:45](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/heartbeat.ts#L45)
 
 Get the current heartbeat state
 
@@ -66,7 +66,7 @@ Get the current heartbeat state
 
 > **onStateChange**(`callback`): () => `void`
 
-Defined in: [heartbeat.ts:77](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/heartbeat.ts#L77)
+Defined in: [heartbeat.ts:77](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/heartbeat.ts#L77)
 
 Register a callback for state changes
 
@@ -90,7 +90,7 @@ Register a callback for state changes
 
 > **start**(): `void`
 
-Defined in: [heartbeat.ts:52](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/heartbeat.ts#L52)
+Defined in: [heartbeat.ts:52](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/heartbeat.ts#L52)
 
 Start sending heartbeats
 
@@ -104,7 +104,7 @@ Start sending heartbeats
 
 > **stop**(): `void`
 
-Defined in: [heartbeat.ts:67](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/heartbeat.ts#L67)
+Defined in: [heartbeat.ts:67](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/heartbeat.ts#L67)
 
 Stop sending heartbeats
 

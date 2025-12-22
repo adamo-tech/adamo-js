@@ -1,6 +1,6 @@
 # Class: JoypadManager
 
-Defined in: [joypad.ts:55](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L55)
+Defined in: [joypad.ts:55](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L55)
 
 JoypadManager - Manages gamepad input and sends to the server
 
@@ -27,7 +27,7 @@ joypad.stop();
 
 > **new JoypadManager**(`client`, `config`): `JoypadManager`
 
-Defined in: [joypad.ts:66](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L66)
+Defined in: [joypad.ts:66](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L66)
 
 #### Parameters
 
@@ -49,7 +49,7 @@ Defined in: [joypad.ts:66](https://github.com/adamo-tech/adamo-js/blob/b6d4e18ac
 
 > **getGamepad**(): `Gamepad` \| `null`
 
-Defined in: [joypad.ts:107](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L107)
+Defined in: [joypad.ts:107](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L107)
 
 Get the currently connected gamepad (if any)
 
@@ -63,7 +63,7 @@ Get the currently connected gamepad (if any)
 
 > **isConnected**(): `boolean`
 
-Defined in: [joypad.ts:122](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L122)
+Defined in: [joypad.ts:122](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L122)
 
 Check if a gamepad is connected
 
@@ -77,7 +77,7 @@ Check if a gamepad is connected
 
 > **onInput**(`callback`): () => `void`
 
-Defined in: [joypad.ts:97](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L97)
+Defined in: [joypad.ts:97](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L97)
 
 Register a callback for joy input events
 
@@ -101,7 +101,7 @@ Register a callback for joy input events
 
 > **start**(): `void`
 
-Defined in: [joypad.ts:74](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L74)
+Defined in: [joypad.ts:74](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L74)
 
 Start polling gamepad and sending joy messages
 
@@ -115,7 +115,7 @@ Start polling gamepad and sending joy messages
 
 > **stop**(): `void`
 
-Defined in: [joypad.ts:83](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/joypad.ts#L83)
+Defined in: [joypad.ts:83](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/joypad.ts#L83)
 
 Stop polling and sending
 

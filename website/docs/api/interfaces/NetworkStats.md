@@ -1,6 +1,6 @@
 # Interface: NetworkStats
 
-Defined in: [types.ts:74](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L74)
+Defined in: [types.ts:74](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/types.ts#L74)
 
 Network statistics from WebRTC connection
 
@@ -10,7 +10,7 @@ Network statistics from WebRTC connection
 
 > **availableBandwidth**: `number`
 
-Defined in: [types.ts:80](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L80)
+Defined in: [types.ts:80](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/types.ts#L80)
 
 Available downlink bandwidth in bits per second
 
@@ -20,7 +20,7 @@ Available downlink bandwidth in bits per second
 
 > **jitter**: `number`
 
-Defined in: [types.ts:82](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L82)
+Defined in: [types.ts:82](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/types.ts#L82)
 
 Jitter in milliseconds
 
@@ -30,7 +30,7 @@ Jitter in milliseconds
 
 > **packetLoss**: `number`
 
-Defined in: [types.ts:78](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L78)
+Defined in: [types.ts:78](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/types.ts#L78)
 
 Packet loss percentage (0-100)
 
@@ -40,7 +40,7 @@ Packet loss percentage (0-100)
 
 > **rtt**: `number`
 
-Defined in: [types.ts:76](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L76)
+Defined in: [types.ts:76](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/types.ts#L76)
 
 Round-trip time in milliseconds
 
@@ -50,6 +50,6 @@ Round-trip time in milliseconds
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:84](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L84)
+Defined in: [types.ts:84](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/types.ts#L84)
 
 Timestamp of when these stats were collected
