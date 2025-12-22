@@ -22,6 +22,8 @@ export { StatsOverlay } from './components/StatsOverlay';
 export type { StatsOverlayProps, StatsOverlayThresholds } from './components/StatsOverlay';
 export { MultiModeLayout } from './components/MultiModeLayout';
 export type { MultiModeLayoutProps, LayoutMode } from './components/MultiModeLayout';
+export { XRTeleop } from './components/XRTeleop';
+export type { XRTeleopProps } from './components/XRTeleop';
 
 // Hooks (for advanced use cases)
 export { useAdamo } from './hooks/useAdamo';
