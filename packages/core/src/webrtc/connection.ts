@@ -207,8 +207,6 @@ export class WebRTCConnection {
     if (!wsToken && queryToken) {
       wsToken = queryToken;
     }
-    // Remove token from URL - we pass it via subprotocol only
-    url.searchParams.delete('token');
 
     const wsUrl = url.toString();
     this.log('Connecting to signaling:', { wsUrl, subprotocol: wsToken ? '[token]' : 'none' });
