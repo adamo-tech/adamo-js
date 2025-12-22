@@ -83,6 +83,7 @@ function useStableSignaling(signaling?: SignalingConfig): SignalingConfig | unde
  */
 export function Teleoperate({ children, config, signaling, autoConnect }: TeleoperateProps) {
   const clientRef = useRef<AdamoClient | null>(null);
+  const mountedRef = useRef(true);
   const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
   const [videoTracks, setVideoTracks] = useState<Map<string, VideoTrack>>(new Map());
   const [dataChannelOpen, setDataChannelOpen] = useState(false);
@@ -93,11 +94,15 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
 
   // Initialize client (only when config actually changes)
   useEffect(() => {
+    // Track mounted state for React Strict Mode compatibility
+    mountedRef.current = true;
+
     const client = new AdamoClient(stableConfig);
     clientRef.current = client;
 
-    // Subscribe to events
+    // Subscribe to events - guard against unmounted updates
     const unsubConnectionState = client.on('connectionStateChanged', (state) => {
+      if (!mountedRef.current) return;
       setConnectionState(state);
       // Clear tracks on disconnect
       if (state === 'disconnected') {
@@ -106,6 +111,7 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
     });
 
     const unsubVideoTrack = client.on('videoTrackReceived', (track) => {
+      if (!mountedRef.current) return;
       setVideoTracks((prev) => {
         const next = new Map(prev);
         next.set(track.name, track);
@@ -114,6 +120,7 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
     });
 
     const unsubVideoEnded = client.on('videoTrackEnded', (trackId) => {
+      if (!mountedRef.current) return;
       setVideoTracks((prev) => {
         const next = new Map(prev);
         // Find and remove track by ID
@@ -128,19 +135,28 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
     });
 
     const unsubDataChannelOpen = client.on('dataChannelOpen', () => {
+      if (!mountedRef.current) return;
       setDataChannelOpen(true);
     });
 
     const unsubDataChannelClose = client.on('dataChannelClose', () => {
+      if (!mountedRef.current) return;
       setDataChannelOpen(false);
     });
 
     // Auto-connect if configured
     if (autoConnect && stableSignaling) {
-      client.connect(stableSignaling).catch(console.error);
+      client.connect(stableSignaling).catch((err) => {
+        // Ignore errors if unmounted (expected during React Strict Mode cleanup)
+        if (mountedRef.current) {
+          console.error('Connection error:', err);
+        }
+      });
     }
 
     return () => {
+      // Mark as unmounted BEFORE cleanup to suppress error callbacks
+      mountedRef.current = false;
       unsubConnectionState();
       unsubVideoTrack();
       unsubVideoEnded();

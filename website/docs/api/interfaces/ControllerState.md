@@ -1,6 +1,6 @@
 # Interface: ControllerState
 
-Defined in: [types.ts:162](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L162)
+Defined in: [types.ts:162](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L162)
 
 Controller state for a single controller
 
@@ -10,7 +10,7 @@ Controller state for a single controller
 
 > **axes**: `number`[]
 
-Defined in: [types.ts:164](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L164)
+Defined in: [types.ts:164](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L164)
 
 Analog axes values (-1 to 1)
 
@@ -20,7 +20,7 @@ Analog axes values (-1 to 1)
 
 > **buttons**: `number`[]
 
-Defined in: [types.ts:166](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L166)
+Defined in: [types.ts:166](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L166)
 
 Button states (0 or 1)
 
@@ -30,7 +30,7 @@ Button states (0 or 1)
 
 > `optional` **handedness**: `"left"` \| `"right"`
 
-Defined in: [types.ts:172](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L172)
+Defined in: [types.ts:172](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L172)
 
 Controller handedness (optional)
 
@@ -40,7 +40,7 @@ Controller handedness (optional)
 
 > `optional` **position**: \[`number`, `number`, `number`\]
 
-Defined in: [types.ts:168](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L168)
+Defined in: [types.ts:168](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L168)
 
 XR controller position [x, y, z] (optional)
 
@@ -50,6 +50,6 @@ XR controller position [x, y, z] (optional)
 
 > `optional` **quaternion**: \[`number`, `number`, `number`, `number`\]
 
-Defined in: [types.ts:170](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L170)
+Defined in: [types.ts:170](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L170)
 
 XR controller quaternion [w, x, y, z] (optional)

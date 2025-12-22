@@ -1,6 +1,6 @@
 # Interface: NavGoal
 
-Defined in: [types.ts:502](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L502)
+Defined in: [types.ts:502](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L502)
 
 Navigation goal to send to Nav2
 
@@ -10,7 +10,7 @@ Navigation goal to send to Nav2
 
 > **theta**: `number`
 
-Defined in: [types.ts:508](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L508)
+Defined in: [types.ts:508](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L508)
 
 Target orientation in radians
 
@@ -20,7 +20,7 @@ Target orientation in radians
 
 > **x**: `number`
 
-Defined in: [types.ts:504](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L504)
+Defined in: [types.ts:504](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L504)
 
 Target X position in meters (map frame)
 
@@ -30,6 +30,6 @@ Target X position in meters (map frame)
 
 > **y**: `number`
 
-Defined in: [types.ts:506](https://github.com/adamo-tech/adamo-js/blob/c4a403ce719a192be99a38b5f4aeddb4ecba228f/packages/core/src/types.ts#L506)
+Defined in: [types.ts:506](https://github.com/adamo-tech/adamo-js/blob/b6d4e18acb8b3c0e8538bb9e7eed22aae66bce61/packages/core/src/types.ts#L506)
 
 Target Y position in meters (map frame)
