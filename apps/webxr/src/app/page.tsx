@@ -302,7 +302,8 @@ export default function Home() {
               signaling={{
                 serverUrl: signallingUrl,
                 roomId: roomId,
-                token: roomToken,
+                // Token is already included in websocketPath, don't pass separately
+                // to avoid duplicate token in URL query string and subprotocol
                 websocketPath: websocketPath || undefined,
                 iceServers: iceServers,
               }}
