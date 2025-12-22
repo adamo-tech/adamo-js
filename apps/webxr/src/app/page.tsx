@@ -148,9 +148,7 @@ export default function Home() {
 
   const handleConnectionStateChange = useCallback((state: string) => {
     setConnectionState(state);
-    if (state === 'disconnected' || state === 'failed') {
-      setIsConnected(false);
-    }
+    // Don't unmount Teleoperate on disconnect/fail - let it handle reconnection internally
   }, []);
 
   const handleError = useCallback((err: Error) => {
@@ -205,7 +203,7 @@ export default function Home() {
           /* Login Form */
           <div className="max-w-sm mx-auto mt-32">
             <div className="border border-neutral-800 rounded-lg p-8">
-              <h2 className="text-lg font-medium mb-6">Login (v3)</h2>
+              <h2 className="text-lg font-medium mb-6">Login (v4)</h2>
 
               {error && (
                 <div className="mb-4 p-3 border border-neutral-700 rounded text-neutral-300 text-sm">

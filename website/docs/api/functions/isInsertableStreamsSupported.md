@@ -2,7 +2,7 @@
 
 > **isInsertableStreamsSupported**(`receiver`): `boolean`
 
-Defined in: [webcodecs/transform.ts:27](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/transform.ts#L27)
+Defined in: [webcodecs/transform.ts:27](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/transform.ts#L27)
 
 Check if Insertable Streams are supported
 

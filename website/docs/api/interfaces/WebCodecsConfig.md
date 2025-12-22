@@ -1,6 +1,6 @@
 # Interface: WebCodecsConfig
 
-Defined in: [webcodecs/types.ts:10](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/types.ts#L10)
+Defined in: [webcodecs/types.ts:10](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/types.ts#L10)
 
 Configuration for the WebCodecs video decoder
 
@@ -10,7 +10,7 @@ Configuration for the WebCodecs video decoder
 
 > `optional` **codec**: `string`
 
-Defined in: [webcodecs/types.ts:12](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/types.ts#L12)
+Defined in: [webcodecs/types.ts:12](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/types.ts#L12)
 
 H.264 codec profile (e.g., 'avc1.42001f' for Baseline Level 3.1)
 
@@ -20,7 +20,7 @@ H.264 codec profile (e.g., 'avc1.42001f' for Baseline Level 3.1)
 
 > `optional` **hardwareAcceleration**: `"prefer-hardware"` \| `"prefer-software"` \| `"no-preference"`
 
-Defined in: [webcodecs/types.ts:20](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/types.ts#L20)
+Defined in: [webcodecs/types.ts:20](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/types.ts#L20)
 
 Hardware acceleration preference
 
@@ -30,7 +30,7 @@ Hardware acceleration preference
 
 > `optional` **height**: `number`
 
-Defined in: [webcodecs/types.ts:16](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/types.ts#L16)
+Defined in: [webcodecs/types.ts:16](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/types.ts#L16)
 
 Video height
 
@@ -40,7 +40,7 @@ Video height
 
 > `optional` **optimizeForLatency**: `boolean`
 
-Defined in: [webcodecs/types.ts:18](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/types.ts#L18)
+Defined in: [webcodecs/types.ts:18](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/types.ts#L18)
 
 Optimize for low latency decoding
 
@@ -50,6 +50,6 @@ Optimize for low latency decoding
 
 > `optional` **width**: `number`
 
-Defined in: [webcodecs/types.ts:14](https://github.com/adamo-tech/adamo-js/blob/03ecf08079e3bcaaf4e4ba8556a675a38aa12768/packages/core/src/webcodecs/types.ts#L14)
+Defined in: [webcodecs/types.ts:14](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/types.ts#L14)
 
 Video width
