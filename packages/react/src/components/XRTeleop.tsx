@@ -274,6 +274,9 @@ export function XRTeleop({
         <span className={`text-sm ${dataChannelOpen ? 'text-white' : 'text-neutral-500'}`}>
           Control: {dataChannelOpen ? 'connected' : 'waiting'}
         </span>
+        <span className={`text-sm ${xrSupported ? 'text-white' : 'text-neutral-500'}`}>
+          XR: {xrSupported === null ? 'checking' : xrSupported ? 'supported' : 'not supported'}
+        </span>
       </div>
     </div>
   );
