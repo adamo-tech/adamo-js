@@ -254,15 +254,13 @@ export function XRTeleop({
           autoPlay
         />
 
-        {/* Enter VR button - top right corner */}
-        {xrSupported && !inVR && (
-          <button
-            onClick={enterVR}
-            className="absolute top-4 right-4 px-4 py-2 bg-white/90 text-black hover:bg-white rounded font-medium transition-colors shadow-lg"
-          >
-            Enter VR
-          </button>
-        )}
+        {/* Enter VR button - always visible */}
+        <button
+          onClick={enterVR}
+          className="absolute top-4 right-4 px-4 py-2 bg-white/90 text-black hover:bg-white rounded font-medium transition-colors shadow-lg"
+        >
+          Enter VR
+        </button>
       </div>
       <canvas ref={canvasRef} className="hidden" />
 
