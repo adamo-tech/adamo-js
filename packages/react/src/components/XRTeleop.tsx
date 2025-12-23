@@ -257,7 +257,8 @@ export function XRTeleop({
         {/* Enter VR button - always visible */}
         <button
           onClick={enterVR}
-          className="absolute top-4 right-4 px-4 py-2 bg-white/90 text-black hover:bg-white rounded font-medium transition-colors shadow-lg"
+          style={{ zIndex: 9999, position: 'absolute', top: '16px', right: '16px' }}
+          className="px-4 py-2 bg-white text-black hover:bg-neutral-200 rounded font-medium transition-colors shadow-lg"
         >
           Enter VR
         </button>
