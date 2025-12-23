@@ -187,6 +187,14 @@ export function XRTeleop({
       if (client && dataChannelOpen) {
         const controllerData: Record<string, unknown> = {};
 
+        // Add head tracking data from viewer pose
+        const headPos = pose.transform.position;
+        const headRot = pose.transform.orientation;
+        controllerData.head = {
+          position: [headPos.x, headPos.y, headPos.z],
+          quaternion: [headRot.w, headRot.x, headRot.y, headRot.z],
+        };
+
         for (const inputSource of inputSourcesRef.current) {
           if (inputSource.gripSpace) {
             const gripPose = frame.getPose(inputSource.gripSpace, refSpace);
@@ -214,13 +222,9 @@ export function XRTeleop({
           }
         }
 
-        // Send if we have controller data
-        if (Object.keys(controllerData).length > 0) {
-          controllerData.timestamp = Date.now();
-          // VR controller data has extended format (button objects with pressed/value)
-          // Cast to ControlMessage for typing - the actual JSON is sent as-is
-          client.sendControl(controllerData as unknown as Parameters<typeof client.sendControl>[0]);
-        }
+        // Send tracking data (always have at least head pose)
+        controllerData.timestamp = Date.now();
+        client.sendControl(controllerData as unknown as Parameters<typeof client.sendControl>[0]);
       }
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, layer.framebuffer);

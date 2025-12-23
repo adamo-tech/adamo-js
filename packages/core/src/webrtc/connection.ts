@@ -323,11 +323,33 @@ export class WebRTCConnection {
 
     this.pc.onicecandidate = (event) => {
       if (event.candidate) {
+        // Log candidate type for debugging ICE selection
+        const candStr = event.candidate.candidate;
+        let candType = 'unknown';
+        if (candStr.includes('typ host')) candType = 'host';
+        else if (candStr.includes('typ srflx')) candType = 'srflx';
+        else if (candStr.includes('typ relay')) candType = 'relay';
+        this.log(`Sending ICE candidate (m-line ${event.candidate.sdpMLineIndex}, type=${candType}): ${candStr}`);
+
         this.sendSignaling({
           type: 'candidate',
           candidate: event.candidate.candidate,
           sdpMLineIndex: event.candidate.sdpMLineIndex,
         });
+      } else {
+        this.log('ICE gathering complete');
+      }
+    };
+
+    this.pc.onicegatheringstatechange = () => {
+      this.log('ICE gathering state:', this.pc?.iceGatheringState);
+    };
+
+    this.pc.oniceconnectionstatechange = () => {
+      this.log('ICE connection state:', this.pc?.iceConnectionState);
+      // Log selected candidate pair when connected
+      if (this.pc?.iceConnectionState === 'connected') {
+        this.logSelectedCandidatePair();
       }
     };
 
@@ -439,6 +461,13 @@ export class WebRTCConnection {
 
     try {
       if (candidate.candidate) {
+        // Log received candidate type for debugging
+        let candType = 'unknown';
+        if (candidate.candidate.includes('typ host')) candType = 'host';
+        else if (candidate.candidate.includes('typ srflx')) candType = 'srflx';
+        else if (candidate.candidate.includes('typ relay')) candType = 'relay';
+        this.log(`Received ICE candidate from robot (m-line ${candidate.sdpMLineIndex}, type=${candType}): ${candidate.candidate}`);
+
         await this.pc.addIceCandidate(candidate);
       }
     } catch (e) {
@@ -455,6 +484,49 @@ export class WebRTCConnection {
   private log(...args: unknown[]): void {
     if (this.config.debug) {
       console.log('[WebRTC]', ...args);
+    }
+  }
+
+  private async logSelectedCandidatePair(): Promise<void> {
+    if (!this.pc) return;
+
+    try {
+      const stats = await this.pc.getStats();
+      stats.forEach((report) => {
+        if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+          const localId = report.localCandidateId;
+          const remoteId = report.remoteCandidateId;
+
+          let localCandidate: RTCStatsReport | null = null;
+          let remoteCandidate: RTCStatsReport | null = null;
+
+          stats.forEach((r) => {
+            if (r.id === localId) localCandidate = r as unknown as RTCStatsReport;
+            if (r.id === remoteId) remoteCandidate = r as unknown as RTCStatsReport;
+          });
+
+          this.log('Selected ICE candidate pair:', {
+            local: localCandidate
+              ? {
+                  type: (localCandidate as unknown as { candidateType: string }).candidateType,
+                  address: (localCandidate as unknown as { address: string }).address,
+                  port: (localCandidate as unknown as { port: number }).port,
+                  protocol: (localCandidate as unknown as { protocol: string }).protocol,
+                }
+              : 'unknown',
+            remote: remoteCandidate
+              ? {
+                  type: (remoteCandidate as unknown as { candidateType: string }).candidateType,
+                  address: (remoteCandidate as unknown as { address: string }).address,
+                  port: (remoteCandidate as unknown as { port: number }).port,
+                  protocol: (remoteCandidate as unknown as { protocol: string }).protocol,
+                }
+              : 'unknown',
+          });
+        }
+      });
+    } catch (e) {
+      this.log('Failed to get candidate pair stats:', e);
     }
   }
 }

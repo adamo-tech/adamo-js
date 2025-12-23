@@ -277,14 +277,25 @@ export class JoypadManager {
     // Notify callbacks
     this.inputCallbacks.forEach((cb) => cb(joyMessage));
 
-    // Send via data channel using new ControlMessage format
+    // Build control message with all connected gamepads
     const controlMessage: ControlMessage = {
-      controller1: {
-        axes,
-        buttons,
-      },
       timestamp: Date.now(),
     };
+
+    // Poll all gamepads and add to message
+    const gamepads = navigator.getGamepads();
+    let controllerIndex = 1;
+
+    for (const gp of gamepads) {
+      if (gp && gp.connected) {
+        const mapped = this.mapToROSJoy(gp);
+        controlMessage[`controller${controllerIndex}` as `controller${number}`] = {
+          axes: mapped.axes,
+          buttons: mapped.buttons,
+        };
+        controllerIndex++;
+      }
+    }
 
     const success = this.client.sendControl(controlMessage);
     if (success) {

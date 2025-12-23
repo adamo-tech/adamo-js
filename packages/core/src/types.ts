@@ -180,6 +180,8 @@ export interface ControlMessage {
   controller1?: ControllerState;
   /** Second controller state (e.g., right hand or secondary gamepad) */
   controller2?: ControllerState;
+  /** Additional controllers (controller3, controller4, etc.) */
+  [key: `controller${number}`]: ControllerState | undefined;
   /** Message timestamp */
   timestamp: number;
 }
