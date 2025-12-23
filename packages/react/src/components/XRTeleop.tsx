@@ -244,26 +244,25 @@ export function XRTeleop({
 
   return (
     <div className={className}>
-      {/* Video preview with VR button overlay */}
-      <div className="relative">
-        <video
-          ref={videoRef}
-          className="w-full max-h-[60vh] bg-black rounded-lg"
-          playsInline
-          muted
-          autoPlay
-        />
+      {/* Video preview */}
+      <video
+        ref={videoRef}
+        className="w-full max-h-[60vh] bg-black rounded-lg"
+        playsInline
+        muted
+        autoPlay
+      />
+      <canvas ref={canvasRef} className="hidden" />
 
-        {/* Enter VR button - always visible */}
+      {/* Enter VR button - below video */}
+      {xrSupported && !inVR && (
         <button
           onClick={enterVR}
-          style={{ zIndex: 9999, position: 'absolute', top: '16px', right: '16px' }}
-          className="px-4 py-2 bg-white text-black hover:bg-neutral-200 rounded font-medium transition-colors shadow-lg"
+          className="w-full mt-4 px-4 py-3 bg-white/90 text-black hover:bg-white rounded font-medium transition-colors"
         >
           Enter VR
         </button>
-      </div>
-      <canvas ref={canvasRef} className="hidden" />
+      )}
 
       {/* Status indicators */}
       <div className="flex gap-4 items-center flex-wrap mt-4">
