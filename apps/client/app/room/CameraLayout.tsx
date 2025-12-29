@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback } from 'react'; 
 import { MultiModeLayout, VideoFeed, useVelocity, type LayoutMode } from '@adamo-tech/react';
 
 /**
