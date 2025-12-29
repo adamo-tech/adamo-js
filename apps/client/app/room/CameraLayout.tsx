@@ -14,7 +14,7 @@ const MODES: LayoutMode[] = [
     label: 'Travel',
     grid: [
       ['left', 'front_low', 'right'],
-      [null, 'fork', null],
+      ['back_top', 'fork', null],
     ],
   },
   {
@@ -22,7 +22,7 @@ const MODES: LayoutMode[] = [
     label: 'Pick and Place',
     grid: [
       ['right', 'fork', 'left'],
-      [null, 'fork_low', 'front_low'],
+      ['back_top', 'fork_low', 'front_low'],
     ],
   },
 ];
@@ -34,6 +34,7 @@ const CAMERA_LABELS: Record<string, string> = {
   front_low: 'Front Low',
   fork: 'Forks',
   fork_low: 'Fork Low',
+  back_top: 'Back Top',
 };
 
 /**
