@@ -48,6 +48,10 @@ export class WebRTCConnection {
   private _trackMetadata: TrackMetadata[] = [];
   /** Track count for fallback naming */
   private _trackCount = 0;
+  /** Whether remote description has been set (for ICE candidate queuing) */
+  private remoteDescriptionSet = false;
+  /** Queue for ICE candidates that arrive before remote description is set */
+  private pendingIceCandidates: { candidate: string; sdpMLineIndex: number }[] = [];
 
   constructor(config: WebRTCConnectionConfig) {
     this.config = config;
@@ -163,6 +167,8 @@ export class WebRTCConnection {
 
   private cleanup(): void {
     this.peerConnected = false;
+    this.remoteDescriptionSet = false;
+    this.pendingIceCandidates = [];
 
     if (this.reconnectTimeoutId) {
       clearTimeout(this.reconnectTimeoutId);
@@ -435,6 +441,16 @@ export class WebRTCConnection {
     try {
       // Set remote description (robot's offer)
       await this.pc.setRemoteDescription({ type: 'offer', sdp });
+      this.remoteDescriptionSet = true;
+
+      // Process any ICE candidates that arrived before the offer
+      if (this.pendingIceCandidates.length > 0) {
+        this.log(`Processing ${this.pendingIceCandidates.length} queued ICE candidates`);
+        for (const candidate of this.pendingIceCandidates) {
+          await this.addIceCandidate(candidate);
+        }
+        this.pendingIceCandidates = [];
+      }
 
       // Create and set local description (our answer)
       const answer = await this.pc.createAnswer();
@@ -458,18 +474,33 @@ export class WebRTCConnection {
     sdpMLineIndex: number;
   }): Promise<void> {
     if (!this.pc) return;
+    if (!candidate.candidate) return;
+
+    // Log received candidate type for debugging
+    let candType = 'unknown';
+    if (candidate.candidate.includes('typ host')) candType = 'host';
+    else if (candidate.candidate.includes('typ srflx')) candType = 'srflx';
+    else if (candidate.candidate.includes('typ relay')) candType = 'relay';
+    this.log(`Received ICE candidate from robot (m-line ${candidate.sdpMLineIndex}, type=${candType}): ${candidate.candidate}`);
+
+    // Queue candidates if remote description not yet set
+    if (!this.remoteDescriptionSet) {
+      this.log('Queuing ICE candidate (remote description not set yet)');
+      this.pendingIceCandidates.push(candidate);
+      return;
+    }
+
+    await this.addIceCandidate(candidate);
+  }
+
+  private async addIceCandidate(candidate: {
+    candidate: string;
+    sdpMLineIndex: number;
+  }): Promise<void> {
+    if (!this.pc) return;
 
     try {
-      if (candidate.candidate) {
-        // Log received candidate type for debugging
-        let candType = 'unknown';
-        if (candidate.candidate.includes('typ host')) candType = 'host';
-        else if (candidate.candidate.includes('typ srflx')) candType = 'srflx';
-        else if (candidate.candidate.includes('typ relay')) candType = 'relay';
-        this.log(`Received ICE candidate from robot (m-line ${candidate.sdpMLineIndex}, type=${candType}): ${candidate.candidate}`);
-
-        await this.pc.addIceCandidate(candidate);
-      }
+      await this.pc.addIceCandidate(candidate);
     } catch (e) {
       this.log('Failed to add ICE candidate:', e);
     }
