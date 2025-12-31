@@ -244,6 +244,16 @@ export function XRTeleop({
 
   return (
     <div className={className}>
+      {/* Enter VR button - above video for visibility */}
+      {!inVR && (
+        <button
+          onClick={enterVR}
+          className="w-full mb-4 px-4 py-3 bg-white text-black hover:bg-neutral-200 rounded font-medium transition-colors"
+        >
+          Enter VR
+        </button>
+      )}
+
       {/* Video preview */}
       <video
         ref={videoRef}
@@ -253,16 +263,6 @@ export function XRTeleop({
         autoPlay
       />
       <canvas ref={canvasRef} className="hidden" />
-
-      {/* Enter VR button - below video */}
-      {!inVR && (
-        <button
-          onClick={enterVR}
-          className="w-full mt-4 px-4 py-3 bg-white/90 text-black hover:bg-white rounded font-medium transition-colors"
-        >
-          Enter VR
-        </button>
-      )}
 
       {/* Status indicators */}
       <div className="flex gap-4 items-center flex-wrap mt-4">
