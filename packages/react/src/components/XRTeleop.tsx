@@ -255,7 +255,7 @@ export function XRTeleop({
       <canvas ref={canvasRef} className="hidden" />
 
       {/* Enter VR button - below video */}
-      {xrSupported && !inVR && (
+      {!inVR && (
         <button
           onClick={enterVR}
           className="w-full mt-4 px-4 py-3 bg-white/90 text-black hover:bg-white rounded font-medium transition-colors"
