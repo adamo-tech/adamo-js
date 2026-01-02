@@ -62,9 +62,6 @@ export interface WebRTCConnectionConfig extends WebRTCConnectionCallbacks {
  * Signaling message types from the server
  */
 export type SignalingMessageType =
-  | 'room_joined'
-  | 'ping'
-  | 'pong'
   | 'peer_connected'
   | 'preparing'
   | 'peer_disconnected'

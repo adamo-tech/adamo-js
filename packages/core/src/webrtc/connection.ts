@@ -56,8 +56,6 @@ export class WebRTCConnection {
   private isReconnecting = false;
   /** Whether we ever received an offer (robot was ready) */
   private receivedOffer = false;
-  /** Whether we've joined the room (received room_joined from server) */
-  private roomJoined = false;
 
   constructor(config: WebRTCConnectionConfig) {
     this.config = config;
@@ -131,7 +129,6 @@ export class WebRTCConnection {
       this.receivedOffer = false;
     }
     this.isReconnecting = false;
-    this.roomJoined = false;
 
     // Use provided ICE servers or defaults
     const iceServers = this.config.signaling.iceServers || [
@@ -182,7 +179,6 @@ export class WebRTCConnection {
     this.peerConnected = false;
     this.remoteDescriptionSet = false;
     this.pendingIceCandidates = [];
-    this.roomJoined = false;
 
     if (!preserveReconnectState) {
       this.receivedOffer = false;
@@ -259,7 +255,6 @@ export class WebRTCConnection {
           code: event.code,
           reason: event.reason,
           attempt: this.reconnectAttempts,
-          roomJoined: this.roomJoined,
           robotReady: this.receivedOffer,
           peerConnectionState: this.pc?.connectionState,
           dataChannelState: this.dataChannel?.readyState,
@@ -344,20 +339,6 @@ export class WebRTCConnection {
     this.log('Received:', type);
 
     switch (type) {
-      case 'room_joined':
-        // Server confirmed we've joined the room
-        this.roomJoined = true;
-        this.log('Joined room', {
-          role: (message as unknown as { role: string }).role,
-          peerConnected: (message as unknown as { peer_connected: boolean }).peer_connected,
-        });
-        break;
-
-      case 'ping':
-        // Server keepalive ping - respond with pong
-        this.sendSignaling({ type: 'pong' });
-        break;
-
       case 'peer_connected':
         // Robot connected to the room
         this.log('Robot connected');
