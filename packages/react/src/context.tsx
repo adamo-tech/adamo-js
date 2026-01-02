@@ -94,6 +94,7 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
 
   // Initialize client (only when config actually changes)
   useEffect(() => {
+    console.log('[Teleoperate] MOUNTING', { stableConfig, stableSignaling, autoConnect });
     // Track mounted state for React Strict Mode compatibility
     mountedRef.current = true;
 
@@ -155,6 +156,7 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
     }
 
     return () => {
+      console.log('[Teleoperate] UNMOUNTING');
       // Mark as unmounted BEFORE cleanup to suppress error callbacks
       mountedRef.current = false;
       unsubConnectionState();
