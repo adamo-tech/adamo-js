@@ -256,10 +256,22 @@ export class WebRTCConnection {
           reason: event.reason,
           attempt: this.reconnectAttempts,
           robotReady: this.receivedOffer,
+          peerConnectionState: this.pc?.connectionState,
+          dataChannelState: this.dataChannel?.readyState,
         });
 
-        if (this._connectionState === 'connected' || this._connectionState === 'connecting') {
-          // Attempt reconnection
+        // Don't reconnect if WebRTC peer connection is already working!
+        // Signaling is only needed for initial handshake - once connected, we're good.
+        const peerConnected = this.pc?.connectionState === 'connected';
+        const dataChannelOpen = this.dataChannel?.readyState === 'open';
+
+        if (peerConnected || dataChannelOpen) {
+          this.log('Signaling closed but WebRTC is connected - ignoring');
+          return;
+        }
+
+        if (this._connectionState === 'connecting') {
+          // Only reconnect if we were still trying to connect
           this.attemptReconnect();
         }
 
