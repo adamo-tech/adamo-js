@@ -41,7 +41,7 @@ export class WebRTCConnection {
   private config: WebRTCConnectionConfig;
   private _connectionState: WebRTCConnectionState = 'disconnected';
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private maxReconnectAttempts = 10;
   private reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private peerConnected = false;
   /** Track metadata from offer (index → name mapping) */
@@ -52,6 +52,10 @@ export class WebRTCConnection {
   private remoteDescriptionSet = false;
   /** Queue for ICE candidates that arrive before remote description is set */
   private pendingIceCandidates: { candidate: string; sdpMLineIndex: number }[] = [];
+  /** Whether this is a reconnection attempt (don't reset counter) */
+  private isReconnecting = false;
+  /** Whether we ever received an offer (robot was ready) */
+  private receivedOffer = false;
 
   constructor(config: WebRTCConnectionConfig) {
     this.config = config;
@@ -118,7 +122,13 @@ export class WebRTCConnection {
    */
   async connect(): Promise<void> {
     this.setConnectionState('connecting');
-    this.reconnectAttempts = 0;
+
+    // Only reset reconnect counter on fresh connections, not reconnection attempts
+    if (!this.isReconnecting) {
+      this.reconnectAttempts = 0;
+      this.receivedOffer = false;
+    }
+    this.isReconnecting = false;
 
     // Use provided ICE servers or defaults
     const iceServers = this.config.signaling.iceServers || [
@@ -165,10 +175,14 @@ export class WebRTCConnection {
     return this.pc.getReceivers().filter((r) => r.track?.kind === 'video');
   }
 
-  private cleanup(): void {
+  private cleanup(preserveReconnectState = false): void {
     this.peerConnected = false;
     this.remoteDescriptionSet = false;
     this.pendingIceCandidates = [];
+
+    if (!preserveReconnectState) {
+      this.receivedOffer = false;
+    }
 
     if (this.reconnectTimeoutId) {
       clearTimeout(this.reconnectTimeoutId);
@@ -237,17 +251,31 @@ export class WebRTCConnection {
       };
 
       this.ws.onclose = (event) => {
-        this.log('Signaling disconnected', { code: event.code, reason: event.reason });
+        this.log('Signaling disconnected', {
+          code: event.code,
+          reason: event.reason,
+          attempt: this.reconnectAttempts,
+          robotReady: this.receivedOffer,
+        });
 
         if (this._connectionState === 'connected' || this._connectionState === 'connecting') {
           // Attempt reconnection
           this.attemptReconnect();
         }
 
-        // Surface early close (e.g., invalid token/room) to UI
-        if (!this.peerConnected && this._connectionState === 'connecting') {
+        // Only surface error to UI if:
+        // 1. We've exhausted reconnection attempts, OR
+        // 2. Server sent explicit rejection (code 4xxx = application error)
+        const isApplicationError = event.code >= 4000 && event.code < 5000;
+        const isExhausted = this.reconnectAttempts >= this.maxReconnectAttempts;
+
+        if (isApplicationError) {
           this.config.onError?.(
-            new Error(`Signaling closed code=${event.code} reason=${event.reason || 'unknown'}`)
+            new Error(`Signaling rejected: code=${event.code} reason=${event.reason || 'unknown'}`)
+          );
+        } else if (isExhausted && !this.receivedOffer) {
+          this.config.onError?.(
+            new Error('Could not connect to robot - robot may be offline')
           );
         }
       };
@@ -265,12 +293,27 @@ export class WebRTCConnection {
     this.reconnectAttempts++;
     this.setConnectionState('reconnecting');
 
-    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts - 1), 10000);
-    this.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+    // Use longer delays when waiting for robot (never received offer)
+    // Robot initialization can take 6+ seconds, so be patient
+    let delay: number;
+    if (!this.receivedOffer) {
+      // Waiting for robot: 2s, 3s, 4s, 5s... up to 8s
+      delay = Math.min(2000 + this.reconnectAttempts * 1000, 8000);
+    } else {
+      // Had connection before, use standard exponential backoff
+      delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts - 1), 10000);
+    }
+
+    this.log(
+      `Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}, ` +
+        `robotReady=${this.receivedOffer})`
+    );
 
     this.reconnectTimeoutId = setTimeout(async () => {
       try {
-        this.cleanup();
+        // Mark as reconnecting so connect() doesn't reset the attempt counter
+        this.isReconnecting = true;
+        this.cleanup(true); // Preserve reconnect state
         await this.connect();
       } catch (e) {
         this.log('Reconnection failed:', e);
@@ -305,6 +348,8 @@ export class WebRTCConnection {
 
       case 'offer':
         // Robot sent an offer, we respond with answer
+        this.receivedOffer = true; // Mark that robot is ready
+        this.reconnectAttempts = 0; // Reset counter on successful offer
         // Store track metadata for naming tracks when they arrive
         if (message.tracks) {
           this._trackMetadata = message.tracks;
