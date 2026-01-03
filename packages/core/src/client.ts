@@ -24,6 +24,9 @@ import type {
   NetworkStats,
   TrackStreamStats,
   NavGoal,
+  PongMessage,
+  RobotStats,
+  LatencyBreakdown,
 } from './types';
 
 const DEFAULT_CONFIG: AdamoClientConfig & { debug: boolean; useWebCodecs: boolean; codecProfile: string; hardwareAcceleration: 'prefer-hardware' | 'prefer-software' | 'no-preference' } = {
@@ -88,6 +91,13 @@ export class AdamoClient {
   private lastFramesDecoded: Map<string, number> = new Map();
   private lastStatsTime = 0;
   private _lastFrameTime: Map<string, number> = new Map();
+
+  // Ping/pong latency measurement
+  private pingSequence = 0;
+  private pendingPings: Map<number, number> = new Map(); // id -> sentTimestamp
+  private _lastApplicationRtt = 0;
+  private _lastRobotStats: RobotStats | null = null;
+  private pingIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(config: AdamoClientConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config } as typeof this.config;
@@ -157,6 +167,20 @@ export class AdamoClient {
    */
   get useWebCodecs(): boolean {
     return this.webCodecsEnabled;
+  }
+
+  /**
+   * Get the last application-level RTT (ping/pong round-trip) in milliseconds
+   */
+  get applicationRtt(): number {
+    return this._lastApplicationRtt;
+  }
+
+  /**
+   * Get the last robot stats received (encoder latency, etc.)
+   */
+  get robotStats(): RobotStats | null {
+    return this._lastRobotStats;
   }
 
   /**
@@ -521,10 +545,12 @@ export class AdamoClient {
   private handleDataChannelOpen(): void {
     this._dataChannelOpen = true;
     this.emit('dataChannelOpen');
+    this.startPingMeasurement();
   }
 
   private handleDataChannelClose(): void {
     this._dataChannelOpen = false;
+    this.stopPingMeasurement();
     this.emit('dataChannelClose');
   }
 
@@ -534,6 +560,18 @@ export class AdamoClient {
     // Handle known message types
     if (typeof data === 'object' && data !== null) {
       const msg = data as Record<string, unknown>;
+
+      // Handle pong response for RTT measurement
+      if (msg.type === 'pong') {
+        this.handlePong(msg as unknown as PongMessage);
+        return;
+      }
+
+      // Handle robot stats (encoder latency)
+      if (msg.type === 'stats/robot') {
+        this.handleRobotStats(msg as unknown as RobotStats);
+        return;
+      }
 
       // Handle nav data, stats, etc.
       if (msg.type === 'nav/map') {
@@ -624,6 +662,100 @@ export class AdamoClient {
     if (this.config.debug) {
       console.log('[AdamoClient]', ...args);
     }
+  }
+
+  // ============================================================================
+  // Ping/Pong Latency Measurement
+  // ============================================================================
+
+  private startPingMeasurement(): void {
+    if (this.pingIntervalId) return;
+
+    // Send ping every second
+    this.pingIntervalId = setInterval(() => {
+      this.sendPing();
+    }, 1000);
+
+    // Send immediately
+    this.sendPing();
+  }
+
+  private stopPingMeasurement(): void {
+    if (this.pingIntervalId) {
+      clearInterval(this.pingIntervalId);
+      this.pingIntervalId = null;
+    }
+    this.pendingPings.clear();
+  }
+
+  private sendPing(): void {
+    if (!this.connection || !this._dataChannelOpen) return;
+
+    const id = ++this.pingSequence;
+    const timestamp = Date.now();
+    this.pendingPings.set(id, timestamp);
+
+    // Clean up old pending pings (> 5 seconds old)
+    const cutoff = timestamp - 5000;
+    for (const [pendingId, sentTime] of this.pendingPings) {
+      if (sentTime < cutoff) {
+        this.pendingPings.delete(pendingId);
+      }
+    }
+
+    this.connection.sendControl({
+      type: 'ping',
+      id,
+      timestamp,
+    } as unknown as ControlMessage);
+  }
+
+  private handlePong(pong: PongMessage): void {
+    const sentTime = this.pendingPings.get(pong.id);
+    if (sentTime) {
+      this.pendingPings.delete(pong.id);
+      this._lastApplicationRtt = Date.now() - sentTime;
+      this.updateLatencyBreakdown();
+    }
+  }
+
+  private handleRobotStats(stats: RobotStats): void {
+    this._lastRobotStats = stats;
+    this.emit('robotStatsUpdated', stats);
+    this.updateLatencyBreakdown();
+  }
+
+  private updateLatencyBreakdown(): void {
+    // Calculate average jitter buffer and decode time across all tracks
+    let avgJitterBuffer = 0;
+    let avgDecodeTime = 0;
+    let trackCount = 0;
+
+    for (const stats of this._trackStats.values()) {
+      avgJitterBuffer += stats.jitterBufferDelayMs || 0;
+      avgDecodeTime += stats.decodeTimeMs || 0;
+      trackCount++;
+    }
+
+    if (trackCount > 0) {
+      avgJitterBuffer /= trackCount;
+      avgDecodeTime /= trackCount;
+    }
+
+    const encoderLatency = this._lastRobotStats?.encoderLatencyMs ?? 0;
+    const applicationLatency = this._lastApplicationRtt / 2;
+
+    const breakdown: LatencyBreakdown = {
+      applicationRtt: this._lastApplicationRtt,
+      applicationLatency,
+      encoderLatency,
+      jitterBufferDelay: avgJitterBuffer,
+      decodeTime: avgDecodeTime,
+      totalLatency: encoderLatency + applicationLatency + avgJitterBuffer + avgDecodeTime,
+      timestamp: Date.now(),
+    };
+
+    this.emit('latencyBreakdownUpdated', breakdown);
   }
 
   // ============================================================================

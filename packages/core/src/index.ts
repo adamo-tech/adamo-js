@@ -57,6 +57,11 @@ export type {
   VelocityState,
   // Encoder stats types
   EncoderStats,
+  // Latency measurement types
+  PingMessage,
+  PongMessage,
+  RobotStats,
+  LatencyBreakdown,
 } from './types';
 
 // Enums (need separate export)

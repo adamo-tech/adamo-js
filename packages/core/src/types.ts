@@ -426,6 +426,10 @@ export interface AdamoClientEvents {
   velocityStateChanged: (state: VelocityState) => void;
   /** Called when encoder stats are received from server */
   encoderStatsUpdated: (stats: EncoderStats) => void;
+  /** Called when robot stats are received (encoder latency from robot) */
+  robotStatsUpdated: (stats: RobotStats) => void;
+  /** Called when latency breakdown is updated */
+  latencyBreakdownUpdated: (breakdown: LatencyBreakdown) => void;
 }
 
 // ============================================================================
@@ -553,5 +557,68 @@ export interface EncoderStats {
   /** Current encoding FPS */
   fps: number;
   /** Timestamp when these stats were collected (Unix ms) */
+  timestamp: number;
+}
+
+// ============================================================================
+// Latency Measurement Types (Fullstack RTT)
+// ============================================================================
+
+/**
+ * Ping message sent to the robot for RTT measurement
+ */
+export interface PingMessage {
+  type: 'ping';
+  /** Sequence number for matching ping/pong pairs */
+  id: number;
+  /** Client send timestamp (Unix ms) */
+  timestamp: number;
+}
+
+/**
+ * Pong response from the robot
+ */
+export interface PongMessage {
+  type: 'pong';
+  /** Echoed sequence number */
+  id: number;
+  /** Echoed client timestamp */
+  clientTimestamp: number;
+  /** Robot receive timestamp (Unix ms) */
+  robotTimestamp: number;
+}
+
+/**
+ * Robot-side statistics message
+ * Sent periodically by the robot over the data channel
+ */
+export interface RobotStats {
+  type: 'stats/robot';
+  /** Average encoder latency in milliseconds (capture to encoded) */
+  encoderLatencyMs: number;
+  /** Number of frames encoded in the stats period */
+  framesEncoded: number;
+  /** Timestamp when these stats were collected (Unix ms) */
+  timestamp: number;
+}
+
+/**
+ * Comprehensive end-to-end latency breakdown
+ * Combines measurements from robot, network, and client
+ */
+export interface LatencyBreakdown {
+  /** Application-level round-trip time (ping/pong) in ms */
+  applicationRtt: number;
+  /** One-way application latency (applicationRtt / 2) in ms */
+  applicationLatency: number;
+  /** Encoder latency on robot (capture to encoded) in ms */
+  encoderLatency: number;
+  /** Jitter buffer delay on client in ms */
+  jitterBufferDelay: number;
+  /** Video decode time on client in ms */
+  decodeTime: number;
+  /** Total estimated glass-to-glass latency in ms */
+  totalLatency: number;
+  /** Timestamp when this breakdown was computed (Unix ms) */
   timestamp: number;
 }

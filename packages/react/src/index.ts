@@ -35,6 +35,7 @@ export { useNav } from './hooks/useNav';
 export { useCostmap } from './hooks/useCostmap';
 export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
+export { useLatencyBreakdown, useRobotStats, useApplicationRtt } from './hooks/useLatency';
 
 // Re-export core types for convenience
 export { HeartbeatState, StreamQuality, isWebCodecsSupported } from '@adamo-tech/core';
@@ -65,4 +66,7 @@ export type {
   EncoderStats,
   // Velocity types
   VelocityState,
+  // Latency measurement types
+  LatencyBreakdown,
+  RobotStats,
 } from '@adamo-tech/core';

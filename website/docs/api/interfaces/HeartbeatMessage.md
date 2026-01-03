@@ -1,6 +1,6 @@
 # Interface: HeartbeatMessage
 
-Defined in: [types.ts:190](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L190)
+Defined in: [types.ts:192](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L192)
 
 Heartbeat message sent over data channel
 
@@ -10,7 +10,7 @@ Heartbeat message sent over data channel
 
 > **state**: [`HeartbeatState`](../enumerations/HeartbeatState.md)
 
-Defined in: [types.ts:193](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L193)
+Defined in: [types.ts:195](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L195)
 
 Safety state
 
@@ -20,7 +20,7 @@ Safety state
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:195](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L195)
+Defined in: [types.ts:197](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L197)
 
 Message timestamp
 
@@ -30,4 +30,4 @@ Message timestamp
 
 > **type**: `"heartbeat"`
 
-Defined in: [types.ts:191](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L191)
+Defined in: [types.ts:193](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L193)

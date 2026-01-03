@@ -1,6 +1,6 @@
 # Interface: AdaptiveStreamState
 
-Defined in: [types.ts:122](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L122)
+Defined in: [types.ts:122](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L122)
 
 Aggregated adaptive streaming state
 
@@ -10,7 +10,7 @@ Aggregated adaptive streaming state
 
 > **currentQuality**: [`StreamQuality`](../enumerations/StreamQuality.md)
 
-Defined in: [types.ts:128](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L128)
+Defined in: [types.ts:128](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L128)
 
 Current actual quality being received
 
@@ -20,7 +20,7 @@ Current actual quality being received
 
 > **enabled**: `boolean`
 
-Defined in: [types.ts:124](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L124)
+Defined in: [types.ts:124](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L124)
 
 Whether adaptive streaming is enabled
 
@@ -30,7 +30,7 @@ Whether adaptive streaming is enabled
 
 > **isAdapting**: `boolean`
 
-Defined in: [types.ts:134](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L134)
+Defined in: [types.ts:134](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L134)
 
 Whether quality is currently being adapted
 
@@ -40,7 +40,7 @@ Whether quality is currently being adapted
 
 > **networkStats**: [`NetworkStats`](NetworkStats.md) \| `null`
 
-Defined in: [types.ts:130](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L130)
+Defined in: [types.ts:130](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L130)
 
 Network statistics
 
@@ -50,7 +50,7 @@ Network statistics
 
 > **preferredQuality**: [`StreamQuality`](../enumerations/StreamQuality.md)
 
-Defined in: [types.ts:126](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L126)
+Defined in: [types.ts:126](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L126)
 
 Current preferred quality (user preference)
 
@@ -60,7 +60,7 @@ Current preferred quality (user preference)
 
 > **qualityReason**: `string`
 
-Defined in: [types.ts:136](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L136)
+Defined in: [types.ts:136](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L136)
 
 Reason for current quality level
 
@@ -70,6 +70,6 @@ Reason for current quality level
 
 > **trackStats**: `Map`\<`string`, [`TrackStreamStats`](TrackStreamStats.md)\>
 
-Defined in: [types.ts:132](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L132)
+Defined in: [types.ts:132](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L132)
 
 Per-track statistics

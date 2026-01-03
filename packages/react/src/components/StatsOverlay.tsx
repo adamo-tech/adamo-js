@@ -5,6 +5,7 @@ import { HeartbeatState } from '@adamo-tech/core';
 import { useHeartbeat } from '../hooks/useHeartbeat';
 import { useJoypad } from '../hooks/useJoypad';
 import { useAdaptiveStream } from '../hooks/useAdaptiveStream';
+import { useLatencyBreakdown } from '../hooks/useLatency';
 
 const stateLabels: Record<HeartbeatState, string> = {
   [HeartbeatState.OK]: 'OK',
@@ -82,6 +83,7 @@ export function StatsOverlay({
   const { state: heartbeatState } = useHeartbeat();
   const { isConnected: gamepadConnected } = useJoypad();
   const { networkStats, trackStats } = useAdaptiveStream();
+  const latencyBreakdown = useLatencyBreakdown();
 
   const thresholds = { ...DEFAULT_THRESHOLDS, ...userThresholds };
 
@@ -120,9 +122,10 @@ export function StatsOverlay({
   }
 
   // Calculate estimated total end-to-end latency
-  // RTT/2 gives one-way network latency
-  const networkLatency = (networkStats?.rtt ?? 0) / 2;
-  const totalLatency = networkLatency + avgJitterBuffer + avgDecodeTime;
+  // Use latency breakdown if available, otherwise fall back to RTT/2
+  const encoderLatency = latencyBreakdown?.encoderLatency ?? 0;
+  const networkLatency = latencyBreakdown?.applicationLatency ?? (networkStats?.rtt ?? 0) / 2;
+  const totalLatency = latencyBreakdown?.totalLatency ?? (networkLatency + avgJitterBuffer + avgDecodeTime);
 
   // Position styles
   const positionStyles: Record<string, React.CSSProperties> = {
@@ -180,11 +183,19 @@ export function StatsOverlay({
       {expanded && (
         <div style={{ padding: '0 14px 12px 14px', borderTop: '1px solid #333' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', paddingTop: '10px' }}>
-            {/* Network one-way latency (RTT/2) */}
+            {/* Encoder latency (robot-side) */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>Network (RTT/2):</span>
+              <span style={{ color: '#888' }}>Encoder (robot):</span>
+              <span style={{ color: getLatencyColor(encoderLatency) }}>
+                {formatMs(encoderLatency)} {latencyBreakdown ? '' : '(no data)'}
+              </span>
+            </div>
+
+            {/* Network one-way latency */}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Network:</span>
               <span style={{ color: getLatencyColor(networkLatency) }}>
-                {formatMs(networkLatency)} {networkStats ? '' : '(no stats)'}
+                {formatMs(networkLatency)} {latencyBreakdown || networkStats ? '' : '(no stats)'}
               </span>
             </div>
 

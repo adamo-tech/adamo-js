@@ -1,6 +1,6 @@
 # Interface: AttachTransformResult
 
-Defined in: [webcodecs/transform.ts:34](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/transform.ts#L34)
+Defined in: [webcodecs/transform.ts:34](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webcodecs/transform.ts#L34)
 
 Result of attaching a WebCodecs transform
 
@@ -10,7 +10,7 @@ Result of attaching a WebCodecs transform
 
 > `optional` **error**: `Error`
 
-Defined in: [webcodecs/transform.ts:37](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/transform.ts#L37)
+Defined in: [webcodecs/transform.ts:37](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webcodecs/transform.ts#L37)
 
 ***
 
@@ -18,7 +18,7 @@ Defined in: [webcodecs/transform.ts:37](https://github.com/adamo-tech/adamo-js/b
 
 > `optional` **method**: `"rtcRtpScriptTransform"` \| `"insertableStreams"`
 
-Defined in: [webcodecs/transform.ts:36](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/transform.ts#L36)
+Defined in: [webcodecs/transform.ts:36](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webcodecs/transform.ts#L36)
 
 ***
 
@@ -26,4 +26,4 @@ Defined in: [webcodecs/transform.ts:36](https://github.com/adamo-tech/adamo-js/b
 
 > **success**: `boolean`
 
-Defined in: [webcodecs/transform.ts:35](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/webcodecs/transform.ts#L35)
+Defined in: [webcodecs/transform.ts:35](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webcodecs/transform.ts#L35)

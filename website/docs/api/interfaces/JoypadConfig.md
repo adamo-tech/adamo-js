@@ -1,6 +1,6 @@
 # Interface: JoypadConfig
 
-Defined in: [types.ts:301](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L301)
+Defined in: [types.ts:303](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L303)
 
 Joypad (gamepad) configuration matching ROS joy_node parameters.
 
@@ -26,7 +26,7 @@ Maps W3C Gamepad API to ROS `sensor_msgs/Joy` format.
 
 > `optional` **autorepeatRate**: `number`
 
-Defined in: [types.ts:326](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L326)
+Defined in: [types.ts:328](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L328)
 
 Autorepeat rate in Hz for continuous input.
 Set to 0 to only send on change.
@@ -43,7 +43,7 @@ Set to 0 to only send on change.
 
 > `optional` **coalesceIntervalMs**: `number`
 
-Defined in: [types.ts:339](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L339)
+Defined in: [types.ts:341](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L341)
 
 Debounce interval in ms to coalesce rapid input changes.
 
@@ -59,7 +59,7 @@ Debounce interval in ms to coalesce rapid input changes.
 
 > `optional` **deadzone**: `number`
 
-Defined in: [types.ts:319](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L319)
+Defined in: [types.ts:321](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L321)
 
 Axis deadzone as a fraction (0.05 = 5%).
 Values within the deadzone are reported as 0.
@@ -76,7 +76,7 @@ Values within the deadzone are reported as 0.
 
 > `optional` **deviceId**: `number`
 
-Defined in: [types.ts:306](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L306)
+Defined in: [types.ts:308](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L308)
 
 Which gamepad to use by index (0 = first connected gamepad).
 
@@ -92,7 +92,7 @@ Which gamepad to use by index (0 = first connected gamepad).
 
 > `optional` **deviceName**: `string`
 
-Defined in: [types.ts:312](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L312)
+Defined in: [types.ts:314](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L314)
 
 Filter gamepad by name substring (e.g., 'Xbox', 'DualSense').
 Takes precedence over `deviceId` if specified.
@@ -103,7 +103,7 @@ Takes precedence over `deviceId` if specified.
 
 > `optional` **maxVideoStalenessMs**: `number`
 
-Defined in: [types.ts:351](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L351)
+Defined in: [types.ts:353](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L353)
 
 Maximum allowed video staleness in ms before blocking commands.
 
@@ -125,7 +125,7 @@ Set to 0 to disable this safety check.
 
 > `optional` **stickyButtons**: `boolean`
 
-Defined in: [types.ts:333](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L333)
+Defined in: [types.ts:335](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L335)
 
 Enable toggle mode for buttons (press to toggle on/off).
 Useful for functions like headlights or horn.
@@ -142,7 +142,7 @@ false
 
 > `optional` **topic**: `string`
 
-Defined in: [types.ts:356](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L356)
+Defined in: [types.ts:358](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L358)
 
 #### Deprecated
 

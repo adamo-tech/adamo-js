@@ -1,6 +1,6 @@
 # Interface: AdamoClientEvents
 
-Defined in: [types.ts:390](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L390)
+Defined in: [types.ts:392](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L392)
 
 Event callback types
 
@@ -10,7 +10,7 @@ Event callback types
 
 > **connectionStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:392](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L392)
+Defined in: [types.ts:394](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L394)
 
 Called when connection state changes
 
@@ -30,7 +30,7 @@ Called when connection state changes
 
 > **costmapData**: (`costmap`) => `void`
 
-Defined in: [types.ts:412](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L412)
+Defined in: [types.ts:414](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L414)
 
 Called when costmap data is received (local rolling window)
 
@@ -50,7 +50,7 @@ Called when costmap data is received (local rolling window)
 
 > **dataChannelClose**: () => `void`
 
-Defined in: [types.ts:400](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L400)
+Defined in: [types.ts:402](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L402)
 
 Called when data channel closes
 
@@ -64,7 +64,7 @@ Called when data channel closes
 
 > **dataChannelMessage**: (`data`) => `void`
 
-Defined in: [types.ts:402](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L402)
+Defined in: [types.ts:404](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L404)
 
 Called when data is received on data channel
 
@@ -84,7 +84,7 @@ Called when data is received on data channel
 
 > **dataChannelOpen**: () => `void`
 
-Defined in: [types.ts:398](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L398)
+Defined in: [types.ts:400](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L400)
 
 Called when data channel opens
 
@@ -98,7 +98,7 @@ Called when data channel opens
 
 > **decodedFrame**: (`frame`) => `void`
 
-Defined in: [types.ts:406](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L406)
+Defined in: [types.ts:408](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L408)
 
 Called when a decoded frame is ready (WebCodecs mode)
 
@@ -118,7 +118,7 @@ Called when a decoded frame is ready (WebCodecs mode)
 
 > **encoderStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:426](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L426)
+Defined in: [types.ts:428](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L428)
 
 Called when encoder stats are received from server
 
@@ -138,7 +138,7 @@ Called when encoder stats are received from server
 
 > **error**: (`error`) => `void`
 
-Defined in: [types.ts:408](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L408)
+Defined in: [types.ts:410](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L410)
 
 Called on any error
 
@@ -158,7 +158,7 @@ Called on any error
 
 > **heartbeatStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:404](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L404)
+Defined in: [types.ts:406](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L406)
 
 Called when heartbeat state changes
 
@@ -174,11 +174,31 @@ Called when heartbeat state changes
 
 ***
 
+### latencyBreakdownUpdated()
+
+> **latencyBreakdownUpdated**: (`breakdown`) => `void`
+
+Defined in: [types.ts:432](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L432)
+
+Called when latency breakdown is updated
+
+#### Parameters
+
+##### breakdown
+
+[`LatencyBreakdown`](LatencyBreakdown.md)
+
+#### Returns
+
+`void`
+
+***
+
 ### mapData()
 
 > **mapData**: (`map`) => `void`
 
-Defined in: [types.ts:410](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L410)
+Defined in: [types.ts:412](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L412)
 
 Called when map data is received (static or SLAM update)
 
@@ -198,7 +218,7 @@ Called when map data is received (static or SLAM update)
 
 > **navPath**: (`path`) => `void`
 
-Defined in: [types.ts:416](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L416)
+Defined in: [types.ts:418](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L418)
 
 Called when navigation path is updated
 
@@ -218,7 +238,7 @@ Called when navigation path is updated
 
 > **networkStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:418](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L418)
+Defined in: [types.ts:420](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L420)
 
 Called when network stats are updated
 
@@ -238,7 +258,7 @@ Called when network stats are updated
 
 > **qualityChanged**: (`quality`) => `void`
 
-Defined in: [types.ts:422](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L422)
+Defined in: [types.ts:424](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L424)
 
 Called when stream quality changes
 
@@ -258,7 +278,7 @@ Called when stream quality changes
 
 > **robotPose**: (`pose`) => `void`
 
-Defined in: [types.ts:414](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L414)
+Defined in: [types.ts:416](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L416)
 
 Called when robot pose is updated
 
@@ -274,11 +294,31 @@ Called when robot pose is updated
 
 ***
 
+### robotStatsUpdated()
+
+> **robotStatsUpdated**: (`stats`) => `void`
+
+Defined in: [types.ts:430](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L430)
+
+Called when robot stats are received (encoder latency from robot)
+
+#### Parameters
+
+##### stats
+
+[`RobotStats`](RobotStats.md)
+
+#### Returns
+
+`void`
+
+***
+
 ### trackStatsUpdated()
 
 > **trackStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:420](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L420)
+Defined in: [types.ts:422](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L422)
 
 Called when track streaming stats are updated
 
@@ -298,7 +338,7 @@ Called when track streaming stats are updated
 
 > **velocityStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:424](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L424)
+Defined in: [types.ts:426](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L426)
 
 Called when robot velocity state is updated
 
@@ -318,7 +358,7 @@ Called when robot velocity state is updated
 
 > **videoTrackEnded**: (`trackId`) => `void`
 
-Defined in: [types.ts:396](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L396)
+Defined in: [types.ts:398](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L398)
 
 Called when video track ends
 
@@ -338,7 +378,7 @@ Called when video track ends
 
 > **videoTrackReceived**: (`track`) => `void`
 
-Defined in: [types.ts:394](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L394)
+Defined in: [types.ts:396](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L396)
 
 Called when video track is received
 

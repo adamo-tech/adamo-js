@@ -1,6 +1,6 @@
 # Interface: AdamoClientConfig
 
-Defined in: [types.ts:219](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L219)
+Defined in: [types.ts:221](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L221)
 
 Configuration options for the Adamo client.
 
@@ -25,7 +25,7 @@ await client.connect({
 
 > `optional` **codecProfile**: `string`
 
-Defined in: [types.ts:237](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L237)
+Defined in: [types.ts:239](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L239)
 
 H.264 codec profile for WebCodecs decoder
 
@@ -41,7 +41,7 @@ H.264 codec profile for WebCodecs decoder
 
 > `optional` **debug**: `boolean`
 
-Defined in: [types.ts:224](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L224)
+Defined in: [types.ts:226](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L226)
 
 Enable debug logging
 
@@ -57,7 +57,7 @@ false
 
 > `optional` **hardwareAcceleration**: `"prefer-hardware"` \| `"prefer-software"` \| `"no-preference"`
 
-Defined in: [types.ts:243](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L243)
+Defined in: [types.ts:245](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L245)
 
 Hardware acceleration preference for WebCodecs
 
@@ -73,7 +73,7 @@ Hardware acceleration preference for WebCodecs
 
 > `optional` **useWebCodecs**: `boolean`
 
-Defined in: [types.ts:231](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L231)
+Defined in: [types.ts:233](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L233)
 
 Enable WebCodecs for ultra-low-latency video decoding (~5-17ms decode time).
 When enabled, video is decoded via a Worker instead of the browser's built-in decoder.
@@ -90,7 +90,7 @@ false
 
 > `optional` **webCodecsWorkerUrl**: `string` \| `URL` \| `Worker`
 
-Defined in: [types.ts:268](https://github.com/adamo-tech/adamo-js/blob/b375ddc8180651bb03b2378e0404c9955fd57e67/packages/core/src/types.ts#L268)
+Defined in: [types.ts:270](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L270)
 
 URL or Worker instance for the WebCodecs decoder worker.
 
