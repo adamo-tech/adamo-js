@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Teleoperate, XRTeleop, useTeleoperateContext } from '@adamo-tech/react';
+import { Teleoperate, XRTeleop, useTeleoperateContext, StatsOverlay } from '@adamo-tech/react';
 
 export default function Home() {
   // Auth state
@@ -311,6 +311,7 @@ export default function Home() {
                 onConnectionStateChange={handleConnectionStateChange}
               />
               <XRTeleop onError={handleError} />
+              <StatsOverlay position="bottom-left" defaultExpanded />
             </Teleoperate>
           </div>
         )}
