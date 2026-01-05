@@ -9,6 +9,7 @@ import {
   HeartbeatMonitor,
   GamepadController,
   StatsOverlay,
+  useJsonStreamCallback,
 } from '@adamo-tech/react';
 import { CameraLayout } from './CameraLayout';
 import { RobotStatusPanel } from './RobotStatusPanel';
@@ -275,6 +276,11 @@ export default function RoomPage() {
 
 function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnect: () => void }) {
   const { connectionState } = useAdamo();
+
+  // Debug: log data from "test" topic
+  useJsonStreamCallback('test', (data, timestamp) => {
+    console.log('[test topic]', data);
+  });
 
   if (connectionState !== 'connected') {
     return (
