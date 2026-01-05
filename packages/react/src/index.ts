@@ -32,6 +32,7 @@ export { useNav } from './hooks/useNav';
 export { useCostmap } from './hooks/useCostmap';
 export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
+export { useTopicData, useMultiTopicData, useTopicDataCallback } from './hooks/useTopicData';
 
 // Re-export core types for convenience
 export { HeartbeatState, StreamQuality } from '@adamo-tech/core';
@@ -55,4 +56,6 @@ export type {
   EncoderStats,
   // Velocity types
   VelocityState,
+  // Topic data types
+  TopicDataPayload,
 } from '@adamo-tech/core';

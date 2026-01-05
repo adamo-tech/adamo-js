@@ -11,6 +11,7 @@ import {
   StatsOverlay,
 } from '@adamo-tech/react';
 import { CameraLayout } from './CameraLayout';
+import { RobotStatusPanel } from './RobotStatusPanel';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -289,6 +290,9 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
       <GamepadController />
       <CameraLayout />
       <StatsOverlay />
+
+      {/* Demo: Robot status from arbitrary JSON topic */}
+      <RobotStatusPanel topic="robot_status" />
 
       {/* Room name indicator */}
       <div style={styles.roomIndicator}>

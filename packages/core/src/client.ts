@@ -23,6 +23,7 @@ import type {
   TrackStreamStats,
   VelocityState,
   EncoderStats,
+  TopicDataPayload,
 } from './types';
 import { StreamQuality } from './types';
 
@@ -573,7 +574,7 @@ export class AdamoClient {
       this.setConnectionState('connected');
     });
 
-    // Handle incoming nav data from server
+    // Handle incoming data from server
     this.room.on(RoomEvent.DataReceived, (payload, participant, kind, topic) => {
       console.log(`[Adamo] DataReceived: topic=${topic}, from=${participant?.identity}, size=${payload.byteLength}`);
 
@@ -583,7 +584,12 @@ export class AdamoClient {
         const decoder = new TextDecoder();
         const jsonStr = decoder.decode(payload);
         const data = JSON.parse(jsonStr);
+        const timestamp = Date.now();
 
+        // Emit generic topicData event for all topics
+        this.emit('topicData', { topic, data, timestamp } as TopicDataPayload);
+
+        // Also emit specific events for known topics
         switch (topic) {
           case 'nav/map':
             console.log(`[Adamo] Map received: ${data.width}x${data.height}`);
@@ -617,11 +623,9 @@ export class AdamoClient {
             this._encoderStats.set(encoderStats.trackName, encoderStats);
             this.emit('encoderStatsUpdated', encoderStats);
             break;
-          default:
-            console.log(`[Adamo] Unknown topic: ${topic}`);
         }
       } catch (e) {
-        console.error(`Error parsing nav data for topic ${topic}:`, e);
+        console.error(`Error parsing data for topic ${topic}:`, e);
       }
     });
   }

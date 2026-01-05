@@ -30,4 +30,6 @@ export {
   VelocityState,
   // Encoder stats types
   EncoderStats,
+  // Generic topic data types
+  TopicDataPayload,
 } from './types';

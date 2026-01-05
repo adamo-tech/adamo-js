@@ -323,6 +323,18 @@ export interface VideoTrack {
 }
 
 /**
+ * Payload for generic topic data events
+ */
+export interface TopicDataPayload<T = unknown> {
+  /** The topic name the data was received on */
+  topic: string;
+  /** The parsed JSON data */
+  data: T;
+  /** Timestamp when the data was received */
+  timestamp: number;
+}
+
+/**
  * Event callback types
  */
 export interface AdamoClientEvents {
@@ -358,6 +370,8 @@ export interface AdamoClientEvents {
   velocityStateChanged: (state: VelocityState) => void;
   /** Called when encoder stats are received from server */
   encoderStatsUpdated: (stats: EncoderStats) => void;
+  /** Called when any JSON data is received on a topic (generic handler) */
+  topicData: (payload: TopicDataPayload) => void;
 }
 
 /**
