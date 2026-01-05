@@ -1,6 +1,6 @@
 # Interface: EncoderStats
 
-Defined in: [types.ts:483](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L483)
+Defined in: [types.ts:497](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L497)
 
 Encoder statistics from the server (per-track)
 Sent via LiveKit data channel on topic "stats/encoder"
@@ -11,7 +11,7 @@ Sent via LiveKit data channel on topic "stats/encoder"
 
 > **encodeTimeMs**: `number`
 
-Defined in: [types.ts:487](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L487)
+Defined in: [types.ts:501](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L501)
 
 Time to encode a frame in milliseconds
 
@@ -21,7 +21,7 @@ Time to encode a frame in milliseconds
 
 > **fps**: `number`
 
-Defined in: [types.ts:495](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L495)
+Defined in: [types.ts:509](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L509)
 
 Current encoding FPS
 
@@ -31,7 +31,7 @@ Current encoding FPS
 
 > **framesDropped**: `number`
 
-Defined in: [types.ts:493](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L493)
+Defined in: [types.ts:507](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L507)
 
 Frames dropped in the stats period
 
@@ -41,7 +41,7 @@ Frames dropped in the stats period
 
 > **framesEncoded**: `number`
 
-Defined in: [types.ts:491](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L491)
+Defined in: [types.ts:505](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L505)
 
 Frames encoded in the stats period
 
@@ -51,7 +51,7 @@ Frames encoded in the stats period
 
 > **pipelineLatencyMs**: `number`
 
-Defined in: [types.ts:489](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L489)
+Defined in: [types.ts:503](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L503)
 
 Total pipeline latency (capture to encoded) in milliseconds
 
@@ -61,7 +61,7 @@ Total pipeline latency (capture to encoded) in milliseconds
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:497](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L497)
+Defined in: [types.ts:511](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L511)
 
 Timestamp when these stats were collected (Unix ms)
 
@@ -71,6 +71,6 @@ Timestamp when these stats were collected (Unix ms)
 
 > **trackName**: `string`
 
-Defined in: [types.ts:485](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L485)
+Defined in: [types.ts:499](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L499)
 
 Track name (e.g., "fork", "front_low")

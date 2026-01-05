@@ -1,6 +1,6 @@
 'use client';
 
-import { useTopicData } from '@adamo-tech/react';
+import { useJsonStream } from '@adamo-tech/react';
 
 /**
  * Example interface for robot status data
@@ -23,7 +23,7 @@ interface RobotStatus {
  * 2. Add <RobotStatusPanel /> inside a <Teleoperate> provider
  */
 export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string }) {
-  const { data, timestamp, isReceiving } = useTopicData<RobotStatus>(topic);
+  const { data, timestamp, isReceiving } = useJsonStream<RobotStatus>(topic);
 
   if (!isReceiving) {
     return (

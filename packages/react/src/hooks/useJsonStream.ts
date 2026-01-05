@@ -3,7 +3,7 @@ import { TopicDataPayload } from '@adamo-tech/core';
 import { useAdamoContext } from '../context';
 
 /**
- * Hook to subscribe to arbitrary JSON data on a specific topic
+ * Hook to subscribe to arbitrary JSON data streamed on a specific topic
  *
  * Use this hook to receive real-time JSON payloads from any ROS topic
  * that the server is streaming via LiveKit data channels.
@@ -21,7 +21,7 @@ import { useAdamoContext } from '../context';
  * }
  *
  * function StatusPanel() {
- *   const { data, timestamp } = useTopicData<RobotStatus>('robot_status');
+ *   const { data, timestamp } = useJsonStream<RobotStatus>('robot_status');
  *
  *   if (!data) return <div>Waiting for status...</div>;
  *
@@ -35,7 +35,7 @@ import { useAdamoContext } from '../context';
  * }
  * ```
  */
-export function useTopicData<T = unknown>(topic: string): {
+export function useJsonStream<T = unknown>(topic: string): {
   data: T | null;
   timestamp: number | null;
   isReceiving: boolean;
@@ -85,7 +85,7 @@ export function useTopicData<T = unknown>(topic: string): {
 }
 
 /**
- * Hook to subscribe to multiple topics at once
+ * Hook to subscribe to multiple JSON streams at once
  *
  * @param topics - Array of topic names to subscribe to
  * @returns Map of topic name to their latest data
@@ -93,11 +93,11 @@ export function useTopicData<T = unknown>(topic: string): {
  * @example
  * ```tsx
  * function MultiSensorPanel() {
- *   const topicData = useMultiTopicData(['sensor/imu', 'sensor/gps', 'sensor/lidar']);
+ *   const streams = useMultiJsonStream(['sensor/imu', 'sensor/gps', 'sensor/lidar']);
  *
  *   return (
  *     <div>
- *       {Array.from(topicData.entries()).map(([topic, { data, timestamp }]) => (
+ *       {Array.from(streams.entries()).map(([topic, { data, timestamp }]) => (
  *         <div key={topic}>
  *           <h3>{topic}</h3>
  *           <pre>{JSON.stringify(data, null, 2)}</pre>
@@ -108,7 +108,7 @@ export function useTopicData<T = unknown>(topic: string): {
  * }
  * ```
  */
-export function useMultiTopicData(topics: string[]): Map<string, { data: unknown; timestamp: number }> {
+export function useMultiJsonStream(topics: string[]): Map<string, { data: unknown; timestamp: number }> {
   const { client, connectionState } = useAdamoContext();
   const [dataMap, setDataMap] = useState<Map<string, { data: unknown; timestamp: number }>>(new Map());
   const topicsRef = useRef(topics);
@@ -145,7 +145,7 @@ export function useMultiTopicData(topics: string[]): Map<string, { data: unknown
 }
 
 /**
- * Hook to get a callback-based subscription for topic data
+ * Hook to get a callback-based subscription for a JSON stream
  *
  * Use this when you need more control over how data is processed,
  * or when you want to avoid re-renders on every message.
@@ -156,7 +156,7 @@ export function useMultiTopicData(topics: string[]): Map<string, { data: unknown
  * @example
  * ```tsx
  * function LoggingComponent() {
- *   useTopicDataCallback('debug/logs', (data) => {
+ *   useJsonStreamCallback('debug/logs', (data) => {
  *     console.log('Debug log:', data);
  *   });
  *
@@ -164,7 +164,7 @@ export function useMultiTopicData(topics: string[]): Map<string, { data: unknown
  * }
  * ```
  */
-export function useTopicDataCallback<T = unknown>(
+export function useJsonStreamCallback<T = unknown>(
   topic: string,
   callback: (data: T, timestamp: number) => void
 ): void {

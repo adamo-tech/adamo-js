@@ -1,6 +1,6 @@
 # Interface: AdamoClientEvents
 
-Defined in: [types.ts:328](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L328)
+Defined in: [types.ts:340](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L340)
 
 Event callback types
 
@@ -10,7 +10,7 @@ Event callback types
 
 > **connectionStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:330](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L330)
+Defined in: [types.ts:342](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L342)
 
 Called when connection state changes
 
@@ -30,7 +30,7 @@ Called when connection state changes
 
 > **costmapData**: (`costmap`) => `void`
 
-Defined in: [types.ts:346](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L346)
+Defined in: [types.ts:358](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L358)
 
 Called when costmap data is received (local rolling window)
 
@@ -50,7 +50,7 @@ Called when costmap data is received (local rolling window)
 
 > **encoderStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:360](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L360)
+Defined in: [types.ts:372](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L372)
 
 Called when encoder stats are received from server
 
@@ -70,7 +70,7 @@ Called when encoder stats are received from server
 
 > **error**: (`error`) => `void`
 
-Defined in: [types.ts:342](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L342)
+Defined in: [types.ts:354](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L354)
 
 Called on any error
 
@@ -90,7 +90,7 @@ Called on any error
 
 > **heartbeatStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:340](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L340)
+Defined in: [types.ts:352](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L352)
 
 Called when heartbeat state changes
 
@@ -110,7 +110,7 @@ Called when heartbeat state changes
 
 > **mapData**: (`map`) => `void`
 
-Defined in: [types.ts:344](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L344)
+Defined in: [types.ts:356](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L356)
 
 Called when map data is received (static or SLAM update)
 
@@ -130,7 +130,7 @@ Called when map data is received (static or SLAM update)
 
 > **navPath**: (`path`) => `void`
 
-Defined in: [types.ts:350](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L350)
+Defined in: [types.ts:362](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L362)
 
 Called when navigation path is updated
 
@@ -150,7 +150,7 @@ Called when navigation path is updated
 
 > **networkStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:352](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L352)
+Defined in: [types.ts:364](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L364)
 
 Called when network stats are updated
 
@@ -170,7 +170,7 @@ Called when network stats are updated
 
 > **qualityChanged**: (`quality`, `trackName?`) => `void`
 
-Defined in: [types.ts:356](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L356)
+Defined in: [types.ts:368](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L368)
 
 Called when stream quality changes
 
@@ -194,7 +194,7 @@ Called when stream quality changes
 
 > **robotPose**: (`pose`) => `void`
 
-Defined in: [types.ts:348](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L348)
+Defined in: [types.ts:360](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L360)
 
 Called when robot pose is updated
 
@@ -210,11 +210,31 @@ Called when robot pose is updated
 
 ***
 
+### topicData()
+
+> **topicData**: (`payload`) => `void`
+
+Defined in: [types.ts:374](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L374)
+
+Called when any JSON data is received on a topic (generic handler)
+
+#### Parameters
+
+##### payload
+
+[`TopicDataPayload`](TopicDataPayload.md)
+
+#### Returns
+
+`void`
+
+***
+
 ### trackAvailable()
 
 > **trackAvailable**: (`track`) => `void`
 
-Defined in: [types.ts:332](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L332)
+Defined in: [types.ts:344](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L344)
 
 Called when a new video track is available
 
@@ -234,7 +254,7 @@ Called when a new video track is available
 
 > **trackRemoved**: (`trackName`) => `void`
 
-Defined in: [types.ts:334](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L334)
+Defined in: [types.ts:346](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L346)
 
 Called when a track is removed
 
@@ -254,7 +274,7 @@ Called when a track is removed
 
 > **trackStatsUpdated**: (`stats`) => `void`
 
-Defined in: [types.ts:354](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L354)
+Defined in: [types.ts:366](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L366)
 
 Called when track streaming stats are updated
 
@@ -274,7 +294,7 @@ Called when track streaming stats are updated
 
 > **trackSubscribed**: (`track`) => `void`
 
-Defined in: [types.ts:336](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L336)
+Defined in: [types.ts:348](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L348)
 
 Called when a track's subscription state changes
 
@@ -294,7 +314,7 @@ Called when a track's subscription state changes
 
 > **trackUnsubscribed**: (`trackName`) => `void`
 
-Defined in: [types.ts:338](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L338)
+Defined in: [types.ts:350](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L350)
 
 Called when a track is unsubscribed
 
@@ -314,7 +334,7 @@ Called when a track is unsubscribed
 
 > **velocityStateChanged**: (`state`) => `void`
 
-Defined in: [types.ts:358](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/types.ts#L358)
+Defined in: [types.ts:370](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/types.ts#L370)
 
 Called when robot velocity state is updated
 

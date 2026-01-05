@@ -1,6 +1,6 @@
 # Class: AdamoClient
 
-Defined in: [client.ts:62](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L62)
+Defined in: [client.ts:63](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L63)
 
 Adamo Client - Core class for teleoperation via LiveKit
 
@@ -31,7 +31,7 @@ await client.subscribe('fork', (track) => {
 
 > **new AdamoClient**(`config`): `AdamoClient`
 
-Defined in: [client.ts:84](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L84)
+Defined in: [client.ts:85](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L85)
 
 #### Parameters
 
@@ -51,7 +51,7 @@ Defined in: [client.ts:84](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c
 
 > **get** **connectionState**(): [`ConnectionState`](../type-aliases/ConnectionState.md)
 
-Defined in: [client.ts:106](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L106)
+Defined in: [client.ts:107](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L107)
 
 Get the current connection state
 
@@ -67,7 +67,7 @@ Get the current connection state
 
 > **get** **encoderStats**(): `Map`\<`string`, [`EncoderStats`](../interfaces/EncoderStats.md)\>
 
-Defined in: [client.ts:141](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L141)
+Defined in: [client.ts:142](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L142)
 
 Get encoder statistics from the server (per-track)
 
@@ -83,7 +83,7 @@ Get encoder statistics from the server (per-track)
 
 > **get** **lastFrameTime**(): `Map`\<`string`, `number`\>
 
-Defined in: [client.ts:466](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L466)
+Defined in: [client.ts:467](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L467)
 
 Get the last frame time for all tracks
 Returns a map of track name to timestamp (ms) when the last frame was decoded
@@ -100,7 +100,7 @@ Returns a map of track name to timestamp (ms) when the last frame was decoded
 
 > **get** **liveKitRoom**(): `Room`
 
-Defined in: [client.ts:113](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L113)
+Defined in: [client.ts:114](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L114)
 
 Get the underlying LiveKit Room instance (for advanced use cases)
 
@@ -116,7 +116,7 @@ Get the underlying LiveKit Room instance (for advanced use cases)
 
 > **get** **networkStats**(): [`NetworkStats`](../interfaces/NetworkStats.md) \| `null`
 
-Defined in: [client.ts:127](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L127)
+Defined in: [client.ts:128](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L128)
 
 Get current network statistics
 
@@ -132,7 +132,7 @@ Get current network statistics
 
 > **get** **preferredQuality**(): [`StreamQuality`](../enumerations/StreamQuality.md)
 
-Defined in: [client.ts:155](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L155)
+Defined in: [client.ts:156](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L156)
 
 Get the preferred quality setting
 
@@ -148,7 +148,7 @@ Get the preferred quality setting
 
 > **get** **serverIdentity**(): `string`
 
-Defined in: [client.ts:120](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L120)
+Defined in: [client.ts:121](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L121)
 
 Get the server identity this client communicates with
 
@@ -164,7 +164,7 @@ Get the server identity this client communicates with
 
 > **get** **trackStats**(): `Map`\<`string`, [`TrackStreamStats`](../interfaces/TrackStreamStats.md)\>
 
-Defined in: [client.ts:134](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L134)
+Defined in: [client.ts:135](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L135)
 
 Get statistics for all tracks
 
@@ -178,7 +178,7 @@ Get statistics for all tracks
 
 > **connect**(`url`, `token`): `Promise`\<`void`\>
 
-Defined in: [client.ts:162](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L162)
+Defined in: [client.ts:163](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L163)
 
 Connect to the Adamo server
 
@@ -202,7 +202,7 @@ Connect to the Adamo server
 
 > **disconnect**(): `void`
 
-Defined in: [client.ts:201](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L201)
+Defined in: [client.ts:202](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L202)
 
 Disconnect from the server
 
@@ -216,7 +216,7 @@ Disconnect from the server
 
 > **getAvailableTracks**(): [`VideoTrack`](../interfaces/VideoTrack.md)[]
 
-Defined in: [client.ts:217](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L217)
+Defined in: [client.ts:218](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L218)
 
 Get all available video tracks from the server
 
@@ -230,7 +230,7 @@ Get all available video tracks from the server
 
 > **getEncoderStats**(`trackName`): [`EncoderStats`](../interfaces/EncoderStats.md) \| `undefined`
 
-Defined in: [client.ts:148](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L148)
+Defined in: [client.ts:149](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L149)
 
 Get encoder stats for a specific track
 
@@ -250,7 +250,7 @@ Get encoder stats for a specific track
 
 > **getLastFrameTime**(`trackName`): `number` \| `undefined`
 
-Defined in: [client.ts:473](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L473)
+Defined in: [client.ts:474](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L474)
 
 Get the last frame time for a specific track
 
@@ -270,7 +270,7 @@ Get the last frame time for a specific track
 
 > **getTrackStats**(`trackName`): [`TrackStreamStats`](../interfaces/TrackStreamStats.md) \| `undefined`
 
-Defined in: [client.ts:458](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L458)
+Defined in: [client.ts:459](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L459)
 
 Get statistics for a specific track
 
@@ -290,7 +290,7 @@ Get statistics for a specific track
 
 > **isVideoFresh**(`maxStalenessMs`): `boolean`
 
-Defined in: [client.ts:482](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L482)
+Defined in: [client.ts:483](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L483)
 
 Check if video feeds are fresh (majority have received frames within threshold)
 
@@ -314,7 +314,7 @@ true if majority of tracks are fresh, false otherwise
 
 > **off**\<`K`\>(`event`, `handler`): `void`
 
-Defined in: [client.ts:418](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L418)
+Defined in: [client.ts:419](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L419)
 
 Remove an event listener
 
@@ -344,7 +344,7 @@ Remove an event listener
 
 > **on**\<`K`\>(`event`, `handler`): () => `void`
 
-Defined in: [client.ts:402](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L402)
+Defined in: [client.ts:403](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L403)
 
 Add an event listener
 
@@ -378,7 +378,7 @@ Add an event listener
 
 > **registerRpcMethod**(`method`, `handler`): `void`
 
-Defined in: [client.ts:382](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L382)
+Defined in: [client.ts:383](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L383)
 
 Register an RPC method handler
 
@@ -402,7 +402,7 @@ Register an RPC method handler
 
 > **requestNavMap**(): `Promise`\<`void`\>
 
-Defined in: [client.ts:347](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L347)
+Defined in: [client.ts:348](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L348)
 
 Request the nav map from the server via RPC
 
@@ -416,7 +416,7 @@ Request the nav map from the server via RPC
 
 > **sendHeartbeat**(`state`): `Promise`\<`void`\>
 
-Defined in: [client.ts:327](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L327)
+Defined in: [client.ts:328](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L328)
 
 Send heartbeat to the server via RPC
 
@@ -436,7 +436,7 @@ Send heartbeat to the server via RPC
 
 > **sendJoyData**(`axes`, `buttons`, `topic`): `Promise`\<`void`\>
 
-Defined in: [client.ts:297](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L297)
+Defined in: [client.ts:298](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L298)
 
 Send joypad data to the server (fire-and-forget, lossy for low latency)
 
@@ -470,7 +470,7 @@ Topic name to publish on (default: 'joy')
 
 > **sendNavGoal**(`goal`): `Promise`\<`void`\>
 
-Defined in: [client.ts:364](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L364)
+Defined in: [client.ts:365](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L365)
 
 Send a navigation goal to Nav2
 
@@ -490,7 +490,7 @@ Send a navigation goal to Nav2
 
 > **setPreferredQuality**(`quality`): `Promise`\<`void`\>
 
-Defined in: [client.ts:428](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L428)
+Defined in: [client.ts:429](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L429)
 
 Set the preferred streaming quality
 This sends a preference to the server which will adapt the stream accordingly
@@ -513,7 +513,7 @@ The desired quality level (LOW, MEDIUM, HIGH, or AUTO)
 
 > **subscribe**(`topicName`, `callback`): () => `void`
 
-Defined in: [client.ts:236](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L236)
+Defined in: [client.ts:237](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L237)
 
 Subscribe to a video topic by name
 
@@ -547,7 +547,7 @@ Unsubscribe function
 
 > **unregisterRpcMethod**(`method`): `void`
 
-Defined in: [client.ts:395](https://github.com/adamo-tech/adamo-js/blob/2b7a4ae6c7345a05c380c1931c7621562e83adba/packages/core/src/client.ts#L395)
+Defined in: [client.ts:396](https://github.com/adamo-tech/adamo-js/blob/d8972d435fb7c91c1a84d66ef07259e210b24f3e/packages/core/src/client.ts#L396)
 
 Unregister an RPC method handler
 

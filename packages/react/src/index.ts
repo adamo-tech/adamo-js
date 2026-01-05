@@ -32,7 +32,7 @@ export { useNav } from './hooks/useNav';
 export { useCostmap } from './hooks/useCostmap';
 export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
-export { useTopicData, useMultiTopicData, useTopicDataCallback } from './hooks/useTopicData';
+export { useJsonStream, useMultiJsonStream, useJsonStreamCallback } from './hooks/useJsonStream';
 
 // Re-export core types for convenience
 export { HeartbeatState, StreamQuality } from '@adamo-tech/core';
