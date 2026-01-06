@@ -594,8 +594,12 @@ export interface PongMessage {
  */
 export interface RobotStats {
   type: 'stats/robot';
-  /** Average encoder latency in milliseconds (capture to encoded) */
+  /** Total encoder latency in milliseconds (capture + pipeline) */
   encoderLatencyMs: number;
+  /** Camera capture latency in milliseconds (ZED SDK internal) */
+  captureLatencyMs: number;
+  /** Pipeline processing latency in milliseconds (videoconvert, encoder, etc) */
+  pipelineLatencyMs: number;
   /** Number of frames encoded in the stats period */
   framesEncoded: number;
   /** Timestamp when these stats were collected (Unix ms) */
@@ -613,6 +617,10 @@ export interface LatencyBreakdown {
   applicationLatency: number;
   /** Encoder latency on robot (capture to encoded) in ms */
   encoderLatency: number;
+  /** Camera capture latency on robot (ZED SDK internal) in ms */
+  captureLatency: number;
+  /** Pipeline processing latency on robot (videoconvert, encoder, etc) in ms */
+  pipelineLatency: number;
   /** Jitter buffer delay on client in ms */
   jitterBufferDelay: number;
   /** Video decode time on client in ms */

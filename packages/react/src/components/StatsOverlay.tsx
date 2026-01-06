@@ -124,6 +124,8 @@ export function StatsOverlay({
   // Calculate estimated total end-to-end latency
   // Use latency breakdown if available, otherwise fall back to RTT/2
   const encoderLatency = latencyBreakdown?.encoderLatency ?? 0;
+  const captureLatency = latencyBreakdown?.captureLatency ?? 0;
+  const pipelineLatency = latencyBreakdown?.pipelineLatency ?? 0;
   const networkLatency = latencyBreakdown?.applicationLatency ?? (networkStats?.rtt ?? 0) / 2;
   const totalLatency = latencyBreakdown?.totalLatency ?? (networkLatency + avgJitterBuffer + avgDecodeTime);
 
@@ -183,16 +185,32 @@ export function StatsOverlay({
       {expanded && (
         <div style={{ padding: '0 14px 12px 14px', borderTop: '1px solid #333' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', paddingTop: '10px' }}>
-            {/* Encoder latency (robot-side) */}
+            {/* Robot-side latencies */}
+            <div style={{ color: '#666', marginBottom: '2px' }}>Robot</div>
+
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>Encoder (robot):</span>
+              <span style={{ color: '#888' }}>Capture (camera):</span>
+              <span style={{ color: getLatencyColor(captureLatency) }}>
+                {formatMs(captureLatency)} {latencyBreakdown ? '' : '(no data)'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Pipeline (encoder):</span>
+              <span style={{ color: getLatencyColor(pipelineLatency) }}>
+                {formatMs(pipelineLatency)}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888' }}>Total robot:</span>
               <span style={{ color: getLatencyColor(encoderLatency) }}>
-                {formatMs(encoderLatency)} {latencyBreakdown ? '' : '(no data)'}
+                {formatMs(encoderLatency)}
               </span>
             </div>
 
             {/* Network one-way latency */}
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
               <span style={{ color: '#888' }}>Network:</span>
               <span style={{ color: getLatencyColor(networkLatency) }}>
                 {formatMs(networkLatency)} {latencyBreakdown || networkStats ? '' : '(no stats)'}
