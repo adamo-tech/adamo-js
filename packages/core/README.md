@@ -1,6 +1,6 @@
 # @adamo-tech/core
 
-Core TypeScript library for robot teleoperation. Provides a simple API for video streaming, gamepad input, and heartbeat monitoring.
+Core TypeScript library for robot teleoperation via WebRTC.
 
 ## Installation
 
@@ -11,33 +11,89 @@ pnpm add @adamo-tech/core
 ## Quick Start
 
 ```typescript
-import { AdamoClient, HeartbeatManager, JoypadManager, HeartbeatState } from '@adamo-tech/core';
+import { AdamoClient, HeartbeatState } from '@adamo-tech/core';
 
-const client = new AdamoClient({
-  serverIdentity: 'robot',
-  playoutDelay: 0,
+const client = new AdamoClient({ debug: true });
+
+await client.connect({
+  serverUrl: 'wss://your-server.com/ws/signal/room-id',
+  roomId: 'room-id',
+  token: 'your-jwt-token',
 });
 
-await client.connect('wss://your-server.com', token);
-
-// Subscribe to video
-client.subscribe('front_camera', (track) => {
+client.on('videoTrackReceived', (track) => {
   const video = document.getElementById('video') as HTMLVideoElement;
-  video.srcObject = new MediaStream([track.mediaStreamTrack!]);
+  video.srcObject = new MediaStream([track.mediaStreamTrack]);
 });
 
-// Heartbeat monitoring
-const heartbeat = new HeartbeatManager(client);
-heartbeat.start();
+client.sendControl({
+  controller1: { axes: [0, 0, 0, 0], buttons: [0, 0, 0, 0] },
+  timestamp: Date.now(),
+});
 
-// Gamepad input
-const joypad = new JoypadManager(client);
+client.sendHeartbeat(HeartbeatState.OK);
+```
+
+## AdamoClient
+
+```typescript
+// Connect
+await client.connect({ serverUrl, roomId, token, iceServers });
+
+// Video tracks
+const track = client.getVideoTrack('front_camera');
+const names = client.getTrackNames();
+
+// Control
+client.sendControl({ controller1: { axes, buttons }, timestamp });
+client.sendHeartbeat(HeartbeatState.OK);
+
+// Stats
+client.networkStats;
+client.trackStats.get('front_camera');
+client.robotStats;
+
+// Events
+client.on('videoTrackReceived', (track) => {});
+client.on('connectionStateChanged', (state) => {});
+client.on('latencyBreakdownUpdated', (breakdown) => {});
+```
+
+## HeartbeatManager
+
+```typescript
+const heartbeat = new HeartbeatManager(client, {
+  interval: 500,
+  checkGamepad: true,
+  checkWindowFocus: true,
+});
+heartbeat.start();
+```
+
+## JoypadManager
+
+```typescript
+const joypad = new JoypadManager(client, {
+  deadzone: 0.05,
+  autorepeatRate: 20,
+  maxVideoStalenessMs: 100,
+});
 joypad.start();
 ```
 
-## Documentation
+## WebCodecs
 
-See [docs.adamohq.com](https://docs.adamohq.com) for full API documentation.
+Optional low-latency H.264 decoding:
+
+```typescript
+if (isWebCodecsSupported()) {
+  const client = new AdamoClient({ useWebCodecs: true });
+  client.on('decodedFrame', (frame) => {
+    ctx.drawImage(frame.frame, 0, 0);
+    frame.frame.close();
+  });
+}
+```
 
 ## License
 

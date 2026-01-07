@@ -43,6 +43,32 @@ export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
 export { useLatencyBreakdown, useRobotStats, useApplicationRtt } from './hooks/useLatency';
 
+// Authentication & Room Management Hooks
+export { useAuth } from './hooks/useAuth';
+export type {
+  UseAuthConfig,
+  UseAuthReturn,
+  AuthSession,
+  LoginResponse,
+} from './hooks/useAuth';
+export { useRooms } from './hooks/useRooms';
+export type {
+  UseRoomsConfig,
+  UseRoomsReturn,
+  Room,
+} from './hooks/useRooms';
+export { useRoomConnection } from './hooks/useRoomConnection';
+export type {
+  UseRoomConnectionConfig,
+  UseRoomConnectionReturn,
+  RoomTokenResponse,
+} from './hooks/useRoomConnection';
+export { useGamepadNavigation, GamepadButton } from './hooks/useGamepadNavigation';
+export type {
+  UseGamepadNavigationConfig,
+  UseGamepadNavigationReturn,
+} from './hooks/useGamepadNavigation';
+
 // Re-export core types for convenience
 export { HeartbeatState, StreamQuality, isWebCodecsSupported } from '@adamo-tech/core';
 export type {

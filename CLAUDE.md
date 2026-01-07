@@ -79,6 +79,60 @@ Key patterns:
 - Components like `HeartbeatMonitor` and `GamepadController` render nothing but enable functionality
 - Hooks (`useAdamo`, `useHeartbeat`, `useJoypad`, `useVideoTrack`) for custom implementations
 
+#### Authentication & Room Management Hooks
+
+The SDK provides hooks to reduce boilerplate for common patterns:
+
+```tsx
+import {
+  useAuth,
+  useRooms,
+  useRoomConnection,
+  useGamepadNavigation,
+} from '@adamo-tech/react';
+
+function App() {
+  // Authentication with localStorage persistence
+  const { isAuthenticated, session, login, logout } = useAuth({
+    apiUrl: 'https://api.example.com',
+  });
+
+  // Fetch available rooms
+  const { rooms, isLoading } = useRooms({
+    accessToken: session?.accessToken,
+    onUnauthorized: () => logout(),
+  });
+
+  // Room connection and signaling setup
+  const { signalingConfig, isConnected, connectToRoom, disconnect } = useRoomConnection({
+    accessToken: session?.accessToken,
+  });
+
+  // Gamepad D-pad navigation for room selection
+  const { selectedIndex, selectedItem } = useGamepadNavigation({
+    items: rooms,
+    enabled: !isConnected,
+    onSelect: (room) => connectToRoom(room.id),
+  });
+
+  // Use signalingConfig with Teleoperate when connected
+  if (isConnected && signalingConfig) {
+    return (
+      <Teleoperate signaling={signalingConfig} autoConnect>
+        <VideoFeed />
+      </Teleoperate>
+    );
+  }
+}
+```
+
+| Hook | Purpose |
+|------|---------|
+| `useAuth()` | Login, logout, session persistence in localStorage |
+| `useRooms()` | Fetch available rooms/robots from backend |
+| `useRoomConnection()` | Get room token and build SignalingConfig |
+| `useGamepadNavigation()` | D-pad navigation through menu items |
+
 ### Client App (`@adamo/client`)
 
 Next.js 16 app with:
