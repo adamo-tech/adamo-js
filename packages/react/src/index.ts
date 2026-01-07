@@ -24,6 +24,12 @@ export { MultiModeLayout } from './components/MultiModeLayout';
 export type { MultiModeLayoutProps, LayoutMode } from './components/MultiModeLayout';
 export { XRTeleop } from './components/XRTeleop';
 export type { XRTeleopProps } from './components/XRTeleop';
+export { AutoVideoLayout } from './components/AutoVideoLayout';
+export type {
+  AutoVideoLayoutProps,
+  TrackConfig,
+  VideoType,
+} from './components/AutoVideoLayout';
 
 // Hooks (for advanced use cases)
 export { useAdamo } from './hooks/useAdamo';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Teleoperate, XRTeleop, useTeleoperateContext, StatsOverlay, VideoFeed } from '@adamo-tech/react';
+import { Teleoperate, useTeleoperateContext, StatsOverlay, AutoVideoLayout } from '@adamo-tech/react';
 
 export default function Home() {
   // Auth state
@@ -433,14 +433,11 @@ export default function Home() {
               <TeleoperateStateHandler
                 onConnectionStateChange={handleConnectionStateChange}
               />
-              <div className="grid grid-cols-2 gap-4">
-                <div className="aspect-video rounded-lg overflow-hidden border border-neutral-800">
-                  <XRTeleop onError={handleError} />
-                </div>
-                <div className="aspect-video rounded-lg overflow-hidden border border-neutral-800">
-                  <VideoFeed trackName="webcam" showLabel />
-                </div>
-              </div>
+              <AutoVideoLayout
+                autoDetectXR
+                showLabels
+                onTracksChange={(tracks) => console.log('Available tracks:', tracks)}
+              />
               <StatsOverlay position="bottom-left" defaultExpanded />
             </Teleoperate>
           </div>
