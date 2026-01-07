@@ -434,7 +434,6 @@ export default function Home() {
                 onConnectionStateChange={handleConnectionStateChange}
               />
               <AutoVideoLayout
-                autoDetectXR
                 showLabels
                 onTracksChange={(tracks) => console.log('Available tracks:', tracks)}
               />
