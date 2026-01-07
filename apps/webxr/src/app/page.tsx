@@ -16,6 +16,7 @@ export default function Home() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [rooms, setRooms] = useState<{ id: string; name: string }[]>([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   // Connection state
   const [roomId, setRoomId] = useState('');
@@ -23,6 +24,56 @@ export default function Home() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionState, setConnectionState] = useState<string>('new');
+
+  // Check for stored session on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const storedToken = localStorage.getItem('access_token');
+    const storedSignallingUrl = localStorage.getItem('signalling_url');
+    const storedIceServers = localStorage.getItem('ice_servers');
+    
+    if (storedToken && storedSignallingUrl) {
+      setAccessToken(storedToken);
+      setSignallingUrl(storedSignallingUrl);
+      if (storedIceServers) {
+        try {
+          setIceServers(JSON.parse(storedIceServers));
+        } catch {}
+      }
+      setIsLoggedIn(true);
+      // Fetch rooms with stored token
+      fetchRooms(storedToken);
+    }
+    setIsCheckingAuth(false);
+  }, []);
+
+  const fetchRooms = async (token: string) => {
+    setIsLoadingRooms(true);
+    try {
+      const roomsResponse = await fetch('/api/rooms', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (roomsResponse.status === 401) {
+        // Token expired - clear and show login
+        handleLogout();
+        return;
+      }
+      if (!roomsResponse.ok) {
+        const roomsData = await roomsResponse.json();
+        throw new Error(roomsData.detail || 'Failed to fetch rooms');
+      }
+      const roomsData = await roomsResponse.json();
+      setRooms(roomsData.rooms);
+      if (roomsData.rooms.length > 0) {
+        setRoomId(roomsData.rooms[0].id);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch rooms');
+    } finally {
+      setIsLoadingRooms(false);
+    }
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -46,34 +97,23 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setAccessToken(data.access_token);
-      setSignallingUrl(data.signalling_url);
-      setIceServers(data.ice_servers || []);
-      console.log('Received ICE servers:', data.ice_servers);
+      const token = data.access_token;
+      const sigUrl = data.signalling_url;
+      const servers = data.ice_servers || [];
+      
+      // Store in localStorage for persistence
+      localStorage.setItem('access_token', token);
+      localStorage.setItem('signalling_url', sigUrl);
+      localStorage.setItem('ice_servers', JSON.stringify(servers));
+      
+      setAccessToken(token);
+      setSignallingUrl(sigUrl);
+      setIceServers(servers);
+      console.log('Received ICE servers:', servers);
       setIsLoggedIn(true);
 
       // Fetch rooms
-      setIsLoadingRooms(true);
-      try {
-        const roomsResponse = await fetch('/api/rooms', {
-          headers: {
-            Authorization: `Bearer ${data.access_token}`,
-          },
-        });
-        if (!roomsResponse.ok) {
-          const roomsData = await roomsResponse.json();
-          throw new Error(roomsData.detail || 'Failed to fetch rooms');
-        }
-        const roomsData = await roomsResponse.json();
-        setRooms(roomsData.rooms);
-        if (roomsData.rooms.length > 0) {
-          setRoomId(roomsData.rooms[0].id);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch rooms');
-      } finally {
-        setIsLoadingRooms(false);
-      }
+      await fetchRooms(token);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -82,11 +122,17 @@ export default function Home() {
   };
 
   const handleLogout = () => {
+    // Clear localStorage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('signalling_url');
+    localStorage.removeItem('ice_servers');
+    
     setAccessToken('');
     setRoomToken('');
     setSignallingUrl('');
     setWebsocketPath('');
     setRoomId('');
+    setRooms([]);
     setIsLoggedIn(false);
     setIsConnected(false);
     setConnectionState('new');
@@ -155,6 +201,15 @@ export default function Home() {
     setError(err.message);
     console.error('WebRTC error:', err);
   }, []);
+
+  // Show loading while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-neutral-500">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

@@ -13,8 +13,8 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if already logged in
-    if (typeof window !== 'undefined' && sessionStorage.getItem('access_token')) {
+    // Check if already logged in (use localStorage for persistence across sessions)
+    if (typeof window !== 'undefined' && localStorage.getItem('access_token')) {
       router.push('/room');
     }
   }, [router]);
@@ -39,9 +39,9 @@ export default function Home() {
       }
 
       const data = await response.json();
-      sessionStorage.setItem('access_token', data.access_token);
-      sessionStorage.setItem('refresh_token', data.refresh_token);
-      sessionStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('refresh_token', data.refresh_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       router.push('/room');
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");

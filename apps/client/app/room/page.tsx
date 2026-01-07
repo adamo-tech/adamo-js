@@ -35,10 +35,10 @@ export default function RoomPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Check authentication
+  // Check authentication (use localStorage for persistence)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const token = sessionStorage.getItem('access_token');
+      const token = localStorage.getItem('access_token');
       if (!token) {
         router.push('/');
       } else {
@@ -61,9 +61,9 @@ export default function RoomPage() {
         });
         if (resp.status === 401) {
           // Token expired or invalid - clear and redirect to login
-          sessionStorage.removeItem('access_token');
-          sessionStorage.removeItem('refresh_token');
-          sessionStorage.removeItem('user');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
           router.push('/');
           return;
         }
@@ -154,9 +154,9 @@ export default function RoomPage() {
           },
         });
         if (resp.status === 401) {
-          sessionStorage.removeItem('access_token');
-          sessionStorage.removeItem('refresh_token');
-          sessionStorage.removeItem('user');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
           router.push('/');
           return;
         }

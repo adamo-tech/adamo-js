@@ -285,9 +285,12 @@ export class WebRTCConnection {
 
     switch (type) {
       case 'peer_connected':
-        // Robot connected to the room
+        // Robot connected to the room (or re-connected after we reconnected)
         this.log('Robot connected');
         this.peerConnected = true;
+        // Reset WebRTC state to prepare for new offer
+        // This handles the case where we reconnected and robot sends new offer
+        this.resetPeerConnectionForRenegotiation();
         break;
 
       case 'preparing':
@@ -305,6 +308,12 @@ export class WebRTCConnection {
 
       case 'offer':
         // Robot sent an offer, we respond with answer
+        // IMPORTANT: Clear any pending ICE candidates - they're from a previous session
+        // and have wrong ICE credentials. Candidates must arrive AFTER the offer.
+        if (this.pendingIceCandidates.length > 0) {
+          this.log(`Clearing ${this.pendingIceCandidates.length} stale ICE candidates`);
+          this.pendingIceCandidates = [];
+        }
         // Store track metadata for naming tracks when they arrive
         if (message.tracks) {
           this._trackMetadata = message.tracks;
@@ -321,6 +330,42 @@ export class WebRTCConnection {
           sdpMLineIndex: message.sdpMLineIndex!,
         });
         break;
+    }
+  }
+
+  /**
+   * Reset peer connection state to prepare for re-negotiation
+   * Called when robot reconnects and will send a new offer
+   */
+  private resetPeerConnectionForRenegotiation(): void {
+    // Clear ICE candidate queue - old candidates are invalid for new offer
+    this.pendingIceCandidates = [];
+    this.remoteDescriptionSet = false;
+    
+    // If we have an existing peer connection that's not in a good state, recreate it
+    if (this.pc) {
+      const state = this.pc.connectionState;
+      const iceState = this.pc.iceConnectionState;
+      
+      if (state === 'failed' || state === 'closed' || iceState === 'failed' || iceState === 'closed') {
+        this.log('Recreating peer connection for re-negotiation (state was:', state, ', ice:', iceState, ')');
+        
+        // Close old data channel
+        if (this.dataChannel) {
+          this.dataChannel.close();
+          this.dataChannel = null;
+        }
+        
+        // Close old peer connection
+        this.pc.close();
+        
+        // Create new peer connection
+        const iceServers = this.config.signaling.iceServers || [
+          { urls: 'stun:stun.l.google.com:19302' },
+        ];
+        this.pc = new RTCPeerConnection({ iceServers });
+        this.setupPeerConnectionHandlers();
+      }
     }
   }
 
