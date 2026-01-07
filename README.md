@@ -81,6 +81,7 @@ function App() {
 |------|---------|
 | `useAdamo()` | Access client, connection state, connect/disconnect |
 | `useVideoTrack()` | Get video track by name |
+| `useXRTracking()` | Capture XR head/controller poses (requires entering VR) |
 | `useNav()` | Map, robot pose, path, and goal sending |
 | `useVelocity()` | Robot velocity state and movement detection |
 | `useLatencyBreakdown()` | Full latency breakdown |

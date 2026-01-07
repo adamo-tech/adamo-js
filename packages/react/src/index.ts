@@ -42,6 +42,14 @@ export { useCostmap } from './hooks/useCostmap';
 export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
 export { useLatencyBreakdown, useRobotStats, useApplicationRtt } from './hooks/useLatency';
+export { useXRTracking } from './hooks/useXRTracking';
+export type {
+  UseXRTrackingConfig,
+  UseXRTrackingReturn,
+  XRTrackingData,
+  XRPose,
+  XRControllerData,
+} from './hooks/useXRTracking';
 
 // Authentication & Room Management Hooks
 export { useAuth } from './hooks/useAuth';
