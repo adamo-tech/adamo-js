@@ -17,27 +17,63 @@ pnpm add @adamo-tech/react @adamo-tech/core
 
 ## Quick Start
 
+Complete app with authentication, room selection, and auto-detected video feeds:
+
 ```tsx
 import {
   Teleoperate,
-  VideoFeed,
-  GamepadController,
-  HeartbeatMonitor,
+  AutoVideoLayout,
+  useAuth,
+  useRooms,
+  useRoomConnection,
 } from '@adamo-tech/react';
 
+const API_URL = 'https://api.example.com';
+
 function App() {
+  const { isAuthenticated, session, login } = useAuth({ apiUrl: API_URL });
+  const { rooms } = useRooms({ accessToken: session?.accessToken });
+  const { signalingConfig, connectToRoom } = useRoomConnection({
+    accessToken: session?.accessToken,
+  });
+
+  if (!isAuthenticated) {
+    return <button onClick={() => login('user', 'pass')}>Login</button>;
+  }
+
+  if (signalingConfig) {
+    return (
+      <Teleoperate signaling={signalingConfig} autoConnect>
+        <AutoVideoLayout />
+      </Teleoperate>
+    );
+  }
+
   return (
-    <Teleoperate
-      signaling={{ serverUrl, roomId, token }}
-      autoConnect
-    >
-      <HeartbeatMonitor />
-      <GamepadController />
-      <VideoFeed trackName="front_camera" />
-    </Teleoperate>
+    <ul>
+      {rooms.map((room) => (
+        <li key={room.id} onClick={() => connectToRoom(room.id)}>
+          {room.name}
+        </li>
+      ))}
+    </ul>
   );
 }
 ```
+
+### Adding Gamepad Control
+
+```tsx
+import { GamepadController, HeartbeatMonitor } from '@adamo-tech/react';
+
+<Teleoperate signaling={signalingConfig} autoConnect>
+  <HeartbeatMonitor />
+  <GamepadController />
+  <AutoVideoLayout />
+</Teleoperate>
+```
+
+`HeartbeatMonitor` sends safety heartbeats - robot stops if connection is lost. `GamepadController` sends gamepad input to the robot.
 
 ## Features
 
