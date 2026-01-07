@@ -107,6 +107,3 @@ pnpm dev           # Run in dev mode
 pnpm typecheck     # Type check all packages
 ```
 
-## License
-
-MIT
