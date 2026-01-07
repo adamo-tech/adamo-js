@@ -68,25 +68,42 @@ function VRApp() {
 }
 ```
 
-The `XRTeleop` component:
-- Renders stereo video (top/bottom format from ZED cameras)
-- Sends head pose and controller position/rotation over data channel
-- Supports Quest, Vive, Index controllers
+### Stereo Video Format
 
-Controller data sent to robot:
+The robot sends stereo video in **top/bottom format**:
+- **Top half**: Left eye view
+- **Bottom half**: Right eye view
+- Typical resolution: 1920x2160 (1080p per eye, stacked)
+
+The `XRTeleop` component splits this and renders each half to the corresponding eye with convergence adjustment.
+
+### XR Data Sent to Robot
+
+Every frame, head and controller poses are sent over the data channel:
+
 ```typescript
 {
-  controller1: {
-    axes: [],
-    buttons: [trigger, grip, thumbstick, ...],
-    position: [x, y, z],        // meters, room-relative
-    quaternion: [w, x, y, z],   // rotation
+  head: {
+    position: [x, y, z],           // meters, local-floor space
+    quaternion: [w, x, y, z],      // rotation (w first)
+  },
+  controller1: {                   // right hand
     handedness: 'right',
+    position: [x, y, z],
+    quaternion: [w, x, y, z],
+    buttons: [
+      { pressed: true, value: 1.0 },   // trigger
+      { pressed: false, value: 0.0 },  // grip
+      // ... more buttons
+    ],
+    axes: [0.0, 0.0, 0.0, 0.0],    // thumbstick x, y, ...
   },
   controller2: { /* left hand */ },
   timestamp: number,
 }
 ```
+
+Coordinate system: WebXR `local-floor` reference space (Y-up, origin at floor level).
 
 ## Navigation (Nav2)
 
