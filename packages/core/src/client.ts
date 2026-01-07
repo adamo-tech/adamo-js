@@ -743,12 +743,16 @@ export class AdamoClient {
     }
 
     const encoderLatency = this._lastRobotStats?.encoderLatencyMs ?? 0;
+    const captureLatency = this._lastRobotStats?.captureLatencyMs ?? 0;
+    const pipelineLatency = this._lastRobotStats?.pipelineLatencyMs ?? 0;
     const applicationLatency = this._lastApplicationRtt / 2;
 
     const breakdown: LatencyBreakdown = {
       applicationRtt: this._lastApplicationRtt,
       applicationLatency,
       encoderLatency,
+      captureLatency,
+      pipelineLatency,
       jitterBufferDelay: avgJitterBuffer,
       decodeTime: avgDecodeTime,
       totalLatency: encoderLatency + applicationLatency + avgJitterBuffer + avgDecodeTime,
