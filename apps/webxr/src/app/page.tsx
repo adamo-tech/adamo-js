@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Teleoperate, useTeleoperateContext, StatsOverlay, AutoVideoLayout } from '@adamo-tech/react';
+import { Teleoperate, useTeleoperateContext, StatsOverlay, AutoVideoLayout, XRTeleop } from '@adamo-tech/react';
 
 export default function Home() {
   // Auth state
@@ -24,6 +24,18 @@ export default function Home() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectionState, setConnectionState] = useState<string>('new');
+
+  // VR mode - enabled when in a VR browser (e.g., Quest)
+  const [isVRMode, setIsVRMode] = useState(false);
+
+  // Detect VR browser on mount
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.xr) {
+      navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+        setIsVRMode(supported);
+      });
+    }
+  }, []);
 
   // Check for stored session on mount
   useEffect(() => {
@@ -433,10 +445,14 @@ export default function Home() {
               <TeleoperateStateHandler
                 onConnectionStateChange={handleConnectionStateChange}
               />
-              <AutoVideoLayout
-                showLabels
-                onTracksChange={(tracks) => console.log('Available tracks:', tracks)}
-              />
+              {isVRMode ? (
+                <XRTeleop />
+              ) : (
+                <AutoVideoLayout
+                  showLabels
+                  onTracksChange={(tracks) => console.log('Available tracks:', tracks)}
+                />
+              )}
               <StatsOverlay position="bottom-left" defaultExpanded />
             </Teleoperate>
           </div>
