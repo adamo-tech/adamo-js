@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Teleoperate, useTeleoperateContext, StatsOverlay, AutoVideoLayout, XRTeleop } from '@adamo-tech/react';
+import { Teleoperate, useTeleoperateContext, StatsOverlay, AutoVideoLayout, XRTeleop, GamepadController } from '@adamo-tech/react';
 
 export default function Home() {
   // Auth state
@@ -445,6 +445,7 @@ export default function Home() {
               <TeleoperateStateHandler
                 onConnectionStateChange={handleConnectionStateChange}
               />
+              <GamepadController />
               {isVRMode ? (
                 <XRTeleop />
               ) : (
