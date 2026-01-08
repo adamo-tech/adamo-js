@@ -417,10 +417,7 @@ export class WebRTCConnection {
         case 'connected':
           this.setConnectionState('connected');
           this.reconnectAttempts = 0;
-          // Create data channel when connected (if not already created via ondatachannel)
-          if (!this.dataChannel) {
-            this.createDataChannel();
-          }
+          // Data channel is created by the robot and received via ondatachannel
           break;
         case 'disconnected':
           this.setConnectionState('disconnected');
