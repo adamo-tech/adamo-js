@@ -12,7 +12,8 @@ Robot teleoperation SDK using native WebRTC. Low-latency video streaming from ro
 ## Installation
 
 ```bash
-pnpm add @adamo-tech/react @adamo-tech/core
+npm install @adamo-tech/core
+npm install @adamo-tech/react
 ```
 
 ## Quick Start
