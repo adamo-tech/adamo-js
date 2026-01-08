@@ -52,6 +52,8 @@ export class WebRTCConnection {
   private remoteDescriptionSet = false;
   /** Queue for ICE candidates that arrive before remote description is set */
   private pendingIceCandidates: { candidate: string; sdpMLineIndex: number }[] = [];
+  /** Interval ID for jitter buffer enforcement loop */
+  private jitterBufferIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(config: WebRTCConnectionConfig) {
     this.config = config;
@@ -173,6 +175,12 @@ export class WebRTCConnection {
     if (this.reconnectTimeoutId) {
       clearTimeout(this.reconnectTimeoutId);
       this.reconnectTimeoutId = null;
+    }
+
+    // Stop jitter buffer enforcement loop
+    if (this.jitterBufferIntervalId) {
+      clearInterval(this.jitterBufferIntervalId);
+      this.jitterBufferIntervalId = null;
     }
 
     if (this.dataChannel) {
@@ -418,6 +426,8 @@ export class WebRTCConnection {
           this.setConnectionState('connected');
           this.reconnectAttempts = 0;
           // Data channel is created by the robot and received via ondatachannel
+          // Start jitter buffer enforcement for smooth video playback
+          this.startJitterBufferEnforcement();
           break;
         case 'disconnected':
           this.setConnectionState('disconnected');
@@ -496,12 +506,17 @@ export class WebRTCConnection {
 
       // Create and set local description (our answer)
       const answer = await this.pc.createAnswer();
-      await this.pc.setLocalDescription(answer);
+
+      // Apply SDP munging for low-latency playback before setting local description
+      const mungedSdp = this.applyLowLatencySdpMunging(answer.sdp || '');
+      const mungedAnswer = { ...answer, sdp: mungedSdp };
+
+      await this.pc.setLocalDescription(mungedAnswer);
 
       // Send answer to robot
       this.sendSignaling({
         type: 'answer',
-        sdp: answer.sdp,
+        sdp: mungedSdp,
       });
 
       this.log('Sent answer to robot');
@@ -601,5 +616,89 @@ export class WebRTCConnection {
     } catch (e) {
       this.log('Failed to get candidate pair stats:', e);
     }
+  }
+
+  /**
+   * Apply SDP modifications for low-latency video playback.
+   *
+   * Modifications:
+   * 1. sps-pps-idr-in-keyframe=1: Bundles SPS/PPS/IDR together in keyframes
+   *    to reduce frame corruption and improve packet loss resilience
+   * 2. minptime=10: Forces 10ms audio frames instead of default 20ms for lower latency
+   * 3. stereo=1: Enables stereo audio for Opus codec
+   */
+  private applyLowLatencySdpMunging(sdp: string): string {
+    let mungedSdp = sdp;
+
+    // 1. Bundle SPS/PPS/IDR in keyframes for H.264 (improves packet loss resilience)
+    // This ensures decoder always has the parameter sets it needs
+    if (mungedSdp.includes('packetization-mode=')) {
+      mungedSdp = mungedSdp.replace(
+        /packetization-mode=/g,
+        'sps-pps-idr-in-keyframe=1;packetization-mode='
+      );
+      this.log('SDP: Added sps-pps-idr-in-keyframe=1 for H.264');
+    }
+
+    // 2. Force 10ms audio frames for Opus (lower latency than default 20ms)
+    if (mungedSdp.includes('useinbandfec=')) {
+      mungedSdp = mungedSdp.replace(
+        /useinbandfec=/g,
+        'minptime=10;useinbandfec='
+      );
+      this.log('SDP: Added minptime=10 for Opus audio');
+    }
+
+    // 3. Enable stereo audio for Opus
+    if (mungedSdp.includes('useinbandfec=') && !mungedSdp.includes('stereo=')) {
+      mungedSdp = mungedSdp.replace(
+        /useinbandfec=/g,
+        'stereo=1;useinbandfec='
+      );
+      this.log('SDP: Added stereo=1 for Opus audio');
+    }
+
+    return mungedSdp;
+  }
+
+  /**
+   * Start jitter buffer enforcement loop for smooth video playback.
+   *
+   * This continuously sets the jitter buffer target to 0 every 15ms to force
+   * the browser to minimize buffering. Without this, browsers typically buffer
+   * 50-200ms which causes choppy/delayed video.
+   */
+  private startJitterBufferEnforcement(): void {
+    if (this.jitterBufferIntervalId) return;
+
+    this.log('Starting jitter buffer enforcement loop');
+
+    // Enforce minimum jitter buffer every 15ms
+    this.jitterBufferIntervalId = setInterval(() => {
+      if (!this.pc) return;
+
+      for (const receiver of this.pc.getReceivers()) {
+        if (receiver.track?.kind === 'video') {
+          // RTCRtpReceiver has jitterBufferTarget in modern browsers
+          // Setting to 0 forces minimum playout delay
+          const recv = receiver as RTCRtpReceiver & {
+            jitterBufferTarget?: number | null;
+            jitterBufferDelayHint?: number;
+            playoutDelayHint?: number;
+          };
+
+          // Try all available APIs for maximum browser compatibility
+          if ('jitterBufferTarget' in recv) {
+            recv.jitterBufferTarget = 0;
+          }
+          if ('jitterBufferDelayHint' in recv) {
+            recv.jitterBufferDelayHint = 0;
+          }
+          if ('playoutDelayHint' in recv) {
+            recv.playoutDelayHint = 0;
+          }
+        }
+      }
+    }, 15);
   }
 }
