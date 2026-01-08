@@ -341,31 +341,31 @@ export class WebRTCConnection {
     // Clear ICE candidate queue - old candidates are invalid for new offer
     this.pendingIceCandidates = [];
     this.remoteDescriptionSet = false;
-    
-    // If we have an existing peer connection that's not in a good state, recreate it
+    this._trackCount = 0;
+    this._trackMetadata = [];
+
+    // Always recreate the peer connection for a fresh start
+    // This ensures clean state for the new offer/answer exchange
     if (this.pc) {
       const state = this.pc.connectionState;
       const iceState = this.pc.iceConnectionState;
-      
-      if (state === 'failed' || state === 'closed' || iceState === 'failed' || iceState === 'closed') {
-        this.log('Recreating peer connection for re-negotiation (state was:', state, ', ice:', iceState, ')');
-        
-        // Close old data channel
-        if (this.dataChannel) {
-          this.dataChannel.close();
-          this.dataChannel = null;
-        }
-        
-        // Close old peer connection
-        this.pc.close();
-        
-        // Create new peer connection
-        const iceServers = this.config.signaling.iceServers || [
-          { urls: 'stun:stun.l.google.com:19302' },
-        ];
-        this.pc = new RTCPeerConnection({ iceServers });
-        this.setupPeerConnectionHandlers();
+      this.log('Recreating peer connection for re-negotiation (state was:', state, ', ice:', iceState, ')');
+
+      // Close old data channel
+      if (this.dataChannel) {
+        this.dataChannel.close();
+        this.dataChannel = null;
       }
+
+      // Close old peer connection
+      this.pc.close();
+
+      // Create new peer connection
+      const iceServers = this.config.signaling.iceServers || [
+        { urls: 'stun:stun.l.google.com:19302' },
+      ];
+      this.pc = new RTCPeerConnection({ iceServers });
+      this.setupPeerConnectionHandlers();
     }
   }
 
