@@ -24,6 +24,7 @@ interface RobotStatus {
  */
 export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string }) {
   const { data, timestamp, isReceiving } = useJsonStream<RobotStatus>(topic);
+  console.log('RobotStatusPanel data:', data, timestamp, isReceiving);
 
   if (!isReceiving) {
     return (
