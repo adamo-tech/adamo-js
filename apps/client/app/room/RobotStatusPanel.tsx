@@ -22,7 +22,7 @@ interface RobotStatus {
  * 1. The server must be publishing JSON data on the 'robot_status' topic
  * 2. Add <RobotStatusPanel /> inside a <Teleoperate> provider
  */
-export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string }) {
+export function RobotStatusPanel({ topic = '/robot_status' }: { topic?: string }) {
   const { data, timestamp, isReceiving } = useJsonStream<RobotStatus>(topic);
   console.log('RobotStatusPanel data:', data, timestamp, isReceiving);
 
