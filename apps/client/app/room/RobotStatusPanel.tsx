@@ -7,7 +7,7 @@ import { useJsonStream } from '@adamo-tech/react';
  * Customize this to match your actual ROS message structure
  */
 interface RobotStatus {
-  battery_level?: number;
+  pallet_status?: number;
   temperature?: number;
   error_code?: number;
   mode?: string;
@@ -24,7 +24,13 @@ interface RobotStatus {
  */
 export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string }) {
   const { data, timestamp, isReceiving } = useJsonStream<RobotStatus>(topic);
-  console.log('RobotStatusPanel data:', data, timestamp, isReceiving);
+  const palletLabels: Record<number, string> = {
+    0: 'Empty',
+    1: 'Loading',
+    2: 'Loaded',
+    3: 'Error',
+  };
+  // console.log('RobotStatusPanel data:', data, timestamp, isReceiving);
 
   if (!isReceiving) {
     return (
@@ -39,10 +45,20 @@ export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string })
     <div style={styles.container}>
       <div style={styles.header}>Robot Status</div>
 
-      {data?.battery_level !== undefined && (
+      {data?.mode !== undefined && (
         <div style={styles.row}>
-          <span style={styles.label}>Battery</span>
-          <span style={styles.value}>{data.battery_level}%</span>
+          <span style={styles.label}>Mode</span>
+          {/* <span style={styles.value}>{data.mode}</span> */}
+          <span style={styles.value}>{data.mode ? 'Drive' : 'Safety Lock'}</span>
+
+        </div>
+
+      )}
+
+      {data?.pallet_status !== undefined && (
+        <div style={styles.row}>
+          <span style={styles.label}>Pallete Status</span>
+          <span style={styles.value}>{palletLabels[data.pallet_status] ?? 'Unknown'}</span>
         </div>
       )}
 
@@ -51,17 +67,8 @@ export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string })
           <span style={styles.label}>Temperature</span>
           <span style={styles.value}>{data.temperature}°C</span>
         </div>
-      )}
-
-      {data?.mode !== undefined && (
-        <div style={styles.row}>
-          <span style={styles.label}>Mode</span>
-          {/* <span style={styles.value}>{data.mode}</span> */}
-          <span style={styles.value}>{data.mode ? 'Drive' : 'Safety Lock'}</span>
-
-        </div>
-      )}
-
+      )}      
+      
       {data?.error_code !== undefined && data.error_code !== 0 && (
         <div style={{ ...styles.row, ...styles.error }}>
           <span style={styles.label}>Error</span>
