@@ -278,8 +278,8 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
   const { connectionState } = useAdamo();
 
   // Debug: log data from "test" topic
-  useJsonStreamCallback('test', (data, timestamp) => {
-    console.log('[test topic]', data);
+  useJsonStreamCallback('fork_low', (data, timestamp) => {
+    console.log('[robot status topic]', data);
   });
 
   if (connectionState !== 'connected') {
@@ -301,7 +301,6 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
       <RobotStatusPanel topic="robot_status" />
 
       {/* Room name indicator */}
-      <div style={styles.roomIndicator}>
         {roomName}
       </div>
 
