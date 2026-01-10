@@ -56,7 +56,9 @@ export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string })
       {data?.mode !== undefined && (
         <div style={styles.row}>
           <span style={styles.label}>Mode</span>
-          <span style={styles.value}>{data.mode}</span>
+          {/* <span style={styles.value}>{data.mode}</span> */}
+          <span style={styles.value}>{data.mode ? 'Drive' : 'Safety Lock'}</span>
+
         </div>
       )}
 
