@@ -26,9 +26,9 @@ export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string })
   const { data, timestamp, isReceiving } = useJsonStream<RobotStatus>(topic);
   const palletLabels: Record<number, string> = {
     0: 'Empty',
-    1: 'Loading',
-    2: 'Loaded',
-    3: 'Error',
+    1: 'Left Side In Only',
+    2: 'Right Side In Only',
+    3: 'Completely In',
   };
   // console.log('RobotStatusPanel data:', data, timestamp, isReceiving);
 
@@ -68,7 +68,7 @@ export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string })
           <span style={styles.value}>{data.temperature}°C</span>
         </div>
       )}      
-      
+
       {data?.error_code !== undefined && data.error_code !== 0 && (
         <div style={{ ...styles.row, ...styles.error }}>
           <span style={styles.label}>Error</span>
