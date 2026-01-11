@@ -25,10 +25,10 @@ interface RobotStatus {
 export function RobotStatusPanel({ topic = 'robot_status' }: { topic?: string }) {
   const { data, timestamp, isReceiving } = useJsonStream<RobotStatus>(topic);
   const palletLabels: Record<number, string> = {
-    0: 'Empty',
+    0: 'Loaded',
     1: 'Left Side In Only',
     2: 'Right Side In Only',
-    3: 'Completely In',
+    3: 'Unloaded', 
   };
   // console.log('RobotStatusPanel data:', data, timestamp, isReceiving);
 
