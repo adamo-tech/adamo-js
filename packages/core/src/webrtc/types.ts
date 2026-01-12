@@ -46,6 +46,8 @@ export interface WebRTCConnectionCallbacks {
   onDataChannelMessage?: (data: unknown) => void;
   /** Called when an error occurs */
   onError?: (error: Error) => void;
+  /** Called when robot is busy (another user connected). Call forceConnect() to take over. */
+  onRobotBusy?: () => void;
 }
 
 /**
@@ -67,7 +69,8 @@ export type SignalingMessageType =
   | 'peer_disconnected'
   | 'offer'
   | 'answer'
-  | 'candidate';
+  | 'candidate'
+  | 'robot_busy';
 
 /**
  * Track metadata sent with offer

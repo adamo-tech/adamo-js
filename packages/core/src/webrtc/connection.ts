@@ -116,6 +116,15 @@ export class WebRTCConnection {
   }
 
   /**
+   * Force connect when robot is busy (another user connected).
+   * Call this after receiving onRobotBusy callback to take over the connection.
+   */
+  forceConnect(): void {
+    this.log('Sending force_connect to take over from existing user');
+    this.sendSignaling({ type: 'force_connect' });
+  }
+
+  /**
    * Connect to signaling server and establish WebRTC connection
    */
   async connect(): Promise<void> {
@@ -247,6 +256,21 @@ export class WebRTCConnection {
       this.ws.onclose = (event) => {
         this.log('Signaling disconnected', { code: event.code, reason: event.reason });
 
+        // Don't reconnect if kicked by another client (4011) or robot busy (4012)
+        if (event.code === 4011) {
+          this.log('Another client connected - not reconnecting');
+          this.setConnectionState('disconnected');
+          this.config.onError?.(new Error('Another client connected to this robot'));
+          return;
+        }
+
+        if (event.code === 4012) {
+          this.log('Robot busy - another user is connected');
+          this.setConnectionState('disconnected');
+          this.config.onError?.(new Error('Another user is already connected to this robot'));
+          return;
+        }
+
         if (this._connectionState === 'connected' || this._connectionState === 'connecting') {
           // Attempt reconnection
           this.attemptReconnect();
@@ -337,6 +361,12 @@ export class WebRTCConnection {
           candidate: message.candidate!,
           sdpMLineIndex: message.sdpMLineIndex!,
         });
+        break;
+
+      case 'robot_busy':
+        // Another user is connected - notify UI so they can choose to take over
+        this.log('Robot busy - another user is connected');
+        this.config.onRobotBusy?.();
         break;
     }
   }
