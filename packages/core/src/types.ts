@@ -432,6 +432,8 @@ export interface AdamoClientEvents {
   latencyBreakdownUpdated: (breakdown: LatencyBreakdown) => void;
   /** Called when a topic message is received */
   topicMessage: (message: TopicMessage) => void;
+  /** Called when robot is busy (another user connected). Call forceConnect() to take over. */
+  robotBusy: () => void;
 }
 
 // ============================================================================

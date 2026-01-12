@@ -1,6 +1,6 @@
 # Interface: PingMessage
 
-Defined in: [types.ts:570](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L570)
+Defined in: [types.ts:574](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L574)
 
 Ping message sent to the robot for RTT measurement
 
@@ -10,7 +10,7 @@ Ping message sent to the robot for RTT measurement
 
 > **id**: `number`
 
-Defined in: [types.ts:573](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L573)
+Defined in: [types.ts:577](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L577)
 
 Sequence number for matching ping/pong pairs
 
@@ -20,7 +20,7 @@ Sequence number for matching ping/pong pairs
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:575](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L575)
+Defined in: [types.ts:579](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L579)
 
 Client send timestamp (Unix ms)
 
@@ -30,4 +30,4 @@ Client send timestamp (Unix ms)
 
 > **type**: `"ping"`
 
-Defined in: [types.ts:571](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L571)
+Defined in: [types.ts:575](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L575)

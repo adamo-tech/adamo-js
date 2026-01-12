@@ -1,6 +1,6 @@
 # Interface: CostmapData
 
-Defined in: [types.ts:461](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L461)
+Defined in: [types.ts:465](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L465)
 
 Local costmap data (robot-centered rolling window)
 Values: 0=free, 100-252=inflated cost, 253=inscribed, 254=lethal
@@ -11,7 +11,7 @@ Values: 0=free, 100-252=inflated cost, 253=inscribed, 254=lethal
 
 > **data**: `number`[]
 
-Defined in: [types.ts:477](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L477)
+Defined in: [types.ts:481](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L481)
 
 Cost values: 0=free, 100-252=inflated, 253=inscribed, 254=lethal
 
@@ -21,7 +21,7 @@ Cost values: 0=free, 100-252=inflated, 253=inscribed, 254=lethal
 
 > **height**: `number`
 
-Defined in: [types.ts:465](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L465)
+Defined in: [types.ts:469](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L469)
 
 Costmap height in cells
 
@@ -31,7 +31,7 @@ Costmap height in cells
 
 > **origin\_x**: `number`
 
-Defined in: [types.ts:469](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L469)
+Defined in: [types.ts:473](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L473)
 
 Origin X in world coordinates (moves with robot)
 
@@ -41,7 +41,7 @@ Origin X in world coordinates (moves with robot)
 
 > **origin\_y**: `number`
 
-Defined in: [types.ts:471](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L471)
+Defined in: [types.ts:475](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L475)
 
 Origin Y in world coordinates (moves with robot)
 
@@ -51,7 +51,7 @@ Origin Y in world coordinates (moves with robot)
 
 > **resolution**: `number`
 
-Defined in: [types.ts:467](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L467)
+Defined in: [types.ts:471](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L471)
 
 Resolution in meters per cell
 
@@ -61,7 +61,7 @@ Resolution in meters per cell
 
 > **robot\_x**: `number`
 
-Defined in: [types.ts:473](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L473)
+Defined in: [types.ts:477](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L477)
 
 Robot X position in world frame
 
@@ -71,7 +71,7 @@ Robot X position in world frame
 
 > **robot\_y**: `number`
 
-Defined in: [types.ts:475](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L475)
+Defined in: [types.ts:479](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L479)
 
 Robot Y position in world frame
 
@@ -81,6 +81,6 @@ Robot Y position in world frame
 
 > **width**: `number`
 
-Defined in: [types.ts:463](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L463)
+Defined in: [types.ts:467](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L467)
 
 Costmap width in cells

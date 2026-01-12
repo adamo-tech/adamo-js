@@ -25,10 +25,14 @@ interface TeleoperateContextValue {
   videoTrack: VideoTrack | null;
   /** Whether the data channel is open and ready */
   dataChannelOpen: boolean;
+  /** Whether another user is connected (robot busy) */
+  robotBusy: boolean;
   /** Connect to robot */
   connect: (signaling: SignalingConfig) => Promise<void>;
   /** Disconnect from robot */
   disconnect: () => void;
+  /** Force connect when robot is busy (boot other user) */
+  forceConnect: () => void;
 }
 
 const TeleoperateContext = createContext<TeleoperateContextValue | null>(null);
@@ -87,6 +91,7 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
   const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
   const [videoTracks, setVideoTracks] = useState<Map<string, VideoTrack>>(new Map());
   const [dataChannelOpen, setDataChannelOpen] = useState(false);
+  const [robotBusy, setRobotBusy] = useState(false);
 
   // Stabilize config to prevent reconnection on every render
   const stableConfig = useStableConfig(config);
@@ -144,6 +149,11 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
       setDataChannelOpen(false);
     });
 
+    const unsubRobotBusy = client.on('robotBusy', () => {
+      if (!mountedRef.current) return;
+      setRobotBusy(true);
+    });
+
     // Auto-connect if configured
     if (autoConnect && stableSignaling) {
       client.connect(stableSignaling).catch((err) => {
@@ -162,6 +172,7 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
       unsubVideoEnded();
       unsubDataChannelOpen();
       unsubDataChannelClose();
+      unsubRobotBusy();
       client.disconnect();
       clientRef.current = null;
     };
@@ -177,6 +188,11 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
     clientRef.current?.disconnect();
   }, []);
 
+  const forceConnect = useCallback(() => {
+    setRobotBusy(false);
+    clientRef.current?.forceConnect();
+  }, []);
+
   // Compute first track for backwards compatibility
   const videoTrack = videoTracks.size > 0 ? videoTracks.values().next().value ?? null : null;
 
@@ -186,8 +202,10 @@ export function Teleoperate({ children, config, signaling, autoConnect }: Teleop
     videoTracks,
     videoTrack,
     dataChannelOpen,
+    robotBusy,
     connect,
     disconnect,
+    forceConnect,
   };
 
   return <TeleoperateContext.Provider value={value}>{children}</TeleoperateContext.Provider>;

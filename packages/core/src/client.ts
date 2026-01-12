@@ -204,6 +204,7 @@ export class AdamoClient {
       onDataChannelClose: () => this.handleDataChannelClose(),
       onDataChannelMessage: (data) => this.handleDataChannelMessage(data),
       onError: (error) => this.emit('error', error),
+      onRobotBusy: () => this.emit('robotBusy'),
     });
 
     try {
@@ -234,6 +235,16 @@ export class AdamoClient {
     this._lastFrameTime.clear();
     this._dataChannelOpen = false;
     this.setConnectionState('disconnected');
+  }
+
+  /**
+   * Force connect when robot is busy (another user connected).
+   * Call this after receiving the 'robotBusy' event to take over the connection.
+   */
+  forceConnect(): void {
+    if (this.connection) {
+      this.connection.forceConnect();
+    }
   }
 
   /**

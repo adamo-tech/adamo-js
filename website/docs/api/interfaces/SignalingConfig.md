@@ -1,6 +1,6 @@
 # Interface: SignalingConfig
 
-Defined in: [webrtc/types.ts:10](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L10)
+Defined in: [webrtc/types.ts:10](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L10)
 
 Configuration for connecting to the signaling server
 
@@ -10,7 +10,7 @@ Configuration for connecting to the signaling server
 
 > `optional` **iceServers**: `RTCIceServer`[]
 
-Defined in: [webrtc/types.ts:18](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L18)
+Defined in: [webrtc/types.ts:18](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L18)
 
 ICE servers for STUN/TURN
 
@@ -20,7 +20,7 @@ ICE servers for STUN/TURN
 
 > **roomId**: `string`
 
-Defined in: [webrtc/types.ts:14](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L14)
+Defined in: [webrtc/types.ts:14](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L14)
 
 Room ID to join
 
@@ -30,7 +30,7 @@ Room ID to join
 
 > **serverUrl**: `string`
 
-Defined in: [webrtc/types.ts:12](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L12)
+Defined in: [webrtc/types.ts:12](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L12)
 
 Signaling server URL (e.g., 'wss://example.com')
 
@@ -40,7 +40,7 @@ Signaling server URL (e.g., 'wss://example.com')
 
 > `optional` **token**: `string`
 
-Defined in: [webrtc/types.ts:16](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L16)
+Defined in: [webrtc/types.ts:16](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L16)
 
 Authentication token (passed via WebSocket subprotocol)
 
@@ -50,6 +50,6 @@ Authentication token (passed via WebSocket subprotocol)
 
 > `optional` **websocketPath**: `string`
 
-Defined in: [webrtc/types.ts:20](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L20)
+Defined in: [webrtc/types.ts:20](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L20)
 
 Optional full WebSocket path override (e.g., from backend response)

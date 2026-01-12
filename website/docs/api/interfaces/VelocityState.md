@@ -1,6 +1,6 @@
 # Interface: VelocityState
 
-Defined in: [types.ts:525](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L525)
+Defined in: [types.ts:529](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L529)
 
 Robot velocity state from /odom topic
 Used for safety interlocks (e.g., prevent mode switching while moving)
@@ -11,7 +11,7 @@ Used for safety interlocks (e.g., prevent mode switching while moving)
 
 > **angularZ**: `number`
 
-Defined in: [types.ts:531](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L531)
+Defined in: [types.ts:535](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L535)
 
 Rotational velocity in rad/s
 
@@ -21,7 +21,7 @@ Rotational velocity in rad/s
 
 > **isMoving**: `boolean`
 
-Defined in: [types.ts:533](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L533)
+Defined in: [types.ts:537](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L537)
 
 Whether the robot is currently in motion
 
@@ -31,7 +31,7 @@ Whether the robot is currently in motion
 
 > **linearX**: `number`
 
-Defined in: [types.ts:527](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L527)
+Defined in: [types.ts:531](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L531)
 
 Forward/backward velocity in m/s
 
@@ -41,7 +41,7 @@ Forward/backward velocity in m/s
 
 > **linearY**: `number`
 
-Defined in: [types.ts:529](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L529)
+Defined in: [types.ts:533](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L533)
 
 Left/right velocity in m/s (usually 0 for non-holonomic robots)
 
@@ -51,6 +51,6 @@ Left/right velocity in m/s (usually 0 for non-holonomic robots)
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:535](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L535)
+Defined in: [types.ts:539](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L539)
 
 Timestamp when this state was recorded (Unix ms)

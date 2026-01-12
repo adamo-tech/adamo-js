@@ -1,6 +1,6 @@
 # Interface: VideoTrack
 
-Defined in: [types.ts:376](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L376)
+Defined in: [types.ts:376](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L376)
 
 Video track information
 
@@ -10,7 +10,7 @@ Video track information
 
 > **active**: `boolean`
 
-Defined in: [types.ts:386](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L386)
+Defined in: [types.ts:386](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L386)
 
 Whether the track is active
 
@@ -20,7 +20,7 @@ Whether the track is active
 
 > `optional` **dimensions**: `object`
 
-Defined in: [types.ts:384](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L384)
+Defined in: [types.ts:384](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L384)
 
 Video dimensions if available
 
@@ -38,7 +38,7 @@ Video dimensions if available
 
 > **id**: `string`
 
-Defined in: [types.ts:378](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L378)
+Defined in: [types.ts:378](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L378)
 
 Track identifier (from WebRTC)
 
@@ -48,7 +48,7 @@ Track identifier (from WebRTC)
 
 > **mediaStreamTrack**: `MediaStreamTrack`
 
-Defined in: [types.ts:382](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L382)
+Defined in: [types.ts:382](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L382)
 
 The underlying MediaStreamTrack
 
@@ -58,6 +58,6 @@ The underlying MediaStreamTrack
 
 > **name**: `string`
 
-Defined in: [types.ts:380](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L380)
+Defined in: [types.ts:380](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L380)
 
 Track name/topic (e.g., 'front_camera', 'fork') - extracted from SDP or track label

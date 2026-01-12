@@ -2,6 +2,6 @@
 
 > **WebRTCConnectionState** = `"disconnected"` \| `"connecting"` \| `"connected"` \| `"reconnecting"` \| `"failed"`
 
-Defined in: [webrtc/types.ts:26](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/webrtc/types.ts#L26)
+Defined in: [webrtc/types.ts:26](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/types.ts#L26)
 
 WebRTC connection states

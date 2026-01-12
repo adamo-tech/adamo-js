@@ -1,6 +1,6 @@
 # Interface: ControlMessage
 
-Defined in: [types.ts:178](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L178)
+Defined in: [types.ts:178](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L178)
 
 Control message sent over data channel
 
@@ -16,7 +16,7 @@ Additional controllers (controller3, controller4, etc.)
 
 > `optional` **controller1**: [`ControllerState`](ControllerState.md)
 
-Defined in: [types.ts:180](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L180)
+Defined in: [types.ts:180](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L180)
 
 First controller state (e.g., left hand or primary gamepad)
 
@@ -26,7 +26,7 @@ First controller state (e.g., left hand or primary gamepad)
 
 > `optional` **controller2**: [`ControllerState`](ControllerState.md)
 
-Defined in: [types.ts:182](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L182)
+Defined in: [types.ts:182](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L182)
 
 Second controller state (e.g., right hand or secondary gamepad)
 
@@ -36,6 +36,6 @@ Second controller state (e.g., right hand or secondary gamepad)
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:186](https://github.com/adamo-tech/adamo-js/blob/ff9361fbed7db73ed318d428fcef5a75002ea9d3/packages/core/src/types.ts#L186)
+Defined in: [types.ts:186](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L186)
 
 Message timestamp
