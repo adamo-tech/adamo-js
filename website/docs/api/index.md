@@ -37,6 +37,7 @@
 - [RobotPose](interfaces/RobotPose.md)
 - [RobotStats](interfaces/RobotStats.md)
 - [SignalingConfig](interfaces/SignalingConfig.md)
+- [TopicMessage](interfaces/TopicMessage.md)
 - [TrackStreamStats](interfaces/TrackStreamStats.md)
 - [VelocityState](interfaces/VelocityState.md)
 - [VideoTrack](interfaces/VideoTrack.md)

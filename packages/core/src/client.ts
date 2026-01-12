@@ -593,6 +593,14 @@ export class AdamoClient {
           msg as unknown as Parameters<AdamoClientEvents['encoderStatsUpdated']>[0]
         );
       }
+
+      // Handle generic topic messages (from ros_subscriber)
+      if (typeof msg.topic === 'string' && 'data' in msg) {
+        this.emit(
+          'topicMessage',
+          msg as unknown as Parameters<AdamoClientEvents['topicMessage']>[0]
+        );
+      }
     }
   }
 

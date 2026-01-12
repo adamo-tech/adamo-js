@@ -118,6 +118,8 @@ import { GamepadController, HeartbeatMonitor } from '@adamo-tech/react';
 |------|---------|
 | `useAdamo()` | Access client, connection state, connect/disconnect |
 | `useVideoTrack()` | Get video track by name |
+| `useTopic()` | Subscribe to a topic streamed from the robot |
+| `useTopics()` | Subscribe to multiple topics at once |
 | `useXRTracking()` | Capture XR head/controller poses (requires entering VR) |
 | `useNav()` | Map, robot pose, path, and goal sending |
 | `useVelocity()` | Robot velocity state and movement detection |

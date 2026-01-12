@@ -4,3 +4,4 @@ export { useJoypad } from './useJoypad';
 export { useVideoTrack } from './useVideoTrack';
 export { useAdaptiveStream, useTrackStats } from './useAdaptiveStream';
 export { useVelocity } from './useVelocity';
+export { useTopic, useTopics, useTopicCallback } from './useTopic';

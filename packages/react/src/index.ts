@@ -43,6 +43,7 @@ export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
 export { useLatencyBreakdown, useRobotStats, useApplicationRtt } from './hooks/useLatency';
 export { useXRTracking } from './hooks/useXRTracking';
+export { useTopic, useTopics, useTopicCallback } from './hooks/useTopic';
 export type {
   UseXRTrackingConfig,
   UseXRTrackingReturn,
@@ -109,4 +110,6 @@ export type {
   // Latency measurement types
   LatencyBreakdown,
   RobotStats,
+  // Topic streaming types
+  TopicMessage,
 } from '@adamo-tech/core';

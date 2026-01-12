@@ -430,6 +430,8 @@ export interface AdamoClientEvents {
   robotStatsUpdated: (stats: RobotStats) => void;
   /** Called when latency breakdown is updated */
   latencyBreakdownUpdated: (breakdown: LatencyBreakdown) => void;
+  /** Called when a topic message is received */
+  topicMessage: (message: TopicMessage) => void;
 }
 
 // ============================================================================
@@ -629,4 +631,22 @@ export interface LatencyBreakdown {
   totalLatency: number;
   /** Timestamp when this breakdown was computed (Unix ms) */
   timestamp: number;
+}
+
+// ============================================================================
+// Topic Streaming Types
+// ============================================================================
+
+/**
+ * Topic message received from the robot via data channel
+ *
+ * The backend streams configured topics as JSON messages with this envelope.
+ */
+export interface TopicMessage {
+  /** The topic name (e.g., "/robot/status") */
+  topic: string;
+  /** The message type (e.g., "std_msgs/String") */
+  type: string;
+  /** The message data, structure depends on the message type */
+  data: unknown;
 }

@@ -62,6 +62,8 @@ export type {
   PongMessage,
   RobotStats,
   LatencyBreakdown,
+  // Topic streaming types
+  TopicMessage,
 } from './types';
 
 // Enums (need separate export)
