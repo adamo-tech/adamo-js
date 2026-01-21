@@ -36,6 +36,13 @@ export default function RoomPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    router.push('/');
+  }, [router]);
+
   // Check authentication (use localStorage for persistence)
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -70,6 +77,7 @@ export default function RoomPage() {
         }
         if (!resp.ok) throw new Error('Failed to fetch rooms');
         const data = await resp.json();
+        console.log('[Room] Fetched rooms:', data);
         setRooms(data.rooms || []);
       } catch (e) {
         setError('Failed to load rooms');
@@ -208,16 +216,28 @@ export default function RoomPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-50 dark:bg-black">
         <div className="text-red-500">{error}</div>
+        <button
+          onClick={logout}
+          className="px-4 py-2 text-sm text-zinc-500 hover:text-zinc-300 underline"
+        >
+          Logout
+        </button>
       </div>
     );
   }
 
   if (rooms.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-50 dark:bg-black">
         <div className="text-zinc-600 dark:text-zinc-400">No robots configured. Add rooms in the admin panel.</div>
+        <button
+          onClick={logout}
+          className="px-4 py-2 text-sm text-zinc-500 hover:text-zinc-300 underline"
+        >
+          Logout
+        </button>
       </div>
     );
   }
