@@ -285,9 +285,11 @@ export class JoypadManager {
     // Poll all gamepads and add to message
     const gamepads = navigator.getGamepads();
     let controllerIndex = 1;
+    let connectedCount = 0;
 
     for (const gp of gamepads) {
       if (gp && gp.connected) {
+        connectedCount++;
         const mapped = this.mapToROSJoy(gp);
         controlMessage[`controller${controllerIndex}` as `controller${number}`] = {
           axes: mapped.axes,
@@ -295,6 +297,12 @@ export class JoypadManager {
         };
         controllerIndex++;
       }
+    }
+
+    // Log when gamepad detection changes
+    const totalGamepads = Array.from(gamepads).filter(g => g !== null).length;
+    if (connectedCount === 0) {
+      console.warn(`[Joypad] No connected gamepads found (${totalGamepads} detected, 0 connected)`);
     }
 
     const success = this.client.sendControl(controlMessage);
