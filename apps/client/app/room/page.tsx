@@ -340,7 +340,11 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
   return (
     <>
       <HeartbeatMonitor />
-      <GamepadController config={{ maxVideoStalenessMs: 0 }} />
+      <GamepadController config={{
+        maxVideoStalenessMs: 0,
+        autorepeatRate: 60,      // 60Hz instead of 20Hz
+        coalesceIntervalMs: 0,   // No coalescing delay
+      }} />
       <CameraLayout />
       <StatsOverlay />
 
