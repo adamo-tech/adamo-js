@@ -6,6 +6,7 @@ import {
   Teleoperate,
   ConnectionStatus,
   useAdamo,
+  useTeleoperateContext,
   HeartbeatMonitor,
   GamepadController,
   StatsOverlay,
@@ -288,6 +289,42 @@ export default function RoomPage() {
   );
 }
 
+function RobotBusyDialog({ onCancel }: { onCancel: () => void }) {
+  const { robotBusy, forceConnect, disconnect } = useTeleoperateContext();
+
+  if (!robotBusy) return null;
+
+  const handleCancel = () => {
+    disconnect();
+    onCancel();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+      <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 max-w-sm mx-4">
+        <h2 className="text-lg font-semibold mb-2">Robot In Use</h2>
+        <p className="text-neutral-400 text-sm mb-6">
+          Another user is currently connected to this robot. Would you like to take over?
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={handleCancel}
+            className="flex-1 px-4 py-2 border border-neutral-600 hover:border-neutral-400 rounded text-sm transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={forceConnect}
+            className="flex-1 px-4 py-2 bg-white text-black hover:bg-neutral-200 rounded text-sm font-medium transition-colors"
+          >
+            Take Over
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnect: () => void }) {
   const { connectionState } = useAdamo();
 
@@ -295,6 +332,7 @@ function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnec
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-900">
         <ConnectionStatus />
+        <RobotBusyDialog onCancel={onDisconnect} />
       </div>
     );
   }
