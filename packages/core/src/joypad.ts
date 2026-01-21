@@ -64,6 +64,10 @@ export class JoypadManager {
   private coalesceTimeout: ReturnType<typeof setTimeout> | null = null;
   private lastAutorepeatTime: number = 0;
   private inputCallbacks: Set<(msg: JoyMessage) => void> = new Set();
+  private connectionCallbacks: Set<(connected: boolean, gamepad?: Gamepad) => void> = new Set();
+  private gamepadConnectedHandler: ((e: GamepadEvent) => void) | null = null;
+  private gamepadDisconnectedHandler: ((e: GamepadEvent) => void) | null = null;
+  private knownGamepadId: string | null = null;
 
   constructor(client: AdamoClient, config: JoypadConfig = {}) {
     this.client = client;
@@ -75,6 +79,32 @@ export class JoypadManager {
    */
   start(): void {
     if (this.animationFrameId || this.pollIntervalId) return;
+
+    // Listen for gamepad connect/disconnect events
+    // IMPORTANT: Chrome requires a button press before gamepad appears in getGamepads()
+    this.gamepadConnectedHandler = (e: GamepadEvent) => {
+      console.log(`[Joypad] Gamepad connected: "${e.gamepad.id}" (index ${e.gamepad.index})`);
+      this.knownGamepadId = e.gamepad.id;
+      this.connectionCallbacks.forEach((cb) => cb(true, e.gamepad));
+    };
+    this.gamepadDisconnectedHandler = (e: GamepadEvent) => {
+      console.log(`[Joypad] Gamepad disconnected: "${e.gamepad.id}" (index ${e.gamepad.index})`);
+      if (this.knownGamepadId === e.gamepad.id) {
+        this.knownGamepadId = null;
+      }
+      this.connectionCallbacks.forEach((cb) => cb(false, e.gamepad));
+    };
+    window.addEventListener('gamepadconnected', this.gamepadConnectedHandler);
+    window.addEventListener('gamepaddisconnected', this.gamepadDisconnectedHandler);
+
+    // Check if gamepad already connected (Safari provides this immediately, Chrome requires button press)
+    const existing = this.getGamepad();
+    if (existing) {
+      console.log(`[Joypad] Found existing gamepad: "${existing.id}"`);
+      this.knownGamepadId = existing.id;
+    } else {
+      console.log('[Joypad] No gamepad detected yet. In Chrome, press a button on your controller.');
+    }
 
     if (this.config.pollIntervalMs > 0) {
       // High-frequency polling with setInterval
@@ -101,6 +131,14 @@ export class JoypadManager {
       clearTimeout(this.coalesceTimeout);
       this.coalesceTimeout = null;
     }
+    if (this.gamepadConnectedHandler) {
+      window.removeEventListener('gamepadconnected', this.gamepadConnectedHandler);
+      this.gamepadConnectedHandler = null;
+    }
+    if (this.gamepadDisconnectedHandler) {
+      window.removeEventListener('gamepaddisconnected', this.gamepadDisconnectedHandler);
+      this.gamepadDisconnectedHandler = null;
+    }
   }
 
   /**
@@ -110,6 +148,16 @@ export class JoypadManager {
     this.inputCallbacks.add(callback);
     return () => {
       this.inputCallbacks.delete(callback);
+    };
+  }
+
+  /**
+   * Register a callback for gamepad connection changes
+   */
+  onConnectionChange(callback: (connected: boolean, gamepad?: Gamepad) => void): () => void {
+    this.connectionCallbacks.add(callback);
+    return () => {
+      this.connectionCallbacks.delete(callback);
     };
   }
 
