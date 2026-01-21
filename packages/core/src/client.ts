@@ -823,6 +823,8 @@ export class AdamoClient {
     let totalJitter = 0;
     let jitterCount = 0;
     let availableBandwidth = 0;
+    let selectedRtt: number | null = null;
+    let selectedBandwidth: number | null = null;
 
     // Build a map of trackIdentifier -> trackName from our video tracks
     const trackIdToName = new Map<string, string>();
@@ -834,12 +836,25 @@ export class AdamoClient {
       // Connection-level stats from candidate-pair
       if (report.type === 'candidate-pair' && (report as RTCIceCandidatePairStats).state === 'succeeded') {
         const candidateReport = report as RTCIceCandidatePairStats;
+        const isSelected =
+          (candidateReport as unknown as { selected?: boolean }).selected === true ||
+          (candidateReport as unknown as { nominated?: boolean }).nominated === true;
+
         if (candidateReport.currentRoundTripTime !== undefined) {
           totalRtt += candidateReport.currentRoundTripTime * 1000;
           rttCount++;
+
+          if (isSelected) {
+            selectedRtt = candidateReport.currentRoundTripTime * 1000;
+          }
         }
-        if ((candidateReport as unknown as Record<string, number>).availableIncomingBitrate) {
-          availableBandwidth = (candidateReport as unknown as Record<string, number>).availableIncomingBitrate;
+
+        const incomingBitrate = (candidateReport as unknown as Record<string, number>).availableIncomingBitrate;
+        if (incomingBitrate) {
+          availableBandwidth = incomingBitrate;
+          if (isSelected) {
+            selectedBandwidth = incomingBitrate;
+          }
         }
       }
 
@@ -933,9 +948,9 @@ export class AdamoClient {
         : 0;
 
     this._networkStats = {
-      rtt: rttCount > 0 ? totalRtt / rttCount : 0,
+      rtt: selectedRtt !== null ? selectedRtt : rttCount > 0 ? totalRtt / rttCount : 0,
       packetLoss,
-      availableBandwidth,
+      availableBandwidth: selectedBandwidth !== null ? selectedBandwidth : availableBandwidth,
       jitter: jitterCount > 0 ? totalJitter / jitterCount : 0,
       timestamp: now,
     };
