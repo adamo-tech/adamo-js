@@ -395,8 +395,16 @@ export class WebRTCConnection {
         this.dataChannel = null;
       }
 
+      // Remove handlers from old PC before closing to prevent spurious state changes
+      const oldPc = this.pc;
+      oldPc.onconnectionstatechange = null;
+      oldPc.oniceconnectionstatechange = null;
+      oldPc.onicecandidate = null;
+      oldPc.ontrack = null;
+      oldPc.ondatachannel = null;
+
       // Close old peer connection
-      this.pc.close();
+      oldPc.close();
 
       // Create new peer connection
       const iceServers = this.config.signaling.iceServers || [
