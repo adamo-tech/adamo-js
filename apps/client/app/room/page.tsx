@@ -208,10 +208,20 @@ export default function RoomPage() {
     );
   }
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
+    sessionStorage.removeItem('user');
+    router.push('/');
+  };
+
   // Room selection screen
   if (!selectedRoom) {
     return (
       <div style={styles.selectorContainer}>
+        <button onClick={handleLogout} style={styles.logoutButton}>
+          Logout
+        </button>
         <h1 style={styles.title}>Select Robot</h1>
         <p style={styles.subtitle}>Use D-pad to navigate, A to select</p>
 
@@ -406,5 +416,18 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 4,
     fontFamily: 'system-ui, -apple-system, sans-serif',
     zIndex: 1000,
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    padding: '8px 16px',
+    backgroundColor: 'transparent',
+    border: '1px solid #444',
+    color: '#888',
+    fontSize: 14,
+    borderRadius: 6,
+    cursor: 'pointer',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
   },
 };
