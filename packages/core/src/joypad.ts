@@ -14,21 +14,48 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
 };
 
 /**
- * W3C Gamepad to ROS Joy button mapping
- * Maps W3C gamepad button indices to ROS joy_node button indices
+ * W3C Gamepad to ROS game_controller_node button mapping
+ * Maps W3C Standard Gamepad button indices to ROS game_controller_node indices
+ * Reference: https://github.com/ros-drivers/joystick_drivers/blob/ros2/joy/README.md
+ *
+ * game_controller_node buttons:
+ *   0-3: A, B, X, Y
+ *   4: Back, 5: Guide, 6: Start
+ *   7: Left Stick, 8: Right Stick
+ *   9: Left Shoulder, 10: Right Shoulder
+ *   11-14: D-Pad Up/Down/Left/Right
+ *   15: Misc, 16-19: Paddle1-4, 20: Touchpad
+ *
+ * W3C Standard Gamepad buttons:
+ *   0-3: A, B, X, Y
+ *   4-5: LB, RB
+ *   6-7: LT, RT (analog triggers as buttons)
+ *   8: Back, 9: Start
+ *   10-11: Left/Right Stick Click
+ *   12-15: D-Pad Up/Down/Left/Right
+ *   16: Guide/Home
  */
 const BUTTON_MAP: Record<number, number> = {
-  0: 0, // A (CROSS) -> A
-  1: 1, // B (CIRCLE) -> B
-  2: 2, // X (SQUARE) -> X
-  3: 3, // Y (TRIANGLE) -> Y
-  8: 4, // Select/Back -> BACK
-  12: 5, // Guide/Home -> GUIDE
-  9: 6, // Start -> START
-  10: 7, // Left Stick Click -> LEFTSTICK
-  11: 8, // Right Stick Click -> RIGHTSTICK
-  4: 9, // LB -> LEFTSHOULDER
-  5: 10, // RB -> RIGHTSHOULDER
+  // Face buttons (same indices)
+  0: 0,   // A
+  1: 1,   // B
+  2: 2,   // X
+  3: 3,   // Y
+  // Menu buttons
+  8: 4,   // Back/Select -> BACK
+  16: 5,  // Guide/Home -> GUIDE
+  9: 6,   // Start -> START
+  // Stick clicks
+  10: 7,  // Left Stick Click -> LEFTSTICK
+  11: 8,  // Right Stick Click -> RIGHTSTICK
+  // Shoulder buttons
+  4: 9,   // LB -> LEFTSHOULDER
+  5: 10,  // RB -> RIGHTSHOULDER
+  // D-Pad
+  12: 11, // D-Pad Up -> DPAD_UP
+  13: 12, // D-Pad Down -> DPAD_DOWN
+  14: 13, // D-Pad Left -> DPAD_LEFT
+  15: 14, // D-Pad Right -> DPAD_RIGHT
 };
 
 const EXPECTED_BUTTON_COUNT = 21;
@@ -37,7 +64,8 @@ const EXPECTED_AXIS_COUNT = 6;
 /**
  * JoypadManager - Manages gamepad input and sends to the server
  *
- * Maps W3C Gamepad API to ROS sensor_msgs/Joy format compatible with joy_node.
+ * Maps W3C Gamepad API to ROS sensor_msgs/Joy format compatible with game_controller_node.
+ * Uses the standardized button/axis mapping from ros-drivers/joystick_drivers.
  * Supports deadzone, autorepeat, sticky buttons, and coalescing.
  *
  * @example
@@ -267,15 +295,7 @@ export class JoypadManager {
       }
     }
 
-    // Handle D-Pad
-    if (gamepad.buttons.length > 12) {
-      buttons[11] = gamepad.buttons[12]?.pressed ? 1 : 0; // DPAD_UP
-      buttons[12] = gamepad.buttons[13]?.pressed ? 1 : 0; // DPAD_DOWN
-      buttons[13] = gamepad.buttons[14]?.pressed ? 1 : 0; // DPAD_LEFT
-      buttons[14] = gamepad.buttons[15]?.pressed ? 1 : 0; // DPAD_RIGHT
-    }
-
-    // Some controllers use axes for D-pad
+    // Some controllers use axes for D-pad (fallback if buttons didn't set them)
     if (gamepad.axes.length > 9) {
       const dpadX = gamepad.axes[9] || 0;
       const dpadY = gamepad.axes[10] || 0;
