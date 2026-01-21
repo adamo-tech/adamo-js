@@ -323,7 +323,7 @@ export interface JoypadConfig {
   /**
    * Autorepeat rate in Hz for continuous input.
    * Set to 0 to only send on change.
-   * @default 20
+   * @default 100
    */
   autorepeatRate?: number;
 
@@ -336,7 +336,8 @@ export interface JoypadConfig {
 
   /**
    * Debounce interval in ms to coalesce rapid input changes.
-   * @default 1
+   * Set to 0 for lowest latency.
+   * @default 0
    */
   coalesceIntervalMs?: number;
 
@@ -351,6 +352,13 @@ export interface JoypadConfig {
    * @default 100
    */
   maxVideoStalenessMs?: number;
+
+  /**
+   * Polling interval in ms. Set to 0 to use requestAnimationFrame (synced to display).
+   * Lower values = lower latency but higher CPU usage.
+   * @default 1
+   */
+  pollIntervalMs?: number;
 
   /**
    * @deprecated No longer used - control messages go via single data channel

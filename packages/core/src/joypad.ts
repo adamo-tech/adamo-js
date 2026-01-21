@@ -5,10 +5,11 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
   deviceId: 0,
   deviceName: '',
   deadzone: 0.05,
-  autorepeatRate: 20.0,
+  autorepeatRate: 100.0, // 100Hz for responsive control
   stickyButtons: false,
-  coalesceIntervalMs: 1,
+  coalesceIntervalMs: 0, // No coalescing for lowest latency
   maxVideoStalenessMs: 100,
+  pollIntervalMs: 1, // 1ms high-frequency polling
   topic: '', // deprecated, unused
 };
 
@@ -56,6 +57,7 @@ export class JoypadManager {
   private client: AdamoClient;
   private config: Required<JoypadConfig>;
   private animationFrameId: number | null = null;
+  private pollIntervalId: ReturnType<typeof setInterval> | null = null;
   private previousState: number[] | null = null;
   private stickyButtonState: number[] = new Array(EXPECTED_BUTTON_COUNT).fill(0);
   private pendingState: { buttons: number[]; axes: number[] } | null = null;
@@ -72,9 +74,15 @@ export class JoypadManager {
    * Start polling gamepad and sending joy messages
    */
   start(): void {
-    if (this.animationFrameId) return;
+    if (this.animationFrameId || this.pollIntervalId) return;
 
-    this.pollGamepad();
+    if (this.config.pollIntervalMs > 0) {
+      // High-frequency polling with setInterval
+      this.pollIntervalId = setInterval(this.pollGamepad, this.config.pollIntervalMs);
+    } else {
+      // Default: sync to display refresh with requestAnimationFrame
+      this.pollGamepad();
+    }
   }
 
   /**
@@ -84,6 +92,10 @@ export class JoypadManager {
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
+    }
+    if (this.pollIntervalId) {
+      clearInterval(this.pollIntervalId);
+      this.pollIntervalId = null;
     }
     if (this.coalesceTimeout) {
       clearTimeout(this.coalesceTimeout);
@@ -136,7 +148,7 @@ export class JoypadManager {
         !this.client.isVideoFresh(this.config.maxVideoStalenessMs)
       ) {
         // Video is stale - skip publishing but continue polling
-        this.animationFrameId = requestAnimationFrame(this.pollGamepad);
+        this.scheduleNextPoll();
         return;
       }
 
@@ -177,8 +189,16 @@ export class JoypadManager {
       }
     }
 
-    this.animationFrameId = requestAnimationFrame(this.pollGamepad);
+    this.scheduleNextPoll();
   };
+
+  private scheduleNextPoll(): void {
+    // Only schedule via rAF when not using interval mode
+    if (this.config.pollIntervalMs === 0) {
+      this.animationFrameId = requestAnimationFrame(this.pollGamepad);
+    }
+    // When using pollIntervalMs > 0, setInterval handles scheduling
+  }
 
   private mapToROSJoy(gamepad: Gamepad): { buttons: number[]; axes: number[] } {
     const buttons = new Array(EXPECTED_BUTTON_COUNT).fill(0);
