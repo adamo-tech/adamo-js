@@ -1,6 +1,4 @@
 {
-  "buildCommand": "cd ../.. && pnpm --filter=@adamo/origin build",
   "installCommand": "cd ../.. && pnpm install",
-  "framework": "nextjs",
-  "outputDirectory": ".next"
+  "buildCommand": "cd ../.. && pnpm build"
 }
