@@ -1,6 +1,6 @@
 # Interface: WebCodecsStats
 
-Defined in: [webcodecs/types.ts:40](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L40)
+Defined in: [webcodecs/types.ts:40](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L40)
 
 Statistics from the WebCodecs decoder
 
@@ -10,7 +10,7 @@ Statistics from the WebCodecs decoder
 
 > **avgDecodeLatencyMs**: `number`
 
-Defined in: [webcodecs/types.ts:48](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L48)
+Defined in: [webcodecs/types.ts:48](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L48)
 
 Average decode latency in milliseconds
 
@@ -20,7 +20,7 @@ Average decode latency in milliseconds
 
 > **decodedFrameCount**: `number`
 
-Defined in: [webcodecs/types.ts:44](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L44)
+Defined in: [webcodecs/types.ts:44](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L44)
 
 Total frames successfully decoded
 
@@ -30,7 +30,7 @@ Total frames successfully decoded
 
 > **decoderState**: `string`
 
-Defined in: [webcodecs/types.ts:50](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L50)
+Defined in: [webcodecs/types.ts:50](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L50)
 
 Current decoder state
 
@@ -40,7 +40,7 @@ Current decoder state
 
 > **frameCount**: `number`
 
-Defined in: [webcodecs/types.ts:42](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L42)
+Defined in: [webcodecs/types.ts:42](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L42)
 
 Total frames received
 
@@ -50,7 +50,7 @@ Total frames received
 
 > **lastDecodeLatencyMs**: `number`
 
-Defined in: [webcodecs/types.ts:46](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L46)
+Defined in: [webcodecs/types.ts:46](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L46)
 
 Last decode latency in milliseconds
 
@@ -60,6 +60,6 @@ Last decode latency in milliseconds
 
 > **queueSize**: `number`
 
-Defined in: [webcodecs/types.ts:52](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webcodecs/types.ts#L52)
+Defined in: [webcodecs/types.ts:52](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webcodecs/types.ts#L52)
 
 Number of frames in decode queue

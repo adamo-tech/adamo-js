@@ -64,6 +64,9 @@ export type {
   LatencyBreakdown,
   // Topic streaming types
   TopicMessage,
+  // Twist types
+  Vector3,
+  TwistMessage,
 } from './types';
 
 // Enums (need separate export)

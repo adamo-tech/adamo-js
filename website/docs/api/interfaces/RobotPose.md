@@ -1,6 +1,6 @@
 # Interface: RobotPose
 
-Defined in: [types.ts:487](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L487)
+Defined in: [types.ts:495](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L495)
 
 Robot pose from AMCL localization
 
@@ -10,7 +10,7 @@ Robot pose from AMCL localization
 
 > **theta**: `number`
 
-Defined in: [types.ts:493](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L493)
+Defined in: [types.ts:501](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L501)
 
 Orientation in radians
 
@@ -20,7 +20,7 @@ Orientation in radians
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:495](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L495)
+Defined in: [types.ts:503](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L503)
 
 Timestamp in milliseconds
 
@@ -30,7 +30,7 @@ Timestamp in milliseconds
 
 > **x**: `number`
 
-Defined in: [types.ts:489](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L489)
+Defined in: [types.ts:497](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L497)
 
 X position in meters (map frame)
 
@@ -40,6 +40,6 @@ X position in meters (map frame)
 
 > **y**: `number`
 
-Defined in: [types.ts:491](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L491)
+Defined in: [types.ts:499](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L499)
 
 Y position in meters (map frame)

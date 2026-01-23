@@ -27,6 +27,7 @@ import type {
   PongMessage,
   RobotStats,
   LatencyBreakdown,
+  TwistMessage,
 } from './types';
 
 const DEFAULT_CONFIG: AdamoClientConfig & { debug: boolean; useWebCodecs: boolean; codecProfile: string; hardwareAcceleration: 'prefer-hardware' | 'prefer-software' | 'no-preference' } = {
@@ -428,6 +429,28 @@ export class AdamoClient {
     const success = this.connection.sendControl({
       type: 'nav_goal',
       goal,
+      timestamp: Date.now(),
+    } as unknown as ControlMessage);
+    if (!success) {
+      throw new Error('Data channel not open');
+    }
+  }
+
+  /**
+   * Send twist (velocity) data for keyboard teleoperation
+   * @param twist - Twist message with linear and angular velocities
+   * @param topic - Topic name for routing (default: 'twist')
+   * @returns Promise that resolves when message is sent
+   */
+  async sendTwist(twist: TwistMessage, topic: string = 'twist'): Promise<void> {
+    if (!this.connection) {
+      throw new Error('Not connected');
+    }
+    const success = this.connection.sendControl({
+      type: 'twist',
+      topic,
+      linear: twist.linear,
+      angular: twist.angular,
       timestamp: Date.now(),
     } as unknown as ControlMessage);
     if (!success) {

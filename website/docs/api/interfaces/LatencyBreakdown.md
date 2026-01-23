@@ -1,6 +1,6 @@
 # Interface: LatencyBreakdown
 
-Defined in: [types.ts:617](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L617)
+Defined in: [types.ts:625](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L625)
 
 Comprehensive end-to-end latency breakdown
 Combines measurements from robot, network, and client
@@ -11,7 +11,7 @@ Combines measurements from robot, network, and client
 
 > **applicationLatency**: `number`
 
-Defined in: [types.ts:621](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L621)
+Defined in: [types.ts:629](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L629)
 
 One-way application latency (applicationRtt / 2) in ms
 
@@ -21,7 +21,7 @@ One-way application latency (applicationRtt / 2) in ms
 
 > **applicationRtt**: `number`
 
-Defined in: [types.ts:619](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L619)
+Defined in: [types.ts:627](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L627)
 
 Application-level round-trip time (ping/pong) in ms
 
@@ -31,7 +31,7 @@ Application-level round-trip time (ping/pong) in ms
 
 > **captureLatency**: `number`
 
-Defined in: [types.ts:625](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L625)
+Defined in: [types.ts:633](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L633)
 
 Camera capture latency on robot (ZED SDK internal) in ms
 
@@ -41,7 +41,7 @@ Camera capture latency on robot (ZED SDK internal) in ms
 
 > **decodeTime**: `number`
 
-Defined in: [types.ts:631](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L631)
+Defined in: [types.ts:639](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L639)
 
 Video decode time on client in ms
 
@@ -51,7 +51,7 @@ Video decode time on client in ms
 
 > **encoderLatency**: `number`
 
-Defined in: [types.ts:623](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L623)
+Defined in: [types.ts:631](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L631)
 
 Encoder latency on robot (capture to encoded) in ms
 
@@ -61,7 +61,7 @@ Encoder latency on robot (capture to encoded) in ms
 
 > **jitterBufferDelay**: `number`
 
-Defined in: [types.ts:629](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L629)
+Defined in: [types.ts:637](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L637)
 
 Jitter buffer delay on client in ms
 
@@ -71,7 +71,7 @@ Jitter buffer delay on client in ms
 
 > **pipelineLatency**: `number`
 
-Defined in: [types.ts:627](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L627)
+Defined in: [types.ts:635](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L635)
 
 Pipeline processing latency on robot (videoconvert, encoder, etc) in ms
 
@@ -81,7 +81,7 @@ Pipeline processing latency on robot (videoconvert, encoder, etc) in ms
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:635](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L635)
+Defined in: [types.ts:643](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L643)
 
 Timestamp when this breakdown was computed (Unix ms)
 
@@ -91,6 +91,6 @@ Timestamp when this breakdown was computed (Unix ms)
 
 > **totalLatency**: `number`
 
-Defined in: [types.ts:633](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L633)
+Defined in: [types.ts:641](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L641)
 
 Total estimated glass-to-glass latency in ms

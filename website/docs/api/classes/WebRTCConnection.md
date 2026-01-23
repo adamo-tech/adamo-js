@@ -1,6 +1,6 @@
 # Class: WebRTCConnection
 
-Defined in: [webrtc/connection.ts:37](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L37)
+Defined in: [webrtc/connection.ts:37](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L37)
 
 WebRTC connection class for robot teleoperation
 
@@ -29,7 +29,7 @@ connection.sendControl({ controller1: { axes: [0, 0], buttons: [0] } });
 
 > **new WebRTCConnection**(`config`): `WebRTCConnection`
 
-Defined in: [webrtc/connection.ts:58](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L58)
+Defined in: [webrtc/connection.ts:58](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L58)
 
 #### Parameters
 
@@ -49,7 +49,7 @@ Defined in: [webrtc/connection.ts:58](https://github.com/adamo-tech/adamo-js/blo
 
 > **get** **connectionState**(): [`WebRTCConnectionState`](../type-aliases/WebRTCConnectionState.md)
 
-Defined in: [webrtc/connection.ts:90](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L90)
+Defined in: [webrtc/connection.ts:90](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L90)
 
 Get the current connection state
 
@@ -65,7 +65,7 @@ Get the current connection state
 
 > **get** **trackMetadata**(): `TrackMetadata`[]
 
-Defined in: [webrtc/connection.ts:83](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L83)
+Defined in: [webrtc/connection.ts:83](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L83)
 
 Get all track metadata from the offer
 
@@ -79,7 +79,7 @@ Get all track metadata from the offer
 
 > **connect**(): `Promise`\<`void`\>
 
-Defined in: [webrtc/connection.ts:130](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L130)
+Defined in: [webrtc/connection.ts:130](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L130)
 
 Connect to signaling server and establish WebRTC connection
 
@@ -93,7 +93,7 @@ Connect to signaling server and establish WebRTC connection
 
 > **disconnect**(): `void`
 
-Defined in: [webrtc/connection.ts:151](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L151)
+Defined in: [webrtc/connection.ts:151](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L151)
 
 Disconnect and cleanup
 
@@ -107,7 +107,7 @@ Disconnect and cleanup
 
 > **forceConnect**(): `void`
 
-Defined in: [webrtc/connection.ts:122](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L122)
+Defined in: [webrtc/connection.ts:122](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L122)
 
 Force connect when robot is busy (another user connected).
 Call this after receiving onRobotBusy callback to take over the connection.
@@ -122,7 +122,7 @@ Call this after receiving onRobotBusy callback to take over the connection.
 
 > **getNextTrackName**(): `string`
 
-Defined in: [webrtc/connection.ts:75](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L75)
+Defined in: [webrtc/connection.ts:75](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L75)
 
 Get next track name (called when tracks arrive)
 Uses metadata if available, otherwise generates name
@@ -137,7 +137,7 @@ Uses metadata if available, otherwise generates name
 
 > **getPeerConnection**(): `RTCPeerConnection` \| `null`
 
-Defined in: [webrtc/connection.ts:159](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L159)
+Defined in: [webrtc/connection.ts:159](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L159)
 
 Get the RTCPeerConnection for advanced usage (e.g., attaching WebCodecs transform)
 
@@ -151,7 +151,7 @@ Get the RTCPeerConnection for advanced usage (e.g., attaching WebCodecs transfor
 
 > **getStats**(): `Promise`\<`RTCStatsReport` \| `null`\>
 
-Defined in: [webrtc/connection.ts:166](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L166)
+Defined in: [webrtc/connection.ts:166](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L166)
 
 Get WebRTC statistics
 
@@ -165,7 +165,7 @@ Get WebRTC statistics
 
 > **getTrackName**(`index`): `string`
 
-Defined in: [webrtc/connection.ts:66](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L66)
+Defined in: [webrtc/connection.ts:66](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L66)
 
 Get track name by index (from offer metadata)
 Falls back to 'video_N' if not found
@@ -186,7 +186,7 @@ Falls back to 'video_N' if not found
 
 > **getVideoReceivers**(): `RTCRtpReceiver`[]
 
-Defined in: [webrtc/connection.ts:174](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L174)
+Defined in: [webrtc/connection.ts:174](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L174)
 
 Get all video receivers for WebCodecs integration
 
@@ -200,7 +200,7 @@ Get all video receivers for WebCodecs integration
 
 > **isDataChannelOpen**(): `boolean`
 
-Defined in: [webrtc/connection.ts:114](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L114)
+Defined in: [webrtc/connection.ts:114](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L114)
 
 Check if the data channel is open and ready
 
@@ -214,7 +214,7 @@ Check if the data channel is open and ready
 
 > **sendControl**(`data`): `boolean`
 
-Defined in: [webrtc/connection.ts:98](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/webrtc/connection.ts#L98)
+Defined in: [webrtc/connection.ts:98](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/webrtc/connection.ts#L98)
 
 Send control data over the data channel
 Returns false if the channel is not open

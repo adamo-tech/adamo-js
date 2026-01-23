@@ -1,6 +1,6 @@
 # Interface: PongMessage
 
-Defined in: [types.ts:585](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L585)
+Defined in: [types.ts:593](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L593)
 
 Pong response from the robot
 
@@ -10,7 +10,7 @@ Pong response from the robot
 
 > **clientTimestamp**: `number`
 
-Defined in: [types.ts:590](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L590)
+Defined in: [types.ts:598](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L598)
 
 Echoed client timestamp
 
@@ -20,7 +20,7 @@ Echoed client timestamp
 
 > **id**: `number`
 
-Defined in: [types.ts:588](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L588)
+Defined in: [types.ts:596](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L596)
 
 Echoed sequence number
 
@@ -30,7 +30,7 @@ Echoed sequence number
 
 > **robotTimestamp**: `number`
 
-Defined in: [types.ts:592](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L592)
+Defined in: [types.ts:600](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L600)
 
 Robot receive timestamp (Unix ms)
 
@@ -40,4 +40,4 @@ Robot receive timestamp (Unix ms)
 
 > **type**: `"pong"`
 
-Defined in: [types.ts:586](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L586)
+Defined in: [types.ts:594](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L594)

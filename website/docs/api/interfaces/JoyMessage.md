@@ -1,6 +1,6 @@
 # Interface: JoyMessage
 
-Defined in: [types.ts:364](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L364)
+Defined in: [types.ts:372](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L372)
 
 ROS-compatible Joy message format
 
@@ -10,7 +10,7 @@ ROS-compatible Joy message format
 
 > **axes**: `number`[]
 
-Defined in: [types.ts:369](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L369)
+Defined in: [types.ts:377](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L377)
 
 ***
 
@@ -18,7 +18,7 @@ Defined in: [types.ts:369](https://github.com/adamo-tech/adamo-js/blob/71c182232
 
 > **buttons**: `number`[]
 
-Defined in: [types.ts:370](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L370)
+Defined in: [types.ts:378](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L378)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [types.ts:370](https://github.com/adamo-tech/adamo-js/blob/71c182232
 
 > **header**: `object`
 
-Defined in: [types.ts:365](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L365)
+Defined in: [types.ts:373](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L373)
 
 #### frame\_id
 

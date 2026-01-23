@@ -112,4 +112,7 @@ export type {
   RobotStats,
   // Topic streaming types
   TopicMessage,
+  // Twist types
+  Vector3,
+  TwistMessage,
 } from '@adamo-tech/core';

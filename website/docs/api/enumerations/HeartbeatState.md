@@ -1,6 +1,6 @@
 # Enumeration: HeartbeatState
 
-Defined in: [types.ts:142](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L142)
+Defined in: [types.ts:142](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L142)
 
 Heartbeat safety states matching the server-side SafetyState enum
 
@@ -10,7 +10,7 @@ Heartbeat safety states matching the server-side SafetyState enum
 
 > **CONTROLLER\_DISCONNECTED**: `3`
 
-Defined in: [types.ts:150](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L150)
+Defined in: [types.ts:150](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L150)
 
 No gamepad detected
 
@@ -20,7 +20,7 @@ No gamepad detected
 
 > **HEARTBEAT\_MISSING**: `4`
 
-Defined in: [types.ts:152](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L152)
+Defined in: [types.ts:152](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L152)
 
 Heartbeat messages stopped (server-side only)
 
@@ -30,7 +30,7 @@ Heartbeat messages stopped (server-side only)
 
 > **HIGH\_LATENCY**: `2`
 
-Defined in: [types.ts:148](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L148)
+Defined in: [types.ts:148](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L148)
 
 Network round-trip time exceeds threshold
 
@@ -40,7 +40,7 @@ Network round-trip time exceeds threshold
 
 > **OK**: `0`
 
-Defined in: [types.ts:144](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L144)
+Defined in: [types.ts:144](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L144)
 
 All checks pass - system operating normally
 
@@ -50,6 +50,6 @@ All checks pass - system operating normally
 
 > **WINDOW\_UNFOCUSED**: `1`
 
-Defined in: [types.ts:146](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L146)
+Defined in: [types.ts:146](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L146)
 
 Browser window is not focused

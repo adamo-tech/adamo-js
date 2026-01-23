@@ -1,6 +1,6 @@
 # Interface: RobotStats
 
-Defined in: [types.ts:599](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L599)
+Defined in: [types.ts:607](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L607)
 
 Robot-side statistics message
 Sent periodically by the robot over the data channel
@@ -11,7 +11,7 @@ Sent periodically by the robot over the data channel
 
 > **captureLatencyMs**: `number`
 
-Defined in: [types.ts:604](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L604)
+Defined in: [types.ts:612](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L612)
 
 Camera capture latency in milliseconds (ZED SDK internal)
 
@@ -21,7 +21,7 @@ Camera capture latency in milliseconds (ZED SDK internal)
 
 > **encoderLatencyMs**: `number`
 
-Defined in: [types.ts:602](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L602)
+Defined in: [types.ts:610](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L610)
 
 Total encoder latency in milliseconds (capture + pipeline)
 
@@ -31,7 +31,7 @@ Total encoder latency in milliseconds (capture + pipeline)
 
 > **framesEncoded**: `number`
 
-Defined in: [types.ts:608](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L608)
+Defined in: [types.ts:616](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L616)
 
 Number of frames encoded in the stats period
 
@@ -41,7 +41,7 @@ Number of frames encoded in the stats period
 
 > **pipelineLatencyMs**: `number`
 
-Defined in: [types.ts:606](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L606)
+Defined in: [types.ts:614](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L614)
 
 Pipeline processing latency in milliseconds (videoconvert, encoder, etc)
 
@@ -51,7 +51,7 @@ Pipeline processing latency in milliseconds (videoconvert, encoder, etc)
 
 > **timestamp**: `number`
 
-Defined in: [types.ts:610](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L610)
+Defined in: [types.ts:618](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L618)
 
 Timestamp when these stats were collected (Unix ms)
 
@@ -61,4 +61,4 @@ Timestamp when these stats were collected (Unix ms)
 
 > **type**: `"stats/robot"`
 
-Defined in: [types.ts:600](https://github.com/adamo-tech/adamo-js/blob/71c1822329b262f5ae59496f274e89fc5f907ee8/packages/core/src/types.ts#L600)
+Defined in: [types.ts:608](https://github.com/adamo-tech/adamo-js/blob/57cd465b4d8c1beff7ea801e7484f54bd1514b37/packages/core/src/types.ts#L608)

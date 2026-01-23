@@ -660,3 +660,40 @@ export interface TopicMessage {
   /** The message data, structure depends on the message type */
   data: unknown;
 }
+
+// ============================================================================
+// Twist/Velocity Command Types
+// ============================================================================
+
+/**
+ * 3D vector component for Twist messages
+ * Compatible with geometry_msgs/msg/Vector3
+ */
+export interface Vector3 {
+  /** X component (forward/backward for linear, roll for angular) */
+  x: number;
+  /** Y component (left/right for linear, pitch for angular) */
+  y: number;
+  /** Z component (up/down for linear, yaw for angular) */
+  z: number;
+}
+
+/**
+ * Twist message for velocity commands
+ * Compatible with geometry_msgs/msg/Twist
+ *
+ * @example
+ * ```ts
+ * const twist: TwistMessage = {
+ *   linear: { x: 0.5, y: 0, z: 0 },   // Move forward at 0.5 m/s
+ *   angular: { x: 0, y: 0, z: 0.1 },  // Rotate at 0.1 rad/s
+ * };
+ * await client.sendTwist(twist);
+ * ```
+ */
+export interface TwistMessage {
+  /** Linear velocity in m/s */
+  linear: Vector3;
+  /** Angular velocity in rad/s */
+  angular: Vector3;
+}

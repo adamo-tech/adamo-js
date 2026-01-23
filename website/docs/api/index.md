@@ -39,6 +39,8 @@
 - [SignalingConfig](interfaces/SignalingConfig.md)
 - [TopicMessage](interfaces/TopicMessage.md)
 - [TrackStreamStats](interfaces/TrackStreamStats.md)
+- [TwistMessage](interfaces/TwistMessage.md)
+- [Vector3](interfaces/Vector3.md)
 - [VelocityState](interfaces/VelocityState.md)
 - [VideoTrack](interfaces/VideoTrack.md)
 - [WebCodecsConfig](interfaces/WebCodecsConfig.md)
