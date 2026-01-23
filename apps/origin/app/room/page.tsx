@@ -8,87 +8,171 @@ import {
   useAdamo,
   HeartbeatMonitor,
   StatsOverlay,
+  AutoVideoLayout,
 } from '@adamo-tech/react';
 import type { TwistMessage } from '@adamo-tech/core';
-import { KeyboardLayout } from './KeyboardLayout';
-import { VELOCITY_INCREMENT, TOPICS } from '../../config/topics';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const VELOCITY_INCREMENT = 0.01;
+const TWIST_TOPIC = 'twist';
+
+interface Room {
+  id: string;
+  name: string;
+  robot_name?: string;
+  is_online: boolean;
+}
 
 export default function RoomPage() {
   const router = useRouter();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [signalingUrl, setSignalingUrl] = useState<string | null>(null);
   const [signalingToken, setSignalingToken] = useState<string | null>(null);
   const [iceServers, setIceServers] = useState<RTCIceServer[]>([]);
-  const [roomId, setRoomId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Check auth and fetch token
+  // Check auth and fetch rooms
   useEffect(() => {
     const token = sessionStorage.getItem('access_token');
     if (!token) {
       router.push('/');
       return;
     }
+    setAccessToken(token);
 
-    const fetchToken = async () => {
+    const fetchRooms = async () => {
       try {
-        // Fetch first available room
-        const roomsResp = await fetch(`${API_URL}/rooms`, {
+        const resp = await fetch(`${API_URL}/rooms`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!roomsResp.ok) throw new Error('Failed to fetch rooms');
-        const roomsData = await roomsResp.json();
-        const room = roomsData.rooms?.[0];
-        if (!room) throw new Error('No rooms available');
-
-        // Get WebRTC token
-        const tokenResp = await fetch(`${API_URL}/rooms/${room.id}/token`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!tokenResp.ok) throw new Error('Failed to get token');
-        const tokenData = await tokenResp.json();
-
-        // Build signaling WebSocket URL
-        if (!tokenData.websocket_url) {
-          throw new Error('Missing websocket_url in response');
+        if (resp.status === 401) {
+          sessionStorage.removeItem('access_token');
+          router.push('/');
+          return;
         }
-        const apiBase = API_URL.replace(/^http/, 'ws');
-        const signalingWsUrl = `${apiBase}${tokenData.websocket_url}`;
-
-        setSignalingUrl(signalingWsUrl);
-        setSignalingToken(tokenData.token);
-        setRoomId(room.id);
-        if (tokenData.ice_servers) {
-          setIceServers(tokenData.ice_servers);
-        }
+        if (!resp.ok) throw new Error('Failed to fetch rooms');
+        const data = await resp.json();
+        setRooms(data.rooms || []);
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Connection failed');
+        setError(e instanceof Error ? e.message : 'Failed to load rooms');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchToken();
+    fetchRooms();
   }, [router]);
+
+  // Fetch token when room is selected
+  useEffect(() => {
+    if (!selectedRoom || !accessToken) return;
+
+    const fetchToken = async () => {
+      try {
+        const resp = await fetch(`${API_URL}/rooms/${selectedRoom.id}/token`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!resp.ok) throw new Error('Failed to get token');
+        const data = await resp.json();
+
+        if (!data.websocket_url) {
+          throw new Error('Missing websocket_url in response');
+        }
+        const apiBase = API_URL.replace(/^http/, 'ws');
+        const signalingWsUrl = `${apiBase}${data.websocket_url}`;
+
+        setSignalingUrl(signalingWsUrl);
+        setSignalingToken(data.token);
+        if (data.ice_servers) {
+          setIceServers(data.ice_servers);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Connection failed');
+        setSelectedRoom(null);
+      }
+    };
+
+    fetchToken();
+  }, [selectedRoom, accessToken]);
+
+  const handleDisconnect = () => {
+    setSelectedRoom(null);
+    setSignalingUrl(null);
+    setSignalingToken(null);
+    setIceServers([]);
+  };
 
   if (loading) {
     return (
       <div style={styles.center}>
-        <div style={styles.loading}>Connecting...</div>
+        <div style={styles.loading}>Loading rooms...</div>
       </div>
     );
   }
 
-  if (error || !signalingToken || !signalingUrl || !roomId) {
+  if (error && !selectedRoom) {
     return (
       <div style={styles.center}>
-        <div style={styles.error}>{error || 'Connection failed'}</div>
+        <div style={styles.error}>{error}</div>
         <button onClick={() => router.push('/')} style={styles.backButton}>
           Back to Login
         </button>
+      </div>
+    );
+  }
+
+  // Room selection screen
+  if (!selectedRoom) {
+    return (
+      <div style={styles.selectorContainer}>
+        <h1 style={styles.title}>Select Robot</h1>
+
+        {rooms.length === 0 ? (
+          <p style={styles.noRooms}>No robots available</p>
+        ) : (
+          <div style={styles.roomList}>
+            {rooms.map((room) => (
+              <button
+                key={room.id}
+                style={{
+                  ...styles.roomItem,
+                  ...(!room.is_online ? styles.roomItemOffline : {}),
+                }}
+                onClick={() => setSelectedRoom(room)}
+              >
+                <div style={styles.roomHeader}>
+                  <div style={styles.roomName}>{room.name}</div>
+                  <div
+                    style={{
+                      ...styles.statusDot,
+                      backgroundColor: room.is_online ? '#22c55e' : '#666',
+                    }}
+                  />
+                </div>
+                {room.robot_name && (
+                  <div style={styles.robotName}>{room.robot_name}</div>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <button onClick={() => router.push('/')} style={styles.logoutButton}>
+          Logout
+        </button>
+      </div>
+    );
+  }
+
+  // Waiting for token
+  if (!signalingToken || !signalingUrl) {
+    return (
+      <div style={styles.center}>
+        <div style={styles.loading}>Connecting to {selectedRoom.name}...</div>
       </div>
     );
   }
@@ -98,30 +182,24 @@ export default function RoomPage() {
       config={{ debug: true }}
       signaling={{
         serverUrl: signalingUrl,
-        roomId: roomId,
+        roomId: selectedRoom.id,
         token: signalingToken,
         iceServers: iceServers.length > 0 ? iceServers : undefined,
       }}
       autoConnect
     >
-      <RoomContent />
+      <RoomContent roomName={selectedRoom.name} onDisconnect={handleDisconnect} />
     </Teleoperate>
   );
 }
 
-function RoomContent() {
+function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnect: () => void }) {
   const { connectionState, client } = useAdamo();
   const [velocity, setVelocity] = useState<TwistMessage>({
     linear: { x: 0, y: 0, z: 0 },
     angular: { x: 0, y: 0, z: 0 },
   });
-  const velocityRef = useRef(velocity);
   const keysHeldRef = useRef<Set<string>>(new Set());
-
-  // Keep ref in sync
-  useEffect(() => {
-    velocityRef.current = velocity;
-  }, [velocity]);
 
   // Keyboard handling
   const updateVelocity = useCallback((key: string) => {
@@ -159,7 +237,7 @@ function RoomContent() {
   // Send velocity when it changes
   useEffect(() => {
     if (!client || connectionState !== 'connected') return;
-    client.sendTwist(velocity, TOPICS.cmdVel.name).catch((e) => {
+    client.sendTwist(velocity, TWIST_TOPIC).catch((e) => {
       console.debug('[Keyboard] Failed to send twist:', e);
     });
   }, [client, connectionState, velocity]);
@@ -217,8 +295,16 @@ function RoomContent() {
   return (
     <>
       <HeartbeatMonitor />
-      <KeyboardLayout />
+      <AutoVideoLayout style={styles.videoLayout} />
       <StatsOverlay />
+
+      {/* Room name and disconnect */}
+      <div style={styles.roomIndicator}>
+        <span>{roomName}</span>
+        <button onClick={onDisconnect} style={styles.disconnectButton}>
+          ✕
+        </button>
+      </div>
 
       {/* Velocity display */}
       <div style={styles.velocityPanel}>
@@ -280,6 +366,101 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fff',
     cursor: 'pointer',
     fontSize: 12,
+  },
+  selectorContainer: {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+    padding: 20,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 600,
+    color: '#fff',
+    marginBottom: 32,
+  },
+  noRooms: {
+    color: '#666',
+    fontSize: 14,
+  },
+  roomList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+    width: '100%',
+    maxWidth: 400,
+  },
+  roomItem: {
+    padding: '16px 20px',
+    backgroundColor: '#111',
+    borderRadius: 8,
+    border: '1px solid #333',
+    cursor: 'pointer',
+    textAlign: 'left',
+    transition: 'all 0.2s ease',
+  },
+  roomItemOffline: {
+    opacity: 0.5,
+  },
+  roomHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  roomName: {
+    fontSize: 18,
+    fontWeight: 500,
+    color: '#fff',
+  },
+  robotName: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 4,
+  },
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: '50%',
+  },
+  logoutButton: {
+    marginTop: 40,
+    padding: '8px 16px',
+    backgroundColor: 'transparent',
+    border: '1px solid #333',
+    borderRadius: 4,
+    color: '#666',
+    cursor: 'pointer',
+    fontSize: 12,
+  },
+  videoLayout: {
+    position: 'fixed',
+    inset: 0,
+    padding: 8,
+  },
+  roomIndicator: {
+    position: 'fixed',
+    top: 10,
+    right: 10,
+    padding: '6px 12px',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    color: '#fff',
+    fontSize: 12,
+    borderRadius: 4,
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+  },
+  disconnectButton: {
+    background: 'none',
+    border: 'none',
+    color: '#666',
+    cursor: 'pointer',
+    fontSize: 14,
+    padding: 0,
   },
   velocityPanel: {
     position: 'fixed',
