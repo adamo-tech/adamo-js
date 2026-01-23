@@ -65,40 +65,6 @@ export default function HomePage() {
         </button>
         {error && <p style={styles.error}>{error}</p>}
       </form>
-
-      <div style={styles.controls}>
-        <h3 style={styles.controlsTitle}>Keyboard Controls</h3>
-        <div style={styles.keyGrid}>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>W</span>
-            <span style={styles.keyDesc}>Forward</span>
-          </div>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>S</span>
-            <span style={styles.keyDesc}>Backward</span>
-          </div>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>A</span>
-            <span style={styles.keyDesc}>Strafe Left</span>
-          </div>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>D</span>
-            <span style={styles.keyDesc}>Strafe Right</span>
-          </div>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>Q</span>
-            <span style={styles.keyDesc}>Rotate Left</span>
-          </div>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>E</span>
-            <span style={styles.keyDesc}>Rotate Right</span>
-          </div>
-          <div style={styles.keyRow}>
-            <span style={styles.key}>X</span>
-            <span style={styles.keyDesc}>Stop (Reset)</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -152,44 +118,5 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#ef4444',
     fontSize: 14,
     textAlign: 'center',
-  },
-  controls: {
-    marginTop: 60,
-    textAlign: 'center',
-  },
-  controlsTitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 16,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  keyGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: 8,
-  },
-  keyRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    padding: '4px 8px',
-  },
-  key: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 28,
-    height: 28,
-    backgroundColor: '#222',
-    border: '1px solid #444',
-    borderRadius: 4,
-    fontSize: 12,
-    fontWeight: 600,
-    fontFamily: 'monospace',
-  },
-  keyDesc: {
-    fontSize: 12,
-    color: '#666',
   },
 };
