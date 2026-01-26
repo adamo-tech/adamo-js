@@ -346,6 +346,11 @@ export class WebRTCConnection {
           this.log(`Clearing ${this.pendingIceCandidates.length} stale ICE candidates`);
           this.pendingIceCandidates = [];
         }
+        // If peer connection is in failed state (ICE restart scenario), recreate it
+        if (this.pc?.connectionState === 'failed' || this.pc?.iceConnectionState === 'failed') {
+          this.log('Received offer while in failed state - resetting peer connection for ICE restart');
+          this.resetPeerConnectionForRenegotiation();
+        }
         // Store track metadata for naming tracks when they arrive
         if (message.tracks) {
           this._trackMetadata = message.tracks;
@@ -472,7 +477,8 @@ export class WebRTCConnection {
           break;
         case 'failed':
           this.setConnectionState('failed');
-          this.attemptReconnect();
+          // Don't do full reconnect - keep signaling open and wait for robot's ICE restart offer
+          this.log('ICE failed - waiting for robot to send ICE restart offer');
           break;
       }
     };
