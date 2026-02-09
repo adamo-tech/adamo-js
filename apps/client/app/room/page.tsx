@@ -69,9 +69,7 @@ export default function RoomPage() {
       }
       if (!resp.ok) throw new Error('Failed to fetch rooms');
       const data = await resp.json();
-      // Only show online robots
-      const onlineRooms = (data.rooms || []).filter((room: Room) => room.is_online);
-      setRooms(onlineRooms);
+      setRooms(data.rooms || []);
     } catch (e) {
       setError('Failed to load rooms');
       console.error('Failed to fetch rooms:', e);
