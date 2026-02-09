@@ -35,6 +35,8 @@ export default function RoomPage() {
   const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
 
   // Check authentication
   useEffect(() => {
@@ -49,38 +51,78 @@ export default function RoomPage() {
     }
   }, [router]);
 
-  // Fetch rooms
+  // Fetch rooms with polling
+  const fetchRooms = useCallback(async () => {
+    if (!accessToken) return;
+    try {
+      const resp = await fetch(`${API_URL}/rooms`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (resp.status === 401) {
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('refresh_token');
+        sessionStorage.removeItem('user');
+        router.push('/');
+        return;
+      }
+      if (!resp.ok) throw new Error('Failed to fetch rooms');
+      const data = await resp.json();
+      // Only show online robots
+      const onlineRooms = (data.rooms || []).filter((room: Room) => room.is_online);
+      setRooms(onlineRooms);
+    } catch (e) {
+      setError('Failed to load rooms');
+      console.error('Failed to fetch rooms:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [accessToken, router]);
+
   useEffect(() => {
     if (!isAuthenticated || !accessToken) return;
 
-    const fetchRooms = async () => {
-      try {
-        const resp = await fetch(`${API_URL}/rooms`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        if (resp.status === 401) {
-          // Token expired or invalid - clear and redirect to login
-          sessionStorage.removeItem('access_token');
-          sessionStorage.removeItem('refresh_token');
-          sessionStorage.removeItem('user');
-          router.push('/');
-          return;
-        }
-        if (!resp.ok) throw new Error('Failed to fetch rooms');
-        const data = await resp.json();
-        setRooms(data.rooms || []);
-      } catch (e) {
-        setError('Failed to load rooms');
-        console.error('Failed to fetch rooms:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    // Initial fetch
     fetchRooms();
-  }, [isAuthenticated, accessToken]);
+
+    // Poll every 5 seconds when on room selection screen
+    const interval = setInterval(() => {
+      if (!selectedRoom) {
+        fetchRooms();
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isAuthenticated, accessToken, fetchRooms, selectedRoom]);
+
+  // Rename a room
+  const handleRename = async (roomId: string, newName: string) => {
+    if (!accessToken || !newName.trim()) return;
+    try {
+      const resp = await fetch(`${API_URL}/rooms/${roomId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ name: newName.trim() }),
+      });
+      if (resp.ok) {
+        setEditingRoomId(null);
+        fetchRooms(); // Refresh the list
+      }
+    } catch (e) {
+      console.error('Failed to rename room:', e);
+    }
+  };
+
+  // Reset selectedIndex if it's out of bounds (when rooms change)
+  useEffect(() => {
+    if (selectedIndex >= rooms.length && rooms.length > 0) {
+      setSelectedIndex(0);
+    }
+  }, [rooms.length, selectedIndex]);
 
   // D-pad navigation for room selection
   useEffect(() => {
@@ -203,7 +245,7 @@ export default function RoomPage() {
   if (rooms.length === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">No robots configured. Add rooms in the admin panel.</div>
+        <div className="text-zinc-600 dark:text-zinc-400">No robots online. Waiting for robots to connect...</div>
       </div>
     );
   }
@@ -232,16 +274,45 @@ export default function RoomPage() {
               style={{
                 ...styles.roomItem,
                 ...(index === selectedIndex ? styles.roomItemSelected : {}),
-                ...(!room.is_online ? styles.roomItemOffline : {}),
               }}
-              onClick={() => setSelectedRoom(room)}
+              onClick={() => editingRoomId !== room.id && setSelectedRoom(room)}
             >
               <div style={styles.roomHeader}>
-                <div style={styles.roomName}>{room.robot_name || room.name}</div>
-                <div style={{
-                  ...styles.statusDot,
-                  backgroundColor: room.is_online ? '#22c55e' : '#666',
-                }} />
+                {editingRoomId === room.id ? (
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleRename(room.id, editName);
+                      if (e.key === 'Escape') setEditingRoomId(null);
+                    }}
+                    onBlur={() => handleRename(room.id, editName)}
+                    autoFocus
+                    style={styles.editInput}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <div style={styles.roomName}>{room.robot_name || room.name}</div>
+                )}
+                <div style={styles.roomActions}>
+                  {editingRoomId !== room.id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingRoomId(room.id);
+                        setEditName(room.name);
+                      }}
+                      style={styles.editButton}
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <div style={{
+                    ...styles.statusDot,
+                    backgroundColor: room.is_online ? '#22c55e' : '#666',
+                  }} />
+                </div>
               </div>
               <div style={styles.robotName}>{room.name}</div>
             </div>
@@ -428,6 +499,33 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 14,
     borderRadius: 6,
     cursor: 'pointer',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+  },
+  roomActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+  },
+  editButton: {
+    padding: '4px 8px',
+    backgroundColor: 'transparent',
+    border: '1px solid #333',
+    color: '#666',
+    fontSize: 11,
+    borderRadius: 4,
+    cursor: 'pointer',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+  },
+  editInput: {
+    flex: 1,
+    padding: '4px 8px',
+    backgroundColor: '#222',
+    border: '1px solid #3b82f6',
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 500,
+    borderRadius: 4,
+    outline: 'none',
     fontFamily: 'system-ui, -apple-system, sans-serif',
   },
 };
