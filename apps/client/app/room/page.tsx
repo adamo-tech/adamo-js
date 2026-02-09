@@ -237,13 +237,13 @@ export default function RoomPage() {
               onClick={() => setSelectedRoom(room)}
             >
               <div style={styles.roomHeader}>
-                <div style={styles.roomName}>{room.name}</div>
+                <div style={styles.roomName}>{room.robot_name || room.name}</div>
                 <div style={{
                   ...styles.statusDot,
                   backgroundColor: room.is_online ? '#22c55e' : '#666',
                 }} />
               </div>
-              {room.robot_name && <div style={styles.robotName}>{room.robot_name}</div>}
+              <div style={styles.robotName}>{room.name}</div>
             </div>
           ))}
         </div>
@@ -259,7 +259,7 @@ export default function RoomPage() {
   if (!livekitToken || !livekitUrl) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">Connecting to {selectedRoom.name}...</div>
+        <div className="text-zinc-600 dark:text-zinc-400">Connecting to {selectedRoom.robot_name || selectedRoom.name}...</div>
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function RoomPage() {
       }}
       autoConnect={{ url: livekitUrl, token: livekitToken }}
     >
-      <RoomContent roomName={selectedRoom.name} onDisconnect={() => {
+      <RoomContent roomName={selectedRoom.robot_name || selectedRoom.name} onDisconnect={() => {
         setSelectedRoom(null);
         setLivekitToken(null);
         setLivekitUrl(null);
