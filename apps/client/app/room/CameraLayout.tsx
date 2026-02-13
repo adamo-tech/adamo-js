@@ -22,7 +22,8 @@ const MODES: LayoutMode[] = [
     label: 'Pick and Place',
     grid: [
       ['right', 'fork', 'left'],
-      ['back_top', 'fork_low', 'front_low'],
+      ['back_top', 'pallet_low', 'fork_low'],
+      [null, 'front_low', null],
     ],
   },
 ];
@@ -35,6 +36,7 @@ const CAMERA_LABELS: Record<string, string> = {
   fork: 'Forks',
   fork_low: 'Fork Low',
   back_top: 'Back Top',
+  pallet_low: 'Pallet Low',
 };
 
 /**
