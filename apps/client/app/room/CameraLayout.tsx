@@ -14,7 +14,7 @@ const MODES: LayoutMode[] = [
     label: 'Travel',
     grid: [
       ['left', 'front_low', 'right'],
-      ['back_top', 'fork', null],
+      ['back_top', 'fork', 'pallet_low'],
     ],
   },
   {
