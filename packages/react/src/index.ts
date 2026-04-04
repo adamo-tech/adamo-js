@@ -33,6 +33,7 @@ export { useCostmap } from './hooks/useCostmap';
 export { useAdaptiveStream, useTrackStats } from './hooks/useAdaptiveStream';
 export { useVelocity } from './hooks/useVelocity';
 export { useJsonStream, useMultiJsonStream, useJsonStreamCallback } from './hooks/useJsonStream';
+export { useJsonPublisher } from './hooks/useJsonPublisher';
 
 // Re-export core types for convenience
 export { HeartbeatState, StreamQuality } from '@adamo-tech/core';

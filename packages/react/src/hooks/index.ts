@@ -5,3 +5,4 @@ export { useVideoTrack } from './useVideoTrack';
 export { useAdaptiveStream, useTrackStats } from './useAdaptiveStream';
 export { useVelocity } from './useVelocity';
 export { useJsonStream, useMultiJsonStream, useJsonStreamCallback } from './useJsonStream';
+export { useJsonPublisher } from './useJsonPublisher';

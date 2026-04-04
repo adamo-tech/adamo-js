@@ -4,39 +4,31 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Teleoperate,
-  ConnectionStatus,
   useAdamo,
   HeartbeatMonitor,
   GamepadController,
-  StatsOverlay,
-  useJsonStreamCallback,
 } from '@adamo-tech/react';
-import { CameraLayout } from './CameraLayout';
+import { CameraLayout, type CameraLayoutApi } from './CameraLayout';
 import { RobotStatusPanel } from './RobotStatusPanel';
+import { StatsPanel } from './StatsPanel';
+import { RoomSelector, type Robot } from './RoomSelector';
+import { RoomHeader } from './RoomHeader';
+import { HeightOverlay, type HeightOverlayRef } from './HeightOverlay';
+import { BUTTONS, W3C_BUTTONS } from './buttons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-interface Room {
-  id: string;
-  name: string;
-  robot_name?: string;
-  is_online: boolean;
-  last_seen?: string;
-}
 
 export default function RoomPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<Robot[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<Robot | null>(null);
   const [livekitToken, setLivekitToken] = useState<string | null>(null);
   const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
-  const [editName, setEditName] = useState('');
 
   // Check authentication
   useEffect(() => {
@@ -56,9 +48,7 @@ export default function RoomPage() {
     if (!accessToken) return;
     try {
       const resp = await fetch(`${API_URL}/rooms`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (resp.status === 401) {
         sessionStorage.removeItem('access_token');
@@ -80,17 +70,10 @@ export default function RoomPage() {
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) return;
-
-    // Initial fetch
     fetchRooms();
-
-    // Poll every 5 seconds when on room selection screen
     const interval = setInterval(() => {
-      if (!selectedRoom) {
-        fetchRooms();
-      }
+      if (!selectedRoom) fetchRooms();
     }, 5000);
-
     return () => clearInterval(interval);
   }, [isAuthenticated, accessToken, fetchRooms, selectedRoom]);
 
@@ -106,21 +89,11 @@ export default function RoomPage() {
         },
         body: JSON.stringify({ name: newName.trim() }),
       });
-      if (resp.ok) {
-        setEditingRoomId(null);
-        fetchRooms(); // Refresh the list
-      }
+      if (resp.ok) fetchRooms();
     } catch (e) {
       console.error('Failed to rename room:', e);
     }
   };
-
-  // Reset selectedIndex if it's out of bounds (when rooms change)
-  useEffect(() => {
-    if (selectedIndex >= rooms.length && rooms.length > 0) {
-      setSelectedIndex(0);
-    }
-  }, [rooms.length, selectedIndex]);
 
   // D-pad navigation for room selection
   useEffect(() => {
@@ -138,61 +111,48 @@ export default function RoomPage() {
         gp = gamepads[gamepadIndex];
       } else {
         for (const pad of gamepads) {
-          if (pad) {
-            gp = pad;
-            gamepadIndex = pad.index;
-            break;
-          }
+          if (pad) { gp = pad; gamepadIndex = pad.index; break; }
         }
       }
 
       if (gp) {
-        // D-pad: up=12, down=13, left=14, right=15
-        // A button = 0 (select)
-        const buttons = [12, 13, 14, 15, 0];
-
-        for (const btnIdx of buttons) {
+        const watched = [
+          W3C_BUTTONS.DPAD_UP,
+          W3C_BUTTONS.DPAD_DOWN,
+          W3C_BUTTONS.DPAD_LEFT,
+          W3C_BUTTONS.DPAD_RIGHT,
+          W3C_BUTTONS.A,
+        ];
+        for (const btnIdx of watched) {
           const pressed = gp.buttons[btnIdx]?.pressed;
           const wasPressed = prevButtons[btnIdx];
-
           if (pressed && !wasPressed) {
-            if (btnIdx === 12 || btnIdx === 14) {
-              // Up or Left - previous room
+            if (btnIdx === W3C_BUTTONS.DPAD_UP || btnIdx === W3C_BUTTONS.DPAD_LEFT) {
               setSelectedIndex((prev) => (prev - 1 + rooms.length) % rooms.length);
-            } else if (btnIdx === 13 || btnIdx === 15) {
-              // Down or Right - next room
+            } else if (btnIdx === W3C_BUTTONS.DPAD_DOWN || btnIdx === W3C_BUTTONS.DPAD_RIGHT) {
               setSelectedIndex((prev) => (prev + 1) % rooms.length);
-            } else if (btnIdx === 0) {
-              // A button - select room
+            } else if (btnIdx === W3C_BUTTONS.A) {
               setSelectedRoom(rooms[selectedIndex]);
             }
           }
-
           prevButtons[btnIdx] = pressed;
         }
       }
-
       animationFrame = requestAnimationFrame(pollGamepad);
     };
 
     animationFrame = requestAnimationFrame(pollGamepad);
-
-    return () => {
-      cancelAnimationFrame(animationFrame);
-    };
+    return () => cancelAnimationFrame(animationFrame);
   }, [selectedRoom, rooms, selectedIndex]);
 
   // Fetch LiveKit token once room is selected
   useEffect(() => {
     if (!selectedRoom || !accessToken) return;
-
     const fetchToken = async () => {
       try {
         const resp = await fetch(`${API_URL}/rooms/${selectedRoom.id}/token`, {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
         if (resp.status === 401) {
           sessionStorage.removeItem('access_token');
@@ -212,41 +172,8 @@ export default function RoomPage() {
         setError('Failed to get connection token');
       }
     };
-
     fetchToken();
   }, [selectedRoom, accessToken, router]);
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">Checking authentication...</div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">Loading rooms...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-red-500">{error}</div>
-      </div>
-    );
-  }
-
-  if (rooms.length === 0) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">No robots online. Waiting for robots to connect...</div>
-      </div>
-    );
-  }
 
   const handleLogout = () => {
     sessionStorage.removeItem('access_token');
@@ -255,81 +182,61 @@ export default function RoomPage() {
     router.push('/');
   };
 
+  const handleBackToList = () => {
+    setSelectedRoom(null);
+    setLivekitToken(null);
+    setLivekitUrl(null);
+  };
+
+  const selectedRoomIdx = selectedRoom ? rooms.findIndex((r) => r.id === selectedRoom.id) : -1;
+
+  const handlePrevRobot = () => {
+    if (rooms.length === 0) return;
+    const idx = selectedRoomIdx === -1 ? 0 : (selectedRoomIdx - 1 + rooms.length) % rooms.length;
+    setLivekitToken(null);
+    setLivekitUrl(null);
+    setSelectedRoom(rooms[idx]);
+  };
+
+  const handleNextRobot = () => {
+    if (rooms.length === 0) return;
+    const idx = selectedRoomIdx === -1 ? 0 : (selectedRoomIdx + 1) % rooms.length;
+    setLivekitToken(null);
+    setLivekitUrl(null);
+    setSelectedRoom(rooms[idx]);
+  };
+
+  if (!isAuthenticated) {
+    return <LoadingScreen message="Checking authentication…" />;
+  }
+  if (loading) {
+    return <LoadingScreen message="Loading robots…" />;
+  }
+  if (error) {
+    return <ErrorScreen message={error} />;
+  }
+  if (rooms.length === 0) {
+    return <LoadingScreen message="No robots online. Waiting for connections…" dim />;
+  }
+
   // Room selection screen
   if (!selectedRoom) {
     return (
-      <div style={styles.selectorContainer}>
-        <button onClick={handleLogout} style={styles.logoutButton}>
-          Logout
-        </button>
-        <h1 style={styles.title}>Select Robot</h1>
-        <p style={styles.subtitle}>Use D-pad to navigate, A to select</p>
-
-        <div style={styles.roomList}>
-          {rooms.map((room, index) => (
-            <div
-              key={room.id}
-              style={{
-                ...styles.roomItem,
-                ...(index === selectedIndex ? styles.roomItemSelected : {}),
-              }}
-              onClick={() => editingRoomId !== room.id && setSelectedRoom(room)}
-            >
-              <div style={styles.roomHeader}>
-                {editingRoomId === room.id ? (
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleRename(room.id, editName);
-                      if (e.key === 'Escape') setEditingRoomId(null);
-                    }}
-                    onBlur={() => handleRename(room.id, editName)}
-                    autoFocus
-                    style={styles.editInput}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <div style={styles.roomName}>{room.robot_name || room.name}</div>
-                )}
-                <div style={styles.roomActions}>
-                  {editingRoomId !== room.id && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingRoomId(room.id);
-                        setEditName(room.name);
-                      }}
-                      style={styles.editButton}
-                    >
-                      Edit
-                    </button>
-                  )}
-                  <div style={{
-                    ...styles.statusDot,
-                    backgroundColor: room.is_online ? '#22c55e' : '#666',
-                  }} />
-                </div>
-              </div>
-              <div style={styles.robotName}>{room.name}</div>
-            </div>
-          ))}
-        </div>
-
-        <div style={styles.controls}>
-          <span style={styles.controlHint}>D-pad: Navigate</span>
-          <span style={styles.controlHint}>A: Select</span>
-        </div>
-      </div>
+      <RoomSelector
+        rooms={rooms}
+        selectedIndex={selectedIndex}
+        onSelect={setSelectedRoom}
+        onRename={handleRename}
+        onLogout={handleLogout}
+      />
     );
   }
 
   if (!livekitToken || !livekitUrl) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-        <div className="text-zinc-600 dark:text-zinc-400">Connecting to {selectedRoom.robot_name || selectedRoom.name}...</div>
-      </div>
+      <LoadingScreen
+        message={`Connecting to ${selectedRoom.robot_name || selectedRoom.name}…`}
+      />
     );
   }
 
@@ -344,186 +251,142 @@ export default function RoomPage() {
       }}
       autoConnect={{ url: livekitUrl, token: livekitToken }}
     >
-      <RoomContent roomName={selectedRoom.robot_name || selectedRoom.name} onDisconnect={() => {
-        setSelectedRoom(null);
-        setLivekitToken(null);
-        setLivekitUrl(null);
-      }} />
+      <RoomContent
+        robotName={selectedRoom.robot_name || selectedRoom.name}
+        hasPrev={rooms.length > 1}
+        hasNext={rooms.length > 1}
+        onBack={handleBackToList}
+        onPrev={handlePrevRobot}
+        onNext={handleNextRobot}
+        onLogout={handleLogout}
+      />
     </Teleoperate>
   );
 }
 
-function RoomContent({ roomName, onDisconnect }: { roomName: string; onDisconnect: () => void }) {
+type RoomContentProps = {
+  robotName: string;
+  hasPrev: boolean;
+  hasNext: boolean;
+  onBack: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onLogout: () => void;
+};
+
+function RoomContent({ robotName, hasPrev, hasNext, onBack, onPrev, onNext, onLogout }: RoomContentProps) {
   const { connectionState } = useAdamo();
+  const [heightOverlayOpen, setHeightOverlayOpen] = useState(false);
+  const heightOverlayRef = useRef<HeightOverlayRef | null>(null);
+  const cameraLayoutRef = useRef<CameraLayoutApi | null>(null);
 
-  // Debug: log data from "test" topic
-  useJsonStreamCallback('test', (data, timestamp) => {
-    console.log('[test topic]', data);
-  });
+  const handleButtonDown = useCallback((buttonIndex: number) => {
+    if (buttonIndex === BUTTONS.START) {
+      setHeightOverlayOpen((open) => !open);
+      return;
+    }
 
-  if (connectionState !== 'connected') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-900">
-        <ConnectionStatus />
-      </div>
-    );
-  }
+    if (heightOverlayOpen) {
+      const ref = heightOverlayRef.current;
+      if (!ref) return;
+      switch (buttonIndex) {
+        case BUTTONS.DPAD_UP:    ref.handleDpad('up'); return;
+        case BUTTONS.DPAD_DOWN:  ref.handleDpad('down'); return;
+        case BUTTONS.DPAD_LEFT:  ref.handleDpad('left'); return;
+        case BUTTONS.DPAD_RIGHT: ref.handleDpad('right'); return;
+        case BUTTONS.A:          ref.handleDpad('confirm'); return;
+        case BUTTONS.X:          ref.handleDpad('delete'); return;
+        case BUTTONS.B:          setHeightOverlayOpen(false); return;
+      }
+      return;
+    }
+
+    if (buttonIndex === BUTTONS.LB) { cameraLayoutRef.current?.cycleMode('prev'); return; }
+    if (buttonIndex === BUTTONS.RB) { cameraLayoutRef.current?.cycleMode('next'); return; }
+  }, [heightOverlayOpen]);
+
+  const handleCameraReady = useCallback((api: CameraLayoutApi) => {
+    cameraLayoutRef.current = api;
+  }, []);
 
   return (
-    <>
+    <div className="relative h-screen w-screen overflow-hidden bg-[#050812]">
       <HeartbeatMonitor />
-      <GamepadController />
-      <CameraLayout />
-      <StatsOverlay />
+      <GamepadController onButtonDown={handleButtonDown} />
 
-      {/* Demo: Robot status from arbitrary JSON topic */}
+      {/* Connection veil while still connecting */}
+      {connectionState !== 'connected' && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#050812]/95 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative flex h-10 w-10 items-center justify-center">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/20" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500/80" />
+            </div>
+            <div className="text-[12px] text-white/50 font-mono uppercase tracking-wider">
+              {connectionState}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Camera grid — fills viewport */}
+      <div className="absolute inset-0">
+        <CameraLayout onReady={handleCameraReady} />
+      </div>
+
+      {/* Header bar — robot name, nav, logout */}
+      <RoomHeader
+        robotName={robotName}
+        connectionState={connectionState}
+        hasPrev={hasPrev}
+        hasNext={hasNext}
+        onBack={onBack}
+        onPrev={onPrev}
+        onNext={onNext}
+        onLogout={onLogout}
+      />
+
+      {/* Corner panels */}
       <RobotStatusPanel topic="robot_status" />
+      <StatsPanel />
 
-      {/* Room name indicator */}
-      <div style={styles.roomIndicator}>
-        {roomName}
-      </div>
-
-      <div style={{ position: 'fixed', top: 10, right: 10, zIndex: 1000 }}>
-        <ConnectionStatus hideWhenConnected />
-      </div>
-    </>
+      {/* Height preset overlay (toggled by Start button) */}
+      {heightOverlayOpen && (
+        <HeightOverlay
+          onClose={() => setHeightOverlayOpen(false)}
+          onReady={(ref) => { heightOverlayRef.current = ref; }}
+        />
+      )}
+    </div>
   );
 }
 
-const styles: Record<string, React.CSSProperties> = {
-  selectorContainer: {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#000',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 600,
-    color: '#fff',
-    marginBottom: 8,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 40,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  roomList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 12,
-    width: '100%',
-    maxWidth: 400,
-  },
-  roomItem: {
-    padding: '16px 20px',
-    backgroundColor: '#111',
-    borderRadius: 8,
-    border: '2px solid transparent',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  },
-  roomItemSelected: {
-    borderColor: '#3b82f6',
-    backgroundColor: '#1a1a2e',
-  },
-  roomItemOffline: {
-    opacity: 0.5,
-  },
-  roomHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  roomName: {
-    fontSize: 18,
-    fontWeight: 500,
-    color: '#fff',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  robotName: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 4,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  statusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: '50%',
-  },
-  roomUrl: {
-    fontSize: 12,
-    color: '#666',
-    fontFamily: 'monospace',
-  },
-  controls: {
-    marginTop: 40,
-    display: 'flex',
-    gap: 24,
-  },
-  controlHint: {
-    fontSize: 12,
-    color: '#444',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  roomIndicator: {
-    position: 'fixed',
-    top: 10,
-    left: 10,
-    padding: '6px 12px',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    color: '#fff',
-    fontSize: 12,
-    borderRadius: 4,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-    zIndex: 1000,
-  },
-  logoutButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    padding: '8px 16px',
-    backgroundColor: 'transparent',
-    border: '1px solid #444',
-    color: '#888',
-    fontSize: 14,
-    borderRadius: 6,
-    cursor: 'pointer',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  roomActions: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-  },
-  editButton: {
-    padding: '4px 8px',
-    backgroundColor: 'transparent',
-    border: '1px solid #333',
-    color: '#666',
-    fontSize: 11,
-    borderRadius: 4,
-    cursor: 'pointer',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-  editInput: {
-    flex: 1,
-    padding: '4px 8px',
-    backgroundColor: '#222',
-    border: '1px solid #3b82f6',
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 500,
-    borderRadius: 4,
-    outline: 'none',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-};
+function LoadingScreen({ message, dim }: { message: string; dim?: boolean }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#050812]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative flex h-8 w-8 items-center justify-center">
+          <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${dim ? 'bg-white/10' : 'bg-red-500/20'}`} />
+          <span className={`relative inline-flex h-2 w-2 rounded-full ${dim ? 'bg-white/40' : 'bg-red-500/80'}`} />
+        </div>
+        <div className="text-[12px] text-white/40 font-mono uppercase tracking-wider">{message}</div>
+      </div>
+    </div>
+  );
+}
+
+function ErrorScreen({ message }: { message: string }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#050812]">
+      <div className="flex flex-col items-center gap-3 text-center max-w-sm px-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-red-500/30 bg-red-500/10">
+          <svg className="h-5 w-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div className="text-[14px] text-red-400 font-medium">Connection error</div>
+        <div className="text-[12px] text-white/40">{message}</div>
+      </div>
+    </div>
+  );
+}

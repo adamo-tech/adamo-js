@@ -360,6 +360,40 @@ export class AdamoClient {
   }
 
   /**
+   * Publish an arbitrary JSON payload to a data channel topic.
+   *
+   * Sends a JSON-encoded message to the server on the given topic.
+   * Use for custom widgets, commands, or any JSON-based protocol.
+   *
+   * @param topic - The topic name to publish on (e.g., 'height_command')
+   * @param data - The data to send (will be JSON-encoded)
+   * @param options - Optional publish options (reliable defaults to true)
+   *
+   * @example
+   * ```ts
+   * await client.publishJson('height_command', { cmd: 'goto', name: 'preset-1' });
+   * ```
+   */
+  async publishJson(
+    topic: string,
+    data: unknown,
+    options?: { reliable?: boolean }
+  ): Promise<void> {
+    if (!this.room.localParticipant) {
+      throw new Error('Not connected');
+    }
+
+    const encoder = new TextEncoder();
+    const payload = encoder.encode(JSON.stringify(data));
+
+    await this.room.localParticipant.publishData(payload, {
+      reliable: options?.reliable ?? true,
+      destinationIdentities: [this.config.serverIdentity],
+      topic,
+    });
+  }
+
+  /**
    * Send a navigation goal to Nav2
    */
   async sendNavGoal(goal: NavGoal): Promise<void> {
