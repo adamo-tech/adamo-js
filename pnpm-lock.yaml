@@ -26,6 +26,9 @@ importers:
       '@adamo-tech/react':
         specifier: workspace:*
         version: link:../../packages/react
+      livekit-client:
+        specifier: ^2.9.1
+        version: 2.16.0(@types/dom-mediacapture-record@1.0.22)
       livekit-server-sdk:
         specifier: ^2.14.0
         version: 2.14.2

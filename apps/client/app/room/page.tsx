@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Teleoperate,
   useAdamo,
@@ -19,7 +19,17 @@ import { BUTTONS, W3C_BUTTONS } from './buttons';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function RoomPage() {
+  return (
+    <Suspense fallback={<LoadingScreen message="Loading…" />}>
+      <RoomPageInner />
+    </Suspense>
+  );
+}
+
+function RoomPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const preselectedRobotId = searchParams.get('robot');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [rooms, setRooms] = useState<Robot[]>([]);
@@ -76,6 +86,14 @@ export default function RoomPage() {
     }, 5000);
     return () => clearInterval(interval);
   }, [isAuthenticated, accessToken, fetchRooms, selectedRoom]);
+
+  // Auto-select robot from ?robot= query param (e.g. from observe page)
+  useEffect(() => {
+    if (preselectedRobotId && rooms.length > 0 && !selectedRoom) {
+      const match = rooms.find((r) => r.id === preselectedRobotId);
+      if (match) setSelectedRoom(match);
+    }
+  }, [preselectedRobotId, rooms, selectedRoom]);
 
   // Rename a room
   const handleRename = async (roomId: string, newName: string) => {
