@@ -59,8 +59,8 @@ html, body {
 }
 
 @keyframes videoClickRipple {
-  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; border-width: 2px; }
-  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; border-width: 1px; }
+  0% { transform: scale(0.3); opacity: 1; border-width: 2px; }
+  100% { transform: scale(1.6); opacity: 0; border-width: 1px; }
 }
 
 /* Scrollbar — thin, subtle */
