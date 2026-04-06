@@ -109,7 +109,7 @@ export function CameraLayout({ onReady }: CameraLayoutProps = {}) {
       {MODES.map((mode, idx) => (
         <div
           key={mode.name}
-          className="absolute inset-0 p-2 pb-14 flex flex-col gap-2"
+          className="absolute inset-0 pt-10 p-2 pb-14 flex flex-col gap-2"
           style={{ display: idx === modeIndex ? 'flex' : 'none' }}
         >
           {mode.grid.map((row, rowIndex) => (

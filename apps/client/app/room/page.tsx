@@ -11,12 +11,24 @@ import {
 import { CameraLayout, type CameraLayoutApi } from './CameraLayout';
 import { RobotStatusPanel } from './RobotStatusPanel';
 import { StatsPanel } from './StatsPanel';
-import { RoomSelector, type Robot } from './RoomSelector';
+import { RobotCard } from './RobotCard';
 import { RoomHeader } from './RoomHeader';
 import { HeightOverlay, type HeightOverlayRef } from './HeightOverlay';
+import { LogOutIcon } from './icons';
 import { BUTTONS, W3C_BUTTONS } from './buttons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+interface StreamingRoom {
+  id: string;
+  name: string;
+  robot_name?: string;
+  is_online: boolean;
+  is_streaming: boolean;
+  track_names: string[];
+  livekit_url: string;
+  livekit_room_name: string;
+}
 
 export default function RoomPage() {
   return (
@@ -32,9 +44,8 @@ function RoomPageInner() {
   const preselectedRobotId = searchParams.get('robot');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [rooms, setRooms] = useState<Robot[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedRoom, setSelectedRoom] = useState<Robot | null>(null);
+  const [rooms, setRooms] = useState<StreamingRoom[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<StreamingRoom | null>(null);
   const [livekitToken, setLivekitToken] = useState<string | null>(null);
   const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,11 +64,11 @@ function RoomPageInner() {
     }
   }, [router]);
 
-  // Fetch rooms with polling
+  // Fetch rooms with streaming status from /api/observe
   const fetchRooms = useCallback(async () => {
     if (!accessToken) return;
     try {
-      const resp = await fetch(`${API_URL}/rooms`, {
+      const resp = await fetch('/api/observe', {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (resp.status === 401) {
@@ -83,85 +94,17 @@ function RoomPageInner() {
     fetchRooms();
     const interval = setInterval(() => {
       if (!selectedRoom) fetchRooms();
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [isAuthenticated, accessToken, fetchRooms, selectedRoom]);
 
-  // Auto-select robot from ?robot= query param (e.g. from observe page)
+  // Auto-select robot from ?robot= query param
   useEffect(() => {
     if (preselectedRobotId && rooms.length > 0 && !selectedRoom) {
       const match = rooms.find((r) => r.id === preselectedRobotId);
       if (match) setSelectedRoom(match);
     }
   }, [preselectedRobotId, rooms, selectedRoom]);
-
-  // Rename a room
-  const handleRename = async (roomId: string, newName: string) => {
-    if (!accessToken || !newName.trim()) return;
-    try {
-      const resp = await fetch(`${API_URL}/rooms/${roomId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ name: newName.trim() }),
-      });
-      if (resp.ok) fetchRooms();
-    } catch (e) {
-      console.error('Failed to rename room:', e);
-    }
-  };
-
-  // D-pad navigation for room selection
-  useEffect(() => {
-    if (selectedRoom || rooms.length === 0) return;
-
-    let gamepadIndex: number | null = null;
-    let animationFrame: number;
-    const prevButtons: Record<number, boolean> = {};
-
-    const pollGamepad = () => {
-      const gamepads = navigator.getGamepads();
-      let gp: Gamepad | null = null;
-
-      if (gamepadIndex !== null) {
-        gp = gamepads[gamepadIndex];
-      } else {
-        for (const pad of gamepads) {
-          if (pad) { gp = pad; gamepadIndex = pad.index; break; }
-        }
-      }
-
-      if (gp) {
-        const watched = [
-          W3C_BUTTONS.DPAD_UP,
-          W3C_BUTTONS.DPAD_DOWN,
-          W3C_BUTTONS.DPAD_LEFT,
-          W3C_BUTTONS.DPAD_RIGHT,
-          W3C_BUTTONS.A,
-        ];
-        for (const btnIdx of watched) {
-          const pressed = gp.buttons[btnIdx]?.pressed;
-          const wasPressed = prevButtons[btnIdx];
-          if (pressed && !wasPressed) {
-            if (btnIdx === W3C_BUTTONS.DPAD_UP || btnIdx === W3C_BUTTONS.DPAD_LEFT) {
-              setSelectedIndex((prev) => (prev - 1 + rooms.length) % rooms.length);
-            } else if (btnIdx === W3C_BUTTONS.DPAD_DOWN || btnIdx === W3C_BUTTONS.DPAD_RIGHT) {
-              setSelectedIndex((prev) => (prev + 1) % rooms.length);
-            } else if (btnIdx === W3C_BUTTONS.A) {
-              setSelectedRoom(rooms[selectedIndex]);
-            }
-          }
-          prevButtons[btnIdx] = pressed;
-        }
-      }
-      animationFrame = requestAnimationFrame(pollGamepad);
-    };
-
-    animationFrame = requestAnimationFrame(pollGamepad);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [selectedRoom, rooms, selectedIndex]);
 
   // Fetch LiveKit token once room is selected
   useEffect(() => {
@@ -233,20 +176,70 @@ function RoomPageInner() {
   if (error) {
     return <ErrorScreen message={error} />;
   }
-  if (rooms.length === 0) {
-    return <LoadingScreen message="No robots online. Waiting for connections…" dim />;
-  }
+  const streamingRooms = rooms.filter((r) => r.is_streaming);
 
-  // Room selection screen
+  // Fleet overview — shows live camera thumbnails for all streaming robots
   if (!selectedRoom) {
     return (
-      <RoomSelector
-        rooms={rooms}
-        selectedIndex={selectedIndex}
-        onSelect={setSelectedRoom}
-        onRename={handleRename}
-        onLogout={handleLogout}
-      />
+      <div className="min-h-screen bg-[#050812]">
+        {/* Atmospheric background */}
+        <div className="pointer-events-none fixed inset-x-0 top-0 h-96 bg-gradient-to-b from-red-500/[0.06] via-red-500/[0.02] to-transparent" />
+
+        {/* Header */}
+        <div className="relative px-8 pt-6">
+          <div className="flex items-end justify-between border-b border-white/[0.06] pb-4">
+            <div>
+              <div className="flex items-baseline gap-3">
+                <h1 className="text-3xl font-medium tracking-tight text-white">Robots</h1>
+                {streamingRooms.length > 0 && (
+                  <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
+                    {streamingRooms.length} streaming
+                  </span>
+                )}
+              </div>
+              <p className="mt-1.5 text-[12px] text-white/30">
+                Click a robot to start operating
+              </p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.03] text-white/40 hover:text-white/80 hover:bg-white/[0.06] text-[12px] transition-all"
+            >
+              <LogOutIcon className="h-3.5 w-3.5" />
+              <span>Sign out</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Grid */}
+        <div className="relative px-8 py-6">
+          {streamingRooms.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-32">
+              <div className="h-16 w-16 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mb-4">
+                <svg className="h-7 w-7 text-white/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <p className="text-[13px] text-white/30 mb-1">No robots streaming</p>
+              <p className="text-[11px] text-white/20">
+                Robots will appear here when they come online
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {streamingRooms.map((room) => (
+                <RobotCard
+                  key={room.id}
+                  room={room}
+                  preferredTrack="fork"
+                  onClick={() => setSelectedRoom(room)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     );
   }
 
@@ -271,8 +264,8 @@ function RoomPageInner() {
     >
       <RoomContent
         robotName={selectedRoom.robot_name || selectedRoom.name}
-        hasPrev={rooms.length > 1}
-        hasNext={rooms.length > 1}
+        hasPrev={streamingRooms.length > 1}
+        hasNext={streamingRooms.length > 1}
         onBack={handleBackToList}
         onPrev={handlePrevRobot}
         onNext={handleNextRobot}

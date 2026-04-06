@@ -31,7 +31,7 @@ export function RoomHeader({
   const connected = connectionState === 'connected';
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 flex items-center gap-3 px-4 py-2.5 bg-gradient-to-b from-black/60 via-black/30 to-transparent backdrop-blur-md pointer-events-none">
+    <div className="fixed top-0 left-0 right-0 z-40 h-9 flex items-center gap-2 px-3 bg-black/80 backdrop-blur-sm pointer-events-none">
       {/* Left cluster — back to list */}
       <button
         onClick={onBack}

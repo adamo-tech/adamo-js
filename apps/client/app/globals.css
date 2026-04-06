@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-hedvig);
+  --font-mono: var(--font-mono);
 
   /* Navy — deep blue-gray scale, our primary surface palette */
   --color-navy-50: #e6e8f0;
