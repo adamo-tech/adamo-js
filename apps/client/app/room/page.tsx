@@ -9,7 +9,7 @@ import {
   GamepadController,
 } from '@adamo-tech/react';
 import { CameraLayout, type CameraLayoutApi } from './CameraLayout';
-import { RobotStatusPanel } from './RobotStatusPanel';
+
 import { StatsPanel } from './StatsPanel';
 import { RobotCard } from './RobotCard';
 import { RoomHeader } from './RoomHeader';
@@ -232,7 +232,7 @@ function RoomPageInner() {
                 <RobotCard
                   key={room.id}
                   room={room}
-                  preferredTrack="fork"
+                  preferredTrack="front_low"
                   onClick={() => setSelectedRoom(room)}
                 />
               ))}
@@ -358,7 +358,6 @@ function RoomContent({ robotName, hasPrev, hasNext, onBack, onPrev, onNext, onLo
       />
 
       {/* Corner panels */}
-      <RobotStatusPanel topic="robot_status" />
       <StatsPanel />
 
       {/* Height preset overlay (toggled by Start button) */}
