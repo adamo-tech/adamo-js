@@ -6,6 +6,7 @@ import { useJsonStream, useJsonPublisher } from '@adamo-tech/react';
 type ForkliftHeightState = {
   heights: Record<string, number>;
   current_height: number;
+  fork_position_received: boolean;
 };
 
 type HeightCommand =
@@ -43,6 +44,9 @@ export function HeightOverlay({
 
   const savedHeights = state?.heights;
   const currentHeight = state?.current_height ?? null;
+  const forkPositionReceived = state?.fork_position_received ?? false;
+  const noData = !state;
+  const noForkSensor = state && !forkPositionReceived;
 
   const heightEntries = useMemo(
     () => Object.entries(savedHeights ?? {}).sort(([a], [b]) => a.localeCompare(b)),
@@ -170,8 +174,8 @@ export function HeightOverlay({
                 <span className="text-[11px] font-medium text-white/40 uppercase tracking-wider">
                   Fork Height
                 </span>
-                <div className="text-lg font-mono tabular-nums text-white font-medium leading-tight">
-                  {currentHeight !== null ? `${currentHeight.toFixed(2)} m` : '--'}
+                <div className={`text-lg font-mono tabular-nums font-medium leading-tight ${noForkSensor ? 'text-amber-400' : 'text-white'}`}>
+                  {noData ? '--' : noForkSensor ? '--' : `${currentHeight!.toFixed(2)} m`}
                 </div>
               </div>
             </div>
@@ -196,6 +200,20 @@ export function HeightOverlay({
             </button>
           </div>
         </div>
+
+        {/* Warning when fork_position topic isn't publishing */}
+        {(noData || noForkSensor) && (
+          <div className="mx-3 mt-1 mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <svg className="h-3.5 w-3.5 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <span className="text-[11px] text-amber-400/90">
+              {noData
+                ? 'Waiting for height data from robot…'
+                : '/fork_position topic not publishing — height sensor may be offline'}
+            </span>
+          </div>
+        )}
 
         {/* Divider */}
         <div className="mx-4 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
