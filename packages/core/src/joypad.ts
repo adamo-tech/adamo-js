@@ -8,7 +8,7 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
   autorepeatRate: 20.0,
   stickyButtons: false,
   coalesceIntervalMs: 1,
-  maxVideoStalenessMs: 100,
+  maxVideoStalenessMs: 300,
   topic: 'joy',
 };
 
