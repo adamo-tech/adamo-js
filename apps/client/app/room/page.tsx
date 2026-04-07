@@ -264,6 +264,7 @@ function RoomPageInner() {
     >
       <RoomContent
         robotName={selectedRoom.robot_name || selectedRoom.name}
+        trackNames={selectedRoom.track_names}
         hasPrev={streamingRooms.length > 1}
         hasNext={streamingRooms.length > 1}
         onBack={handleBackToList}
@@ -277,6 +278,7 @@ function RoomPageInner() {
 
 type RoomContentProps = {
   robotName: string;
+  trackNames: string[];
   hasPrev: boolean;
   hasNext: boolean;
   onBack: () => void;
@@ -285,7 +287,7 @@ type RoomContentProps = {
   onLogout: () => void;
 };
 
-function RoomContent({ robotName, hasPrev, hasNext, onBack, onPrev, onNext, onLogout }: RoomContentProps) {
+function RoomContent({ robotName, trackNames, hasPrev, hasNext, onBack, onPrev, onNext, onLogout }: RoomContentProps) {
   const { connectionState } = useAdamo();
   const [heightOverlayOpen, setHeightOverlayOpen] = useState(false);
   const heightOverlayRef = useRef<HeightOverlayRef | null>(null);
@@ -312,8 +314,8 @@ function RoomContent({ robotName, hasPrev, hasNext, onBack, onPrev, onNext, onLo
       return;
     }
 
-    if (buttonIndex === BUTTONS.LB) { cameraLayoutRef.current?.cycleMode('prev'); return; }
-    if (buttonIndex === BUTTONS.RB) { cameraLayoutRef.current?.cycleMode('next'); return; }
+    if (buttonIndex === BUTTONS.LB) { cameraLayoutRef.current?.cycleLayout('prev'); return; }
+    if (buttonIndex === BUTTONS.RB) { cameraLayoutRef.current?.cycleLayout('next'); return; }
   }, [heightOverlayOpen]);
 
   const handleCameraReady = useCallback((api: CameraLayoutApi) => {
@@ -342,7 +344,7 @@ function RoomContent({ robotName, hasPrev, hasNext, onBack, onPrev, onNext, onLo
 
       {/* Camera grid — fills viewport */}
       <div className="absolute inset-0">
-        <CameraLayout onReady={handleCameraReady} />
+        <CameraLayout trackNames={trackNames} onReady={handleCameraReady} />
       </div>
 
       {/* Header bar — robot name, nav, logout */}
@@ -363,6 +365,8 @@ function RoomContent({ robotName, hasPrev, hasNext, onBack, onPrev, onNext, onLo
       {/* Height preset overlay (toggled by Start button) */}
       {heightOverlayOpen && (
         <HeightOverlay
+          roomId={selectedRoom!.id}
+          accessToken={accessToken!}
           onClose={() => setHeightOverlayOpen(false)}
           onReady={(ref) => { heightOverlayRef.current = ref; }}
         />

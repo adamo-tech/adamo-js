@@ -12,7 +12,8 @@ type ForkliftHeightState = {
 type HeightCommand =
   | { stamp: number; cmd: 'save'; name: string }
   | { stamp: number; cmd: 'goto'; name: string }
-  | { stamp: number; cmd: 'delete'; name: string };
+  | { stamp: number; cmd: 'delete'; name: string }
+  | { stamp: number; cmd: 'rename'; name: string; new_name: string };
 
 type Direction = 'up' | 'down' | 'left' | 'right' | 'confirm' | 'delete';
 
@@ -22,6 +23,8 @@ export type HeightOverlayRef = {
 };
 
 type HeightOverlayProps = {
+  roomId: string;
+  accessToken: string;
   onClose: () => void;
 };
 
@@ -35,14 +38,40 @@ type HeightOverlayProps = {
  * Exposes a dpad dispatcher via the `onReady` callback so gamepad
  * events from a parent GamepadController can navigate the list.
  */
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export function HeightOverlay({
+  roomId,
+  accessToken,
   onClose,
   onReady,
 }: HeightOverlayProps & { onReady?: (ref: HeightOverlayRef) => void }) {
   const { data: state } = useJsonStream<ForkliftHeightState>('fork_height');
   const publish = useJsonPublisher<HeightCommand>('height_command');
 
-  const savedHeights = state?.heights;
+  // Persistent heights from backend
+  const [persistedHeights, setPersistedHeights] = useState<Record<string, number>>({});
+
+  const authHeaders = useMemo(() => ({
+    'Authorization': `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+  }), [accessToken]);
+
+  const fetchHeights = useCallback(async () => {
+    try {
+      const resp = await fetch(`${API_URL}/rooms/${roomId}/fork-heights`, {
+        headers: authHeaders,
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setPersistedHeights(data.heights);
+      }
+    } catch {}
+  }, [roomId, authHeaders]);
+
+  useEffect(() => { fetchHeights(); }, [fetchHeights]);
+
+  const savedHeights = persistedHeights;
   const currentHeight = state?.current_height ?? null;
   const forkPositionReceived = state?.fork_position_received ?? false;
   const noData = !state;
@@ -57,6 +86,8 @@ export function HeightOverlay({
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [sentName, setSentName] = useState<string | null>(null);
   const sentTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [editingName, setEditingName] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
 
   useEffect(() => {
     setSelectedIdx((prev) => Math.min(prev, Math.max(0, itemCount - 1)));
@@ -75,11 +106,20 @@ export function HeightOverlay({
     sentTimer.current = setTimeout(() => setSentName(null), 600);
   }, []);
 
-  const handleSaveCurrent = useCallback(() => {
+  const handleSaveCurrent = useCallback(async () => {
+    if (currentHeight === null) return;
     const name = `height_${heightEntries.length + 1}`;
     sendCommand({ cmd: 'save', name });
     flashSent('__save__');
-  }, [heightEntries.length, sendCommand, flashSent]);
+    try {
+      await fetch(`${API_URL}/rooms/${roomId}/fork-heights`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({ name, height: currentHeight }),
+      });
+      fetchHeights();
+    } catch {}
+  }, [heightEntries.length, sendCommand, flashSent, currentHeight, roomId, authHeaders, fetchHeights]);
 
   const handleGoto = useCallback(
     (name: string) => {
@@ -90,11 +130,42 @@ export function HeightOverlay({
   );
 
   const handleDelete = useCallback(
-    (name: string) => {
+    async (name: string) => {
       sendCommand({ cmd: 'delete', name });
+      try {
+        await fetch(`${API_URL}/rooms/${roomId}/fork-heights/${encodeURIComponent(name)}`, {
+          method: 'DELETE',
+          headers: authHeaders,
+        });
+        fetchHeights();
+      } catch {}
     },
-    [sendCommand]
+    [sendCommand, roomId, authHeaders, fetchHeights]
   );
+
+  const handleRename = useCallback(
+    async (oldName: string, newName: string) => {
+      const trimmed = newName.trim();
+      if (trimmed && trimmed !== oldName) {
+        sendCommand({ cmd: 'rename', name: oldName, new_name: trimmed });
+        try {
+          await fetch(`${API_URL}/rooms/${roomId}/fork-heights/${encodeURIComponent(oldName)}`, {
+            method: 'PATCH',
+            headers: authHeaders,
+            body: JSON.stringify({ new_name: trimmed }),
+          });
+          fetchHeights();
+        } catch {}
+      }
+      setEditingName(null);
+    },
+    [sendCommand, roomId, authHeaders, fetchHeights]
+  );
+
+  const startEditing = useCallback((name: string) => {
+    setEditingName(name);
+    setEditValue(name);
+  }, []);
 
   const activateSelected = useCallback(() => {
     if (selectedIdx === 0) {
@@ -284,7 +355,31 @@ export function HeightOverlay({
                   >
                     {(i + 1).toString().padStart(2, '0')}
                   </div>
-                  <span className="text-[13px] truncate">{name}</span>
+                  {editingName === name ? (
+                    <input
+                      autoFocus
+                      className="text-[13px] bg-transparent border-b border-white/30 outline-none text-white w-full min-w-0"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => handleRename(name, editValue)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleRename(name, editValue);
+                        if (e.key === 'Escape') setEditingName(null);
+                        e.stopPropagation();
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <span
+                      className="text-[13px] truncate cursor-text hover:text-white"
+                      onDoubleClick={(e) => {
+                        e.stopPropagation();
+                        startEditing(name);
+                      }}
+                    >
+                      {name}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-[11px] font-mono tabular-nums text-white/30">
