@@ -52,8 +52,14 @@ type CameraLayoutProviderProps = {
 };
 
 export function CameraLayoutProvider({ roomId, accessToken, children }: CameraLayoutProviderProps) {
-  const [cameraKey, setCameraKey] = useState('');
-  const [store, updateStore] = useLayoutStore(cameraKey);
+  const [cameraKey, setCameraKeyRaw] = useState('');
+  // Use roomId as the layout key when available (matches API persistence),
+  // otherwise fall back to whatever the grid sets (hash of camera names)
+  const effectiveKey = roomId || cameraKey;
+  const [store, updateStore] = useLayoutStore(effectiveKey);
+  const setCameraKey = useCallback((key: string) => {
+    if (!roomId) setCameraKeyRaw(key);
+  }, [roomId]);
   const [editMode, setEditMode] = useState(false);
   const [adjustingGrid, setAdjustingGrid] = useState(false);
 
@@ -90,7 +96,7 @@ export function CameraLayoutProvider({ roomId, accessToken, children }: CameraLa
 
   // Debounced save to API on every store change
   useEffect(() => {
-    if (!roomId || !cameraKey || !authHeaders) return;
+    if (!roomId || !effectiveKey || !authHeaders) return;
     const isInitial = Object.keys(store.layouts).length === 0;
     if (isInitial) return;
 
@@ -109,7 +115,7 @@ export function CameraLayoutProvider({ roomId, accessToken, children }: CameraLa
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [store, roomId, cameraKey, authHeaders]);
+  }, [store, roomId, effectiveKey, authHeaders]);
 
   const activeLayout = useMemo(() => {
     if (store.activeLayoutId && store.layouts[store.activeLayoutId]) {
