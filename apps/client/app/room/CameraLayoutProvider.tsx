@@ -10,7 +10,7 @@ export type CameraLayoutContextValue = {
   activeLayout: CameraLayout;
   editMode: boolean;
   setEditMode: (on: boolean) => void;
-  setCameraKey: (key: string) => void;
+  setCameraKey: (key: string) => void; // no-op, kept for compat
   switchLayout: (id: string) => void;
   createLayout: (name: string, basedOn?: string) => string;
   renameLayout: (id: string, name: string) => void;
@@ -52,14 +52,8 @@ type CameraLayoutProviderProps = {
 };
 
 export function CameraLayoutProvider({ roomId, accessToken, children }: CameraLayoutProviderProps) {
-  const [cameraKey, setCameraKeyRaw] = useState('');
-  // Use roomId as the layout key when available (matches API persistence),
-  // otherwise fall back to whatever the grid sets (hash of camera names)
-  const effectiveKey = roomId || cameraKey;
-  const [store, updateStore] = useLayoutStore(effectiveKey);
-  const setCameraKey = useCallback((key: string) => {
-    if (!roomId) setCameraKeyRaw(key);
-  }, [roomId]);
+  const [store, updateStore] = useLayoutStore();
+  const setCameraKey = useCallback(() => {}, []); // no-op, kept for CameraGrid compat
   const [editMode, setEditMode] = useState(false);
   const [adjustingGrid, setAdjustingGrid] = useState(false);
 
@@ -67,45 +61,38 @@ export function CameraLayoutProvider({ roomId, accessToken, children }: CameraLa
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const storeRef = useRef(store);
   storeRef.current = store;
-  const roomIdRef = useRef(roomId);
-  roomIdRef.current = roomId;
+  const loadedRef = useRef(false);
 
   const authHeaders = useMemo(() => {
     if (!accessToken) return undefined;
     return { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
   }, [accessToken]);
 
-  // Load layouts from API when roomId changes
+  // Load layouts from API once on mount
   useEffect(() => {
-    if (!roomId || !authHeaders) return;
-    let stale = false;
+    if (!roomId || !authHeaders || loadedRef.current) return;
+    loadedRef.current = true;
 
     fetch(`${API_URL}/rooms/${roomId}/layouts`, { headers: authHeaders })
       .then((r) => r.ok ? r.json() : null)
       .then((cfg) => {
-        if (stale || roomIdRef.current !== roomId || !cfg) return;
-        // cfg is the LayoutStore if it has layouts
+        if (!cfg) return;
         if (cfg.layouts && Object.keys(cfg.layouts).length > 0) {
-          seedLayoutStore(roomId, cfg as LayoutStore);
+          seedLayoutStore(cfg as LayoutStore);
         }
       })
       .catch(() => { /* API unreachable — localStorage still works */ });
-
-    return () => { stale = true; };
   }, [roomId, authHeaders]);
 
   // Debounced save to API on every store change
   useEffect(() => {
-    if (!roomId || !effectiveKey || !authHeaders) return;
+    if (!roomId || !authHeaders) return;
     const isInitial = Object.keys(store.layouts).length === 0;
     if (isInitial) return;
 
-    const savedRoomId = roomId;
-
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      if (roomIdRef.current !== savedRoomId) return;
-      fetch(`${API_URL}/rooms/${savedRoomId}/layouts`, {
+      fetch(`${API_URL}/rooms/${roomId}/layouts`, {
         method: 'PUT',
         headers: authHeaders,
         body: JSON.stringify({ config: storeRef.current }),
@@ -115,7 +102,7 @@ export function CameraLayoutProvider({ roomId, accessToken, children }: CameraLa
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [store, roomId, effectiveKey, authHeaders]);
+  }, [store, roomId, authHeaders]);
 
   const activeLayout = useMemo(() => {
     if (store.activeLayoutId && store.layouts[store.activeLayoutId]) {
