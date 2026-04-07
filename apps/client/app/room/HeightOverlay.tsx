@@ -111,15 +111,16 @@ export function HeightOverlay({
     const name = `height_${heightEntries.length + 1}`;
     sendCommand({ cmd: 'save', name });
     flashSent('__save__');
+    // Optimistic update
+    setPersistedHeights((prev) => ({ ...prev, [name]: currentHeight }));
     try {
       await fetch(`${API_URL}/rooms/${roomId}/fork-heights`, {
         method: 'POST',
         headers: authHeaders,
         body: JSON.stringify({ name, height: currentHeight }),
       });
-      fetchHeights();
     } catch {}
-  }, [heightEntries.length, sendCommand, flashSent, currentHeight, roomId, authHeaders, fetchHeights]);
+  }, [heightEntries.length, sendCommand, flashSent, currentHeight, roomId, authHeaders]);
 
   const handleGoto = useCallback(
     (name: string) => {
@@ -132,15 +133,19 @@ export function HeightOverlay({
   const handleDelete = useCallback(
     async (name: string) => {
       sendCommand({ cmd: 'delete', name });
+      // Optimistic update
+      setPersistedHeights((prev) => {
+        const { [name]: _, ...rest } = prev;
+        return rest;
+      });
       try {
         await fetch(`${API_URL}/rooms/${roomId}/fork-heights/${encodeURIComponent(name)}`, {
           method: 'DELETE',
           headers: authHeaders,
         });
-        fetchHeights();
       } catch {}
     },
-    [sendCommand, roomId, authHeaders, fetchHeights]
+    [sendCommand, roomId, authHeaders]
   );
 
   const handleRename = useCallback(
@@ -148,18 +153,22 @@ export function HeightOverlay({
       const trimmed = newName.trim();
       if (trimmed && trimmed !== oldName) {
         publish({ stamp: Date.now(), cmd: 'rename', name: oldName, new_name: trimmed });
+        // Optimistic update
+        setPersistedHeights((prev) => {
+          const { [oldName]: value, ...rest } = prev;
+          return { ...rest, [trimmed]: value };
+        });
         try {
           await fetch(`${API_URL}/rooms/${roomId}/fork-heights/${encodeURIComponent(oldName)}`, {
             method: 'PATCH',
             headers: authHeaders,
             body: JSON.stringify({ new_name: trimmed }),
           });
-          fetchHeights();
         } catch {}
       }
       setEditingName(null);
     },
-    [sendCommand, roomId, authHeaders, fetchHeights]
+    [publish, roomId, authHeaders]
   );
 
   const startEditing = useCallback((name: string) => {
