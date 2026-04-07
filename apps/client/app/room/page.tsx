@@ -265,6 +265,8 @@ function RoomPageInner() {
       <RoomContent
         robotName={selectedRoom.robot_name || selectedRoom.name}
         trackNames={selectedRoom.track_names}
+        roomId={selectedRoom.id}
+        accessToken={accessToken!}
         hasPrev={streamingRooms.length > 1}
         hasNext={streamingRooms.length > 1}
         onBack={handleBackToList}
@@ -279,6 +281,8 @@ function RoomPageInner() {
 type RoomContentProps = {
   robotName: string;
   trackNames: string[];
+  roomId: string;
+  accessToken: string;
   hasPrev: boolean;
   hasNext: boolean;
   onBack: () => void;
@@ -287,7 +291,7 @@ type RoomContentProps = {
   onLogout: () => void;
 };
 
-function RoomContent({ robotName, trackNames, hasPrev, hasNext, onBack, onPrev, onNext, onLogout }: RoomContentProps) {
+function RoomContent({ robotName, trackNames, roomId, accessToken, hasPrev, hasNext, onBack, onPrev, onNext, onLogout }: RoomContentProps) {
   const { connectionState } = useAdamo();
   const [heightOverlayOpen, setHeightOverlayOpen] = useState(false);
   const heightOverlayRef = useRef<HeightOverlayRef | null>(null);
@@ -344,7 +348,7 @@ function RoomContent({ robotName, trackNames, hasPrev, hasNext, onBack, onPrev, 
 
       {/* Camera grid — fills viewport */}
       <div className="absolute inset-0">
-        <CameraLayout trackNames={trackNames} onReady={handleCameraReady} />
+        <CameraLayout trackNames={trackNames} roomId={roomId} accessToken={accessToken} onReady={handleCameraReady} />
       </div>
 
       {/* Header bar — robot name, nav, logout */}
