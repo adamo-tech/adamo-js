@@ -19,7 +19,7 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
 //  2: X          6: LT         10: L3        14: DPad Left
 //  3: Y          7: RT         11: R3        15: DPad Right
 //                                            16: Xbox/Guide
-const EXPECTED_BUTTON_COUNT = 17;
+const EXPECTED_BUTTON_COUNT = 21;
 const EXPECTED_AXIS_COUNT = 6;
 
 /**
