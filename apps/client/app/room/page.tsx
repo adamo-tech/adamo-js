@@ -369,8 +369,8 @@ function RoomContent({ robotName, trackNames, roomId, accessToken, hasPrev, hasN
       {/* Height preset overlay (toggled by Start button) */}
       {heightOverlayOpen && (
         <HeightOverlay
-          roomId={selectedRoom!.id}
-          accessToken={accessToken!}
+          roomId={roomId}
+          accessToken={accessToken}
           onClose={() => setHeightOverlayOpen(false)}
           onReady={(ref) => { heightOverlayRef.current = ref; }}
         />
