@@ -49,27 +49,35 @@ export function HeightOverlay({
   const { data: state } = useJsonStream<ForkliftHeightState>('fork_height');
   const publish = useJsonPublisher<HeightCommand>('height_command');
 
-  // Persistent heights from backend
-  const [persistedHeights, setPersistedHeights] = useState<Record<string, number>>({});
+  // Persistent heights — load from localStorage instantly, then sync from API
+  const cacheKey = `adamo-fork-heights:${roomId}`;
+  const [persistedHeights, setPersistedHeightsRaw] = useState<Record<string, number>>(() => {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      return cached ? JSON.parse(cached) : {};
+    } catch { return {}; }
+  });
+
+  const setPersistedHeights = useCallback((update: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>)) => {
+    setPersistedHeightsRaw((prev) => {
+      const next = typeof update === 'function' ? update(prev) : update;
+      try { localStorage.setItem(cacheKey, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, [cacheKey]);
 
   const authHeaders = useMemo(() => ({
     'Authorization': `Bearer ${accessToken}`,
     'Content-Type': 'application/json',
   }), [accessToken]);
 
-  const fetchHeights = useCallback(async () => {
-    try {
-      const resp = await fetch(`${API_URL}/rooms/${roomId}/fork-heights`, {
-        headers: authHeaders,
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        setPersistedHeights(data.heights);
-      }
-    } catch {}
-  }, [roomId, authHeaders]);
-
-  useEffect(() => { fetchHeights(); }, [fetchHeights]);
+  // Background sync from API
+  useEffect(() => {
+    fetch(`${API_URL}/rooms/${roomId}/fork-heights`, { headers: authHeaders })
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data?.heights) setPersistedHeights(data.heights); })
+      .catch(() => {});
+  }, [roomId, authHeaders, setPersistedHeights]);
 
   const savedHeights = persistedHeights;
   const currentHeight = state?.current_height ?? null;
