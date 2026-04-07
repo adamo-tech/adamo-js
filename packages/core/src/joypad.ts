@@ -12,31 +12,20 @@ const DEFAULT_CONFIG: Required<JoypadConfig> = {
   topic: 'joy',
 };
 
-/**
- * W3C Gamepad to ROS Joy button mapping
- * Maps W3C gamepad button indices to ROS joy_node button indices
- */
-const BUTTON_MAP: Record<number, number> = {
-  0: 0, // A (CROSS) -> A
-  1: 1, // B (CIRCLE) -> B
-  2: 2, // X (SQUARE) -> X
-  3: 3, // Y (TRIANGLE) -> Y
-  8: 4, // Select/Back -> BACK
-  12: 5, // Guide/Home -> GUIDE
-  9: 6, // Start -> START
-  10: 7, // Left Stick Click -> LEFTSTICK
-  11: 8, // Right Stick Click -> RIGHTSTICK
-  4: 9, // LB -> LEFTSHOULDER
-  5: 10, // RB -> RIGHTSHOULDER
-};
-
-const EXPECTED_BUTTON_COUNT = 21;
+// Standard Gamepad button mapping (W3C / Xbox controller)
+// https://w3c.github.io/gamepad/#remapping
+//  0: A          4: LB         8: Back       12: DPad Up
+//  1: B          5: RB         9: Start      13: DPad Down
+//  2: X          6: LT         10: L3        14: DPad Left
+//  3: Y          7: RT         11: R3        15: DPad Right
+//                                            16: Xbox/Guide
+const EXPECTED_BUTTON_COUNT = 17;
 const EXPECTED_AXIS_COUNT = 6;
 
 /**
  * JoypadManager - Manages gamepad input and sends to the server
  *
- * Maps W3C Gamepad API to ROS sensor_msgs/Joy format compatible with joy_node.
+ * Maps W3C Gamepad API with 1:1 button passthrough (indices 0-16).
  * Supports deadzone, autorepeat, sticky buttons, and coalescing.
  *
  * @example
@@ -140,7 +129,7 @@ export class JoypadManager {
         return;
       }
 
-      const { buttons, axes } = this.mapToROSJoy(gamepad);
+      const { buttons, axes } = this.mapToJoy(gamepad);
 
       const changed = this.hasStateChanged(buttons, axes);
       const now = Date.now();
@@ -180,44 +169,34 @@ export class JoypadManager {
     this.animationFrameId = requestAnimationFrame(this.pollGamepad);
   };
 
-  private mapToROSJoy(gamepad: Gamepad): { buttons: number[]; axes: number[] } {
+  private mapToJoy(gamepad: Gamepad): { buttons: number[]; axes: number[] } {
     const buttons = new Array(EXPECTED_BUTTON_COUNT).fill(0);
     const axes = new Array(EXPECTED_AXIS_COUNT).fill(0.0);
 
-    // Map buttons
-    for (let i = 0; i < gamepad.buttons.length; i++) {
-      const rosIndex = BUTTON_MAP[i];
-      if (rosIndex !== undefined) {
-        if (this.config.stickyButtons) {
-          if (gamepad.buttons[i].pressed && this.previousState && !this.previousState[rosIndex]) {
-            this.stickyButtonState[rosIndex] = this.stickyButtonState[rosIndex] ? 0 : 1;
-          }
-          buttons[rosIndex] = this.stickyButtonState[rosIndex];
-        } else {
-          buttons[rosIndex] = gamepad.buttons[i].pressed ? 1 : 0;
+    // Standard mapping: button indices pass through 1:1
+    const count = Math.min(gamepad.buttons.length, EXPECTED_BUTTON_COUNT);
+    for (let i = 0; i < count; i++) {
+      if (this.config.stickyButtons) {
+        if (gamepad.buttons[i].pressed && this.previousState && !this.previousState[i]) {
+          this.stickyButtonState[i] = this.stickyButtonState[i] ? 0 : 1;
         }
+        buttons[i] = this.stickyButtonState[i];
+      } else {
+        buttons[i] = gamepad.buttons[i].pressed ? 1 : 0;
       }
     }
 
-    // Handle D-Pad
-    if (gamepad.buttons.length > 12) {
-      buttons[11] = gamepad.buttons[12]?.pressed ? 1 : 0; // DPAD_UP
-      buttons[12] = gamepad.buttons[13]?.pressed ? 1 : 0; // DPAD_DOWN
-      buttons[13] = gamepad.buttons[14]?.pressed ? 1 : 0; // DPAD_LEFT
-      buttons[14] = gamepad.buttons[15]?.pressed ? 1 : 0; // DPAD_RIGHT
-    }
-
-    // Some controllers use axes for D-pad
-    if (gamepad.axes.length > 9) {
+    // Fallback: some non-standard controllers report D-pad as axes[9]/axes[10]
+    if (gamepad.axes.length > 9 && !buttons[12] && !buttons[13] && !buttons[14] && !buttons[15]) {
       const dpadX = gamepad.axes[9] || 0;
       const dpadY = gamepad.axes[10] || 0;
-      if (dpadY < -0.5) buttons[11] = 1;
-      if (dpadY > 0.5) buttons[12] = 1;
-      if (dpadX < -0.5) buttons[13] = 1;
-      if (dpadX > 0.5) buttons[14] = 1;
+      if (dpadY < -0.5) buttons[12] = 1; // Up
+      if (dpadY > 0.5) buttons[13] = 1;  // Down
+      if (dpadX < -0.5) buttons[14] = 1; // Left
+      if (dpadX > 0.5) buttons[15] = 1;  // Right
     }
 
-    // Map axes
+    // Axes 0-3: thumbsticks (standard mapping)
     if (gamepad.axes.length >= 4) {
       axes[0] = this.applyDeadzone(gamepad.axes[0]);
       axes[1] = this.applyDeadzone(gamepad.axes[1]);
@@ -225,7 +204,7 @@ export class JoypadManager {
       axes[3] = this.applyDeadzone(gamepad.axes[3]);
     }
 
-    // Triggers
+    // Axes 4-5: trigger analog values from standard buttons 6/7 (LT/RT)
     if (gamepad.buttons.length > 6) {
       axes[4] = gamepad.buttons[6]?.value || 0;
     }
@@ -233,7 +212,7 @@ export class JoypadManager {
       axes[5] = gamepad.buttons[7]?.value || 0;
     }
 
-    // Some controllers put triggers on axes
+    // Fallback: some non-standard controllers report triggers as axes[4]/axes[5]
     if (gamepad.axes.length > 5 && axes[4] === 0 && axes[5] === 0) {
       const lt = gamepad.axes[4] || 0;
       const rt = gamepad.axes[5] || 0;

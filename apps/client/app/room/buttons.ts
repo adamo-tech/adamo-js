@@ -1,24 +1,25 @@
 /**
- * Named button indices from @adamo-tech/core's ROS joypad mapping
- * (packages/core/src/joypad.ts). These are the indices passed to
- * GamepadController.onButtonDown, after W3C→ROS remapping.
+ * W3C standard gamepad button indices (1:1 passthrough).
+ * These are the indices passed to GamepadController.onButtonDown.
  */
 export const BUTTONS = {
   A: 0,
   B: 1,
   X: 2,
   Y: 3,
-  BACK: 4,
-  GUIDE: 5,
-  START: 6,
-  LEFT_STICK: 7,
-  RIGHT_STICK: 8,
-  LB: 9,
-  RB: 10,
-  DPAD_UP: 11,
-  DPAD_DOWN: 12,
-  DPAD_LEFT: 13,
-  DPAD_RIGHT: 14,
+  LB: 4,
+  RB: 5,
+  LT: 6,
+  RT: 7,
+  BACK: 8,
+  START: 9,
+  LEFT_STICK: 10,
+  RIGHT_STICK: 11,
+  DPAD_UP: 12,
+  DPAD_DOWN: 13,
+  DPAD_LEFT: 14,
+  DPAD_RIGHT: 15,
+  GUIDE: 16,
 } as const;
 
 /**
