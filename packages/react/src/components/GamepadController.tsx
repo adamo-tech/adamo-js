@@ -5,6 +5,8 @@ import type { JoypadConfig, JoyMessage } from '@adamo-tech/core';
 export interface GamepadControllerProps {
   /** Joypad configuration */
   config?: JoypadConfig;
+  /** When true, stops publishing joy data to the robot (axes/buttons are not sent) */
+  paused?: boolean;
   /** Called on each input event (continuous, at autorepeat rate) */
   onInput?: (input: JoyMessage) => void;
   /** Called once when a button is pressed (0 → 1 transition) */
@@ -46,12 +48,19 @@ export interface GamepadControllerProps {
  */
 export function GamepadController({
   config,
+  paused,
   onInput,
   onButtonDown,
   onButtonUp,
   onConnectionChange,
 }: GamepadControllerProps) {
-  const { isConnected, lastInput } = useJoypad(config);
+  const { isConnected, lastInput, stop, start } = useJoypad(config);
+
+  // Pause/resume joy publishing
+  useEffect(() => {
+    if (paused) stop();
+    else start();
+  }, [paused, stop, start]);
   const prevButtonsRef = useRef<number[]>([]);
 
   // Notify on input and detect button edges

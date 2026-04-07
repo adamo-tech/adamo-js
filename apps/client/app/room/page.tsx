@@ -329,7 +329,7 @@ function RoomContent({ robotName, trackNames, roomId, accessToken, hasPrev, hasN
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#050812]">
       <HeartbeatMonitor />
-      <GamepadController onButtonDown={handleButtonDown} />
+      <GamepadController paused={heightOverlayOpen} onButtonDown={handleButtonDown} />
 
       {/* Connection veil while still connecting */}
       {connectionState !== 'connected' && (
