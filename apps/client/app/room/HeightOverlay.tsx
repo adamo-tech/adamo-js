@@ -147,7 +147,7 @@ export function HeightOverlay({
     async (oldName: string, newName: string) => {
       const trimmed = newName.trim();
       if (trimmed && trimmed !== oldName) {
-        sendCommand({ cmd: 'rename', name: oldName, new_name: trimmed });
+        publish({ stamp: Date.now(), cmd: 'rename', name: oldName, new_name: trimmed });
         try {
           await fetch(`${API_URL}/rooms/${roomId}/fork-heights/${encodeURIComponent(oldName)}`, {
             method: 'PATCH',
