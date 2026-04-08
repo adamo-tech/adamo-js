@@ -104,7 +104,7 @@ export function VideoFeed({
   const videoStyle: CSSProperties = {
     width: '100%',
     height: '100%',
-    objectFit: 'cover',
+    objectFit: 'contain',
     transform: mirror ? 'scaleX(-1)' : undefined,
     ...style,
   };
