@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
+import { Suspense, useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Teleoperate,
@@ -292,8 +292,17 @@ type RoomContentProps = {
 };
 
 function RoomContent({ robotName, trackNames, roomId, accessToken, hasPrev, hasNext, onBack, onPrev, onNext, onLogout }: RoomContentProps) {
-  const { connectionState } = useAdamo();
+  const { connectionState, availableTracks } = useAdamo();
   const [heightOverlayOpen, setHeightOverlayOpen] = useState(false);
+
+  // Merge API track names with live-discovered tracks so late-starting cameras appear
+  const allTrackNames = useMemo(() => {
+    const names = new Set(trackNames);
+    for (const t of availableTracks) {
+      names.add(t.name);
+    }
+    return [...names];
+  }, [trackNames, availableTracks]);
   const heightOverlayRef = useRef<HeightOverlayRef | null>(null);
   const cameraLayoutRef = useRef<CameraLayoutApi | null>(null);
 
@@ -348,7 +357,7 @@ function RoomContent({ robotName, trackNames, roomId, accessToken, hasPrev, hasN
 
       {/* Camera grid — fills viewport */}
       <div className="absolute inset-0">
-        <CameraLayout trackNames={trackNames} roomId={roomId} accessToken={accessToken} onReady={handleCameraReady} />
+        <CameraLayout trackNames={allTrackNames} roomId={roomId} accessToken={accessToken} onReady={handleCameraReady} />
       </div>
 
       {/* Header bar — robot name, nav, logout */}
