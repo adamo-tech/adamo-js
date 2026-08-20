@@ -58,7 +58,10 @@ const BUTTON_MAP: Record<number, number> = {
   15: 14, // D-Pad Right -> DPAD_RIGHT
 };
 
-const EXPECTED_BUTTON_COUNT = 21;
+// Keep the ROS game_controller_node slots available for standard controllers,
+// but never truncate devices with extended controls (for example steering
+// wheels whose browser Gamepad reports include B32-B38).
+const MINIMUM_BUTTON_COUNT = 21;
 const EXPECTED_AXIS_COUNT = 6;
 
 /**
@@ -87,7 +90,7 @@ export class JoypadManager {
   private animationFrameId: number | null = null;
   private pollIntervalId: ReturnType<typeof setInterval> | null = null;
   private previousState: number[] | null = null;
-  private stickyButtonState: number[] = new Array(EXPECTED_BUTTON_COUNT).fill(0);
+  private stickyButtonState: number[] = new Array(MINIMUM_BUTTON_COUNT).fill(0);
   private pendingState: { buttons: number[]; axes: number[] } | null = null;
   private coalesceTimeout: ReturnType<typeof setTimeout> | null = null;
   private lastAutorepeatTime: number = 0;
@@ -277,21 +280,21 @@ export class JoypadManager {
   }
 
   private mapToROSJoy(gamepad: Gamepad): { buttons: number[]; axes: number[] } {
-    const buttons = new Array(EXPECTED_BUTTON_COUNT).fill(0);
+    const buttonCount = Math.max(gamepad.buttons.length, MINIMUM_BUTTON_COUNT);
+    const buttons = new Array(buttonCount).fill(0);
     const axes = new Array(EXPECTED_AXIS_COUNT).fill(0.0);
 
-    // Map buttons
+    // Preserve the standard ROS mapping, and pass extended/unmapped controls
+    // through at their browser Gamepad index so no physical button is dropped.
     for (let i = 0; i < gamepad.buttons.length; i++) {
-      const rosIndex = BUTTON_MAP[i];
-      if (rosIndex !== undefined) {
-        if (this.config.stickyButtons) {
-          if (gamepad.buttons[i].pressed && this.previousState && !this.previousState[rosIndex]) {
-            this.stickyButtonState[rosIndex] = this.stickyButtonState[rosIndex] ? 0 : 1;
-          }
-          buttons[rosIndex] = this.stickyButtonState[rosIndex];
-        } else {
-          buttons[rosIndex] = gamepad.buttons[i].pressed ? 1 : 0;
+      const rosIndex = BUTTON_MAP[i] ?? i;
+      if (this.config.stickyButtons) {
+        if (gamepad.buttons[i].pressed && this.previousState && !this.previousState[rosIndex]) {
+          this.stickyButtonState[rosIndex] = this.stickyButtonState[rosIndex] ? 0 : 1;
         }
+        buttons[rosIndex] = this.stickyButtonState[rosIndex] ?? 0;
+      } else {
+        buttons[rosIndex] = gamepad.buttons[i].pressed ? 1 : 0;
       }
     }
 
